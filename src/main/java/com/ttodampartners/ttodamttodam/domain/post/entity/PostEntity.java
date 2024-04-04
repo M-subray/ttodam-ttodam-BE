@@ -27,13 +27,13 @@ public class PostEntity {
 //    @JoinColumn(name = "user_id", nullable = false)
 //    private UserEntity userId;
 
-    @Column(name = "title", nullable = false)
+    @Column(nullable = false)
     private String title;
 
-    @Column(name = "participants", nullable = false)
+    @Column(nullable = false)
     private Integer participants;
 
-    @Column(name = "place", nullable = false)
+    @Column(nullable = false)
     private String place;
 
     @Column(name = "p_location_x", nullable = false)
@@ -42,14 +42,15 @@ public class PostEntity {
     @Column(name = "p_location_y", nullable = false)
     private Double pLocationY;
 
-    @Column(name = "deadline", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime deadline;
 
-    @Column(name = "category", nullable = false)
-    private String category;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+     private Category category;
 
     @Lob
-    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @Column(name = "create_at", nullable = false)
@@ -60,6 +61,7 @@ public class PostEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+// 상품테이블로 빼기
     @Column(name = "product_name", nullable = false)
     private String productName;
 
@@ -67,11 +69,27 @@ public class PostEntity {
     private String purchaseLink;
 
 
-    @Column(name = "price", nullable = false)
+    @Column(nullable = false)
     private Long price;
 
 
     @Column(name = "product_img_url", nullable = false)
     private String productImgUrl;
 
+    @Getter
+    public enum Category {
+        DAILY("생활용품"),
+        KITCHEN("주방용품"),
+        FOOD("식품"),
+        PET("반려동물용품"),
+        CLOTHING("의류/잡화"),
+        HEALTH("헬스/건강식품"),
+        OFFICE("오피스/문구"),
+        OTHER("기타");
+
+        private final String label;
+        Category(String label) {
+            this.label = label;
+        }
+    }
 }

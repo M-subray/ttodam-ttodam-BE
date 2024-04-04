@@ -26,7 +26,7 @@ public class PostCreateDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime deadline;
 
-    private String category;
+    private PostEntity.Category category;
     private String content;
 
     private String productName;
