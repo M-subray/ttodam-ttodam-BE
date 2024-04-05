@@ -1,20 +1,12 @@
 ---
 name: Issue Template
 about: 이슈 템플릿입니다.
-title: ''
-labels: ''
-assignees: ''
+title: 'Feat:#4-로그인 기능 구현'
+labels: '기능'
+assignees: 'M-subray'
 ---
 ## Description
-- 회원가입 기능 생성
-  - 메일 인증을 통한 회원가입 구현
-    - 구글 SMTP 이용해 메일 전송
-  - 랜덤함 6자리 숫자 받아 기입하는 형식
-    - Redis에 인증 메일이 key가 되어 value로 번호 5분간 저장 후 자동삭제
-  - 인증 완료 후
-    - Redis에 인증 완료 된 메일이 key가 되어 value로 'CONFIRMED' 저장 (인증번호가 value로 들어가 있다면 덧씌워짐)
-      - 해당 키는 60분간 존재하며 자동삭제
-      - 최종 회원가입 버튼을 누를 때 Redis에 해당 메일의 value가 'CONFIRMED' 가 아니라면 가입불가
+-  로그인 기능 구현
 
 ## Estimated Duration
 4/1(월) ~ 4/7 (목) [7일]

@@ -13,6 +13,7 @@ public enum ErrorCode {
   EXISTS_EMAIL("이미 등록된 이메일입니다."),
   EXISTS_PHONE("이미 등록된 휴대폰 번호입니다."),
   EXISTS_NICKNAME("이미 등록된 닉네임입니다."),
+  NOT_MATCH_PASSWORD("비밀번호가 일치하지 않습니다."),
 
   /*
   Mail Exception
