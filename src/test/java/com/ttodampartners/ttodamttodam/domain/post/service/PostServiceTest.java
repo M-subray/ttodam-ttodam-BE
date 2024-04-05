@@ -25,7 +25,7 @@ class PostServiceTest {
 
         LocalDateTime deadline = LocalDateTime.of(2024, 4, 5, 0, 0);
 
-        PostCreateDto postCreateDto = new PostCreateDto("test title", 2, "test place", deadline, "c", "test content", "test productName", "test purchaseLink", 10000L, "test productImgUrl");
+        PostCreateDto postCreateDto = new PostCreateDto("test title", 2, "test place", deadline, PostEntity.Category.DAILY, "test content", "test productName", "test purchaseLink", 10000L, "test productImgUrl");
 
 
         PostEntity post = postService.createPost(postCreateDto);

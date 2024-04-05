@@ -21,7 +21,7 @@ public class PostController {
         ) {
         postService.createPost(postCreateDto);
 //        postService.createPost(userId, postCreateDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(OK).build();
        }
 
 //    @GetMapping("/post")
