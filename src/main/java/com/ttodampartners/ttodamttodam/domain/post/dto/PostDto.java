@@ -19,7 +19,7 @@ public class PostDto {
     private Double pLocationX;
     private Double pLocationY;
     private LocalDateTime deadline;
-    private String category;
+    private PostEntity.Category category;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -28,5 +28,26 @@ public class PostDto {
     private String purchaseLink;
     private Long price;
     private String productImgUrl;
+
+    public static PostDto of(PostEntity postEntity) {
+        return PostDto.builder()
+                .postId(postEntity.getPostId())
+                .title(postEntity.getTitle())
+                .participants(postEntity.getParticipants())
+                .place(postEntity.getPlace())
+                .pLocationX(postEntity.getPLocationX())
+                .pLocationY(postEntity.getPLocationY())
+                .deadline(postEntity.getDeadline())
+                .category(postEntity.getCategory())
+                .content(postEntity.getContent())
+                .createdAt(postEntity.getCreatedAt())
+                .updatedAt(postEntity.getUpdatedAt())
+
+                .productName(postEntity.getProductName())
+                .purchaseLink(postEntity.getPurchaseLink())
+                .price(postEntity.getPrice())
+                .productImgUrl(postEntity.getProductImgUrl())
+                .build();
+    }
 
 }
