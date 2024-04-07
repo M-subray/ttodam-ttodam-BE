@@ -27,6 +27,7 @@ public class SigninController {
 
     HttpHeaders headers = new HttpHeaders();
     headers.add("Authorization", "Bearer " + token);
+    log.info("로그인 성공, email : {}", signinRequestDto.getEmail());
 
    return ResponseEntity.ok().headers(headers).body("로그인 성공");
   }

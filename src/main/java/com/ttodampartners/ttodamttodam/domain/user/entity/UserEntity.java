@@ -1,4 +1,4 @@
-package com.ttodampartners.ttodamttodam.domain.user.domain;
+package com.ttodampartners.ttodamttodam.domain.user.entity;
 
 import com.ttodampartners.ttodamttodam.domain.user.dto.model.BaseEntity;
 import jakarta.persistence.Column;
@@ -20,8 +20,8 @@ import org.hibernate.envers.AuditOverride;
 @NoArgsConstructor
 @AllArgsConstructor
 @AuditOverride(forClass = BaseEntity.class)
-@Entity
-public class User extends BaseEntity {
+@Entity(name = "User")
+public class UserEntity extends BaseEntity {
 
   @Id
   @Column(name = "id", nullable = false)
