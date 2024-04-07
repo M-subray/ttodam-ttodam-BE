@@ -1,6 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.user.service;
 
-import com.ttodampartners.ttodamttodam.domain.user.domain.User;
+import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import com.ttodampartners.ttodamttodam.global.dto.UserDetailsDto;
@@ -18,14 +18,14 @@ public class AuthenticationService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    User user = findByEmail(email);
+    UserEntity userEntity = findByEmail(email);
     return UserDetailsDto.builder()
-        .email(user.getEmail())
-        .password(user.getPassword())
+        .email(userEntity.getEmail())
+        .password(userEntity.getPassword())
         .build();
   }
 
-  private User findByEmail(String email) throws UserException {
+  private UserEntity findByEmail(String email) throws UserException {
     return userRepository.findByEmail(email)
         .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_EMAIL));
   }

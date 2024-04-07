@@ -14,7 +14,8 @@ public enum ErrorCode {
   EXISTS_PHONE("이미 등록된 휴대폰 번호입니다."),
   EXISTS_NICKNAME("이미 등록된 닉네임입니다."),
   NOT_MATCH_PASSWORD("비밀번호가 일치하지 않습니다."),
-
+  SIGNIN_TIME_OUT("재로그인이 필요합니다."),
+  PERMISSION_DENIED("권한이 없습니다."),
   /*
   Mail Exception
    */
