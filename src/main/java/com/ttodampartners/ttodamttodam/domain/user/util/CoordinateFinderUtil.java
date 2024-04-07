@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CoordinateFinder {
+public class CoordinateFinderUtil {
 
   @Value("${spring.kakao.key}")
   private String API_KEY;

@@ -1,6 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.user.service;
 
-import com.ttodampartners.ttodamttodam.domain.user.domain.User;
+import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.dto.SignupRequestDto;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
@@ -24,7 +24,7 @@ public class SignupService {
     iskEmailExists(signupRequestDto.getEmail());
     isEmailVerified(signupRequestDto.getEmail());
 
-    userRepository.save(User.builder()
+    userRepository.save(UserEntity.builder()
         .email(signupRequestDto.getEmail())
         .password(passwordEncoder.encode(signupRequestDto.getPassword()))
         .build());

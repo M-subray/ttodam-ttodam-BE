@@ -1,6 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.user.service;
 
-import com.ttodampartners.ttodamttodam.domain.user.domain.User;
+import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.dto.SigninRequestDto;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
@@ -18,12 +18,12 @@ public class SigninService {
 
   @Transactional(readOnly = true)
   public void signin(SigninRequestDto signinRequestDto) {
-    User user = getUserByEmail(signinRequestDto.getEmail());
+    UserEntity userEntity = getUserByEmail(signinRequestDto.getEmail());
 
-    isMatchPassword(signinRequestDto.getPassword(), user.getPassword());
+    isMatchPassword(signinRequestDto.getPassword(), userEntity.getPassword());
   }
 
-  private User getUserByEmail(String email) {
+  private UserEntity getUserByEmail(String email) {
     return userRepository.findByEmail(email).orElseThrow(() ->
         new UserException(ErrorCode.NOT_FOUND_EMAIL));
   }
