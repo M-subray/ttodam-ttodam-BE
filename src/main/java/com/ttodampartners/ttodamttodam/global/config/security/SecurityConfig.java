@@ -33,7 +33,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorize ->
             authorize
                 .requestMatchers("/users/**").permitAll()
-                .requestMatchers("/users/{userId}").authenticated()
+                .requestMatchers("/users/{userId}/**").authenticated()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         );
     return http.build();

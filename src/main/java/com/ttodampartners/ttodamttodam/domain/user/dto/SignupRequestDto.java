@@ -19,6 +19,8 @@ import lombok.Setter;
 public class SignupRequestDto {
   @NotBlank(message = "이메일을 입력해 주세요.")
   @Column(unique = true)
+  @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+      message = "올바른 이메일 형식을 입력해 주세요")
   private String email;
 
   @NotBlank(message = "비밀번호를 입력해 주세요.")

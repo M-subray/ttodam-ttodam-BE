@@ -16,10 +16,10 @@ public class WithdrawController {
   private final WithdrawService withdrawService;
 
   @DeleteMapping("/users/{userId}")
-  public ResponseEntity<String> withdraw (@PathVariable String userId) {
+  public ResponseEntity<String> withdraw (@PathVariable Long userId) {
     withdrawService.withdraw(userId);
 
-    log.info("회원탈퇴 완료, 이메알 : {}", userId);
+    log.info("회원탈퇴 완료, userId : {}", userId);
     return ResponseEntity.ok().body("탈퇴 완료");
   }
 }

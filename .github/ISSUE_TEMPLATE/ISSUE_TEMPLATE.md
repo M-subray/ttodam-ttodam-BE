@@ -17,28 +17,7 @@ assignees: ''
 - [ ] 기타
 
 ## TO-DO
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 - [ ] 할일 1 
 - [ ] 할일 2
 
 ## ETC
-=======
-- [ ] 할일 1
-- [ ] 할일 2
-
-## ETC
->>>>>>> feature/signUp
-=======
-- [ ] 할일 1
-- [ ] 할일 2
-
-## ETC
->>>>>>> feature/#4-signin
-=======
-- [ ] 할일 1
-- [ ] 할일 2
-
-## ETC
->>>>>>> feature/#5-withdraw
