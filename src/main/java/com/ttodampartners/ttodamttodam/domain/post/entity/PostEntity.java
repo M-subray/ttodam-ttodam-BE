@@ -1,6 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.post.entity;
 
 // import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
+import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -8,10 +9,12 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-//@Audited
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,6 +32,10 @@ public class PostEntity {
 //    @ManyToOne
 //    @JoinColumn(name = "user_id", nullable = false)
 //    private UserEntity userId;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_id", nullable = false)
+    private List<ProductEntity> products = new ArrayList<>();
 
     @Column(nullable = false)
     private String title;
@@ -63,21 +70,6 @@ public class PostEntity {
     @Column(name = "update_at", nullable = false)
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
-// 상품테이블로 빼기
-    @Column(name = "product_name", nullable = false)
-    private String productName;
-
-    @Column(name = "purchase_link", nullable = false)
-    private String purchaseLink;
-
-
-    @Column(nullable = false)
-    private Long price;
-
-
-    @Column(name = "product_img_url", nullable = false)
-    private String productImgUrl;
 
     @Getter
     public enum Category {
