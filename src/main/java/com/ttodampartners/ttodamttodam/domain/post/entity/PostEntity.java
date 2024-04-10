@@ -9,13 +9,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
 //@Audited
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EnableJpaAuditing
 @Builder
-@EntityListeners(value = {AuditingEntityListener.class})
+@EntityListeners(AuditingEntityListener.class)
 @Entity(name = "post")
 public class PostEntity {
     @Id

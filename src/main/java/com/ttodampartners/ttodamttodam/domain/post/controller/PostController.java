@@ -2,6 +2,7 @@ package com.ttodampartners.ttodamttodam.domain.post.controller;
 
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
+import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,4 +40,24 @@ public class PostController {
         PostDto postDto = postService.getPost(postId);
         return ResponseEntity.status(OK).body(postDto);
     }
+
+//    @PutMapping("/post/{postId}")
+//    public ResponseEntity<PostDto> updatePost(
+//            @PathVariable Long postId
+//    )
+//    {
+//        PostDto postDto = postService.updatePost(postId);
+//        return ResponseEntity.status(OK).body(postDto);
+//    }
+
+    @DeleteMapping("/post/{postId}")
+    public ResponseEntity<Void> deletePost(
+            @PathVariable Long postId
+    )
+    {
+        postService.deletePost(postId);
+        return ResponseEntity.status(OK).build();
+    }
+
+
 }

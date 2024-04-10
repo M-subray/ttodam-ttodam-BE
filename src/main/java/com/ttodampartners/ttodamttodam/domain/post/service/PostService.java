@@ -19,6 +19,7 @@ public class PostService {
 
     private final PostRepository postRepository;
 
+    // userID 추가
     @Transactional
     public PostEntity createPost(PostCreateDto postCreateDto) {
 //        UserEntity userEntity = getUser(userId);
@@ -33,5 +34,23 @@ public class PostService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
         return PostDto.of(post);
     }
+
+     // userID 추가
+    @Transactional
+    public PostEntity updatePost(Long postId) {
+        //        UserEntity userEntity = getUser(userId);
+
+        PostEntity postEntity = PostCreateDto.from(postCreateDto);
+        return postRepository.save(postEntity);
+    }
+
+    // userID 추가
+    @Transactional
+    public void deletePost(Long postId) {
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+        postRepository.delete(post);
+    }
+
 
     }
