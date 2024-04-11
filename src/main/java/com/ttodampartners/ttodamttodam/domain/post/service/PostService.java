@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
-    private ProductRepository productRepository;
 
     // userID 추가
     @Transactional

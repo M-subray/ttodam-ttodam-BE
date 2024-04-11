@@ -21,7 +21,7 @@ public class ProductEntity {
     @Column(name = "id", nullable = false)
     private Long productId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
     private PostEntity post;
 
