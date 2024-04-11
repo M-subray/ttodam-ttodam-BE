@@ -23,14 +23,13 @@ public class ProductEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id", nullable = false)
-    private PostEntity postId;
-
+    private PostEntity post;
 
     @Column(name = "product_name", nullable = false)
     private String productName;
 
     @Column(nullable = false)
-    private Long count;
+    private Integer count;
 
     @Column(name = "purchase_link", nullable = false)
     private String purchaseLink;

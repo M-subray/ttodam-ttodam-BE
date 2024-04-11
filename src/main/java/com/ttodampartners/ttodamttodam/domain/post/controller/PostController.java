@@ -4,9 +4,13 @@ import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.service.PostService;
+import com.ttodampartners.ttodamttodam.domain.product.dto.ProductAddDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 import static org.springframework.http.HttpStatus.*;
 
 
@@ -20,10 +24,11 @@ public class PostController {
             @RequestBody PostCreateDto postCreateDto
 //                @AuthenticationPrincipal
         ) {
-        postService.createPost(postCreateDto);
+//        postService.createPost(postCreateDto);
 //        postService.createPost(userId, postCreateDto);
-        return ResponseEntity.status(OK).build();
+        return ResponseEntity.ok(PostDto.of(postService.createPost(postCreateDto)));
        }
+
 
 //    @GetMapping("/post")
 //    public ResponseEntity<PostDto> getPostList(

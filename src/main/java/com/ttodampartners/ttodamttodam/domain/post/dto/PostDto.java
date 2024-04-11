@@ -1,9 +1,12 @@
 package com.ttodampartners.ttodamttodam.domain.post.dto;
 
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
+import com.ttodampartners.ttodamttodam.domain.product.dto.ProductDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -12,7 +15,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PostDto {
     private Long postId;
-    //    private UserEntity userId;
+    //    private Long userId;
+    private List<ProductDto> products;
     private String title;
     private Integer participants;
     private String place;
@@ -24,12 +28,10 @@ public class PostDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private String productName;
-    private String purchaseLink;
-    private Long price;
-    private String productImgUrl;
 
     public static PostDto of(PostEntity postEntity) {
+        List<ProductDto> products = postEntity.getProducts()
+                .stream().map(ProductDto::from).collect(Collectors.toList());
         return PostDto.builder()
                 .postId(postEntity.getPostId())
                 .title(postEntity.getTitle())
@@ -42,11 +44,7 @@ public class PostDto {
                 .content(postEntity.getContent())
                 .createdAt(postEntity.getCreatedAt())
                 .updatedAt(postEntity.getUpdatedAt())
-
-                .productName(postEntity.getProductName())
-                .purchaseLink(postEntity.getPurchaseLink())
-                .price(postEntity.getPrice())
-                .productImgUrl(postEntity.getProductImgUrl())
+                .products(products)
                 .build();
     }
 

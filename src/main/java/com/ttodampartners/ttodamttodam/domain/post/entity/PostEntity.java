@@ -31,10 +31,9 @@ public class PostEntity {
 
 //    @ManyToOne
 //    @JoinColumn(name = "user_id", nullable = false)
-//    private UserEntity userId;
+//    private UserEntity user;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "product_id", nullable = false)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<ProductEntity> products = new ArrayList<>();
 
     @Column(nullable = false)
@@ -54,6 +53,9 @@ public class PostEntity {
 
     @Column(nullable = false)
     private LocalDateTime deadline;
+
+//    @Column(nullable = false)
+//    private Status status;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -87,4 +89,17 @@ public class PostEntity {
             this.label = label;
         }
     }
+
+//    @Getter
+//    public enum Status {
+//        IN_PROGRESS("진행중"),
+//        COMPLETED("완료"),
+//        FAILED("실패");
+//
+//        private final String label;
+//        Status(String label) {
+//            this.label = label;
+//        }
+//    }
+
 }
