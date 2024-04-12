@@ -2,8 +2,10 @@ package com.ttodampartners.ttodamttodam.domain.chat.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,9 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@AttributeOverride(name = "createAt", column = @Column(name = "created_date"))
-@Entity(name = "chatrooms")
-public class ChatroomsEntity extends BaseEntity{
+@EntityListeners(AuditingEntityListener.class)
+@Entity(name = "CHATROOMS")
+public class ChatroomsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -25,16 +27,20 @@ public class ChatroomsEntity extends BaseEntity{
     private PostEntity postEntity;
 
 //  // CHATROOM_MEMBERS 테이블과 연결
-    @OneToMany(mappedBy = "chatroomsEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChatroomMembersEntity> chatroomMembersEntityList = new ArrayList<>();
+//    @OneToMany(mappedBy = "chatroomsEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ChatroomMembersEntity> chatroomMembersEntityList = new ArrayList<>();
 
 //  // CHAT_MESSAGE 테이블과 연결
-    @OneToMany(mappedBy = "chatroomsEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChatMessageEntity> chatMessageEntityList = new ArrayList<>();
+//    @OneToMany(mappedBy = "chatroomsEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ChatMessageEntity> chatMessageEntityList = new ArrayList<>();
 
-    @Column
+    @Column(name = "chat_name")
     private String chatName;
 
-    @Column
+    @Column(name = "user_count")
     private int userCount;
+
+    @Column(name = "created_date")
+    @CreatedDate
+    private LocalDateTime createdDate;
 }

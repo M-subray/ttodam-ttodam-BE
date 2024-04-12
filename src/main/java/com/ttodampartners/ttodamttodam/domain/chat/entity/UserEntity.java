@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @Getter
 @NoArgsConstructor
-@Entity(name = "user")
+@Entity(name = "USER")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,12 +24,12 @@ public class UserEntity {
     private List<PostEntity> postEntityList;
 
     // CHATROOM_MEMBER 테이블과 연결
-    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChatroomMembersEntity> chatroomMembersEntityList = new ArrayList<>();
+//    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ChatroomMembersEntity> chatroomMembersEntityList = new ArrayList<>();
 
     // CHAT_MESSAGES 테이블과 연결
-    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChatMessageEntity> chatMessageEntityList = new ArrayList<>();
+//    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ChatMessageEntity> chatMessageEntityList = new ArrayList<>();
 
     @Column(name = "nickname", nullable = false)
     private String nickname;

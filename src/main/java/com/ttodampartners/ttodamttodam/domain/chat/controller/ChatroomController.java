@@ -22,7 +22,7 @@ public class ChatroomController {
 
     @PostMapping
     public ResponseEntity<ChatResponse<ChatroomResponse>> createChatroom(@RequestBody ChatroomCreateRequest request) {
-        chatroomService.createChatroom(request);
-        return ResponseEntity.ok(ChatResponse.res(HttpStatus.OK, HttpStatus.OK.toString()));
+        ChatroomResponse chatroomResponse = chatroomService.createChatroom(request);
+        return ResponseEntity.ok(ChatResponse.res(HttpStatus.OK, HttpStatus.OK.toString(), chatroomResponse));
     }
 }

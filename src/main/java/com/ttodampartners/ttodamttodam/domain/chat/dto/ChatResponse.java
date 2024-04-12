@@ -10,24 +10,25 @@ import org.springframework.http.HttpStatus;
 @Builder
 public class ChatResponse<T> {
     private HttpStatus statusCode;
-    private String resultMsg;
-    private T resultData;
+    private String message;
+    private T data;
 
-    public ChatResponse(final HttpStatus statusCode, final String resultMsg) {
+    public ChatResponse(final HttpStatus statusCode, final String message) {
         this.statusCode = statusCode;
-        this.resultMsg = resultMsg;
-        this.resultData = null;
+        this.message = message;
+        this.data = null;
     }
 
-    public static<T> ChatResponse<T> res(final HttpStatus statusCode, final String resultMsg) {
-        return res(statusCode, resultMsg, null);
+    // 전달할 데이터는 따로 없는 경우
+    public static<T> ChatResponse<T> res(final HttpStatus statusCode, final String message) {
+        return res(statusCode, message, null);
     }
 
-    public static<T> ChatResponse<T> res(final HttpStatus statusCode, final String resultMsg, final T t) {
+    public static<T> ChatResponse<T> res(final HttpStatus statusCode, final String message, final T t) {
         return ChatResponse.<T>builder()
-                .resultData(t)
+                .data(t)
                 .statusCode(statusCode)
-                .resultMsg(resultMsg)
+                .message(message)
                 .build();
     }
 }

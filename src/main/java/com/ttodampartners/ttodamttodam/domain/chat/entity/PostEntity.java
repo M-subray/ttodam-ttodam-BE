@@ -16,8 +16,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Entity(name = "post")
-public class PostEntity {
+@Entity(name = "POST")
+public class PostEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id", nullable = false)
@@ -29,18 +29,38 @@ public class PostEntity {
     private UserEntity userEntity;
 
     // CHATROOMS 테이블과 연결
-    @OneToMany(mappedBy = "postEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChatroomsEntity> chatroomsEntityList = new ArrayList<>();
+//    @OneToMany(mappedBy = "postEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ChatroomsEntity> chatroomsEntityList = new ArrayList<>();
 
     @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
-    private Integer participants;
-
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Category category;
+
+    @Column(nullable = false)
+    private Integer participants;
+
+    @Column
+    private String place;
+
+    @Column(name = "p_location_x")
+    private Double pLocationX;
+
+    @Column(name = "p_location_y")
+    private Double pLocationY;
+
+    @Column
+    private LocalDateTime deadline;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
+    @Column(nullable = false)
+    private String status;
+
 
     @Column(name = "create_at", nullable = false)
     @CreatedDate
@@ -65,10 +85,6 @@ public class PostEntity {
         Category(String label) {
             this.label = label;
         }
-    }
-
-    public void createChatroom(String title, int userCount) {
-        this.chatroomsEntityList.add(ChatroomsEntity.builder().postEntity(this).chatName(title).userCount(userCount).build());
     }
 
 }
