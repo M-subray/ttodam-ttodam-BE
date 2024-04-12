@@ -2,10 +2,12 @@ package com.ttodampartners.ttodamttodam.domain.post.service;
 
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
+import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
 import com.ttodampartners.ttodamttodam.domain.product.dto.ProductAddDto;
 import com.ttodampartners.ttodamttodam.domain.product.dto.ProductDto;
+import com.ttodampartners.ttodamttodam.domain.product.dto.ProductUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
 import com.ttodampartners.ttodamttodam.domain.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
@@ -32,7 +34,6 @@ public class PostService {
 //        UserEntity userEntity = getUser(userId);
 
         PostEntity postEntity = PostCreateDto.from(postCreateDto);
-
         return postRepository.save(postEntity);
         }
 
@@ -45,13 +46,30 @@ public class PostService {
     }
 
      // userID 추가
-//    @Transactional
-//    public PostEntity updatePost(Long postId) {
-//        //        UserEntity userEntity = getUser(userId);
-//
-//        PostEntity postEntity = PostCreateDto.from(PostCreateDto);
-//        return postRepository.save(postEntity);
-//    }
+    @Transactional
+    public PostEntity updatePost(PostUpdateDto postUpdateDto) {
+        //        UserEntity userEntity = getUser(userId);
+        PostEntity post = postRepository.findById(postUpdateDto.getPostId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+        post.setTitle(postUpdateDto.getTitle());
+        post.setParticipants(postUpdateDto.getParticipants());
+        post.setPlace(postUpdateDto.getPlace());
+        post.setDeadline(postUpdateDto.getDeadline());
+        post.setCategory(postUpdateDto.getCategory());
+        post.setContent(postUpdateDto.getContent());
+
+        for(ProductUpdateDto productUpdateDto : postUpdateDto.getProducts()){
+            ProductEntity product = post.getProducts().stream()
+                    .filter(pi->pi.getProductId().equals(productUpdateDto.getProductId()))
+                    .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+            product.setProductName(productUpdateDto.getProductName());
+            product.setCount(productUpdateDto.getCount());
+            product.setPrice(productUpdateDto.getPrice());
+            product.setPurchaseLink(productUpdateDto.getPurchaseLink());
+
+        }
+        return post;
+    }
 
     // userID 추가
     @Transactional

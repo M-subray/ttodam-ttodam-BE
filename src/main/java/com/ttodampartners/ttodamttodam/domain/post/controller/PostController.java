@@ -2,6 +2,7 @@ package com.ttodampartners.ttodamttodam.domain.post.controller;
 
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
+import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.service.PostService;
 import com.ttodampartners.ttodamttodam.domain.product.dto.ProductAddDto;
@@ -46,14 +47,13 @@ public class PostController {
         return ResponseEntity.status(OK).body(postDto);
     }
 
-//    @PutMapping("/post/{postId}")
-//    public ResponseEntity<PostDto> updatePost(
-//            @PathVariable Long postId
-//    )
-//    {
-//        PostDto postDto = postService.updatePost(postId);
-//        return ResponseEntity.status(OK).body(postDto);
-//    }
+    @PutMapping("/post")
+    public ResponseEntity<PostDto> updatePost(
+            @RequestBody PostUpdateDto postUpdateDto
+    )
+    {
+        return ResponseEntity.ok(PostDto.of(postService.updatePost(postUpdateDto)));
+    }
 
     @DeleteMapping("/post/{postId}")
     public ResponseEntity<Void> deletePost(

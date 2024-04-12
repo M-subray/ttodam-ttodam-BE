@@ -4,6 +4,7 @@ import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
+import com.ttodampartners.ttodamttodam.domain.product.dto.ProductUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
 import com.ttodampartners.ttodamttodam.domain.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
@@ -17,6 +18,17 @@ import org.springframework.web.server.ResponseStatusException;
 public class ProductService {
 
     private final ProductRepository productRepository;
+
+    @Transactional
+    public ProductEntity updateProduct(ProductUpdateDto productUpdateDto) {
+        ProductEntity product = productRepository.findById(productUpdateDto.getProductId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+        product.setProductName(productUpdateDto.getProductName());
+        product.setCount(productUpdateDto.getCount());
+        product.setPrice(productUpdateDto.getPrice());
+        product.setPurchaseLink(productUpdateDto.getPurchaseLink());
+        return product;
+    }
 
     @Transactional
     public void deleteProduct(Long productId) {
