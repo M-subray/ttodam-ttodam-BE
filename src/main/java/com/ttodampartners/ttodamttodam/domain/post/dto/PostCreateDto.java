@@ -35,6 +35,7 @@ public class PostCreateDto {
 
     private PostEntity.Category category;
     private String content;
+    private String postImgUrl;
 
     private List<ProductAddDto> products;
 
@@ -54,6 +55,7 @@ public class PostCreateDto {
                 .deadline(postCreateDto.getDeadline())
                 .category(postCreateDto.getCategory())
                 .content(postCreateDto.getContent())
+                .postImgUrl(postCreateDto.getPostImgUrl())
                 .build();
 
         List<ProductEntity> productEntities = products.stream()

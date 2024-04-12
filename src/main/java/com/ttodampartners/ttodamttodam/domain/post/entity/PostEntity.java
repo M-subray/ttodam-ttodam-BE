@@ -65,6 +65,9 @@ public class PostEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @Column(name = "post_img_url", nullable = false)
+    private String postImgUrl;
+
     @Column(name = "create_at", nullable = false)
     @CreatedDate
     private LocalDateTime createdAt;

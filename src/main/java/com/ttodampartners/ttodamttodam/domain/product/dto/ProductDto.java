@@ -16,7 +16,6 @@ public class ProductDto {
     private Integer count;
     private String purchaseLink;
     private Long price;
-    private String productImgUrl;
 
     public static ProductDto from(ProductEntity productEntity){
         return ProductDto.builder()
@@ -26,7 +25,6 @@ public class ProductDto {
                 .count(productEntity.getCount())
                 .purchaseLink(productEntity.getPurchaseLink())
                 .price(productEntity.getPrice())
-                .productImgUrl(productEntity.getProductImgUrl())
                 .build();
     }
 

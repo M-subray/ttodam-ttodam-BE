@@ -23,7 +23,6 @@ public class ProductAddDto {
 
     private Long price;
     private String purchaseLink;
-    private String productImgUrl;
 
     public static ProductEntity from(ProductAddDto productAddDto) {
         return ProductEntity.builder()
@@ -31,7 +30,6 @@ public class ProductAddDto {
                 .count(productAddDto.getCount())
                 .purchaseLink(productAddDto.getPurchaseLink())
                 .price(productAddDto.getPrice())
-                .productImgUrl(productAddDto.getProductImgUrl())
                 .build();
     }
 

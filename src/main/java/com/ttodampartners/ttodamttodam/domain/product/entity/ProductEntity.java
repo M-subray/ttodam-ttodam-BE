@@ -36,7 +36,4 @@ public class ProductEntity {
 
     @Column(nullable = false)
     private Long price;
-
-    @Column(name = "product_img_url", nullable = false)
-    private String productImgUrl;
 }
