@@ -25,6 +25,7 @@ public class PostDto {
     private LocalDateTime deadline;
     private PostEntity.Category category;
     private String content;
+    private String postImgUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -42,6 +43,7 @@ public class PostDto {
                 .deadline(postEntity.getDeadline())
                 .category(postEntity.getCategory())
                 .content(postEntity.getContent())
+                .postImgUrl(postEntity.getPostImgUrl())
                 .createdAt(postEntity.getCreatedAt())
                 .updatedAt(postEntity.getUpdatedAt())
                 .products(products)

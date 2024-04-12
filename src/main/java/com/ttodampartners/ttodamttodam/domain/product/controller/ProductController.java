@@ -1,8 +1,5 @@
 package com.ttodampartners.ttodamttodam.domain.product.controller;
 
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
-import com.ttodampartners.ttodamttodam.domain.post.service.PostService;
 import com.ttodampartners.ttodamttodam.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

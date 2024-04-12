@@ -3,9 +3,7 @@ package com.ttodampartners.ttodamttodam.domain.post.controller;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
-import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.service.PostService;
-import com.ttodampartners.ttodamttodam.domain.product.dto.ProductAddDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +29,13 @@ public class PostController {
        }
 
 
-//    @GetMapping("/post")
-//    public ResponseEntity<PostDto> getPostList(
-//
-//    ){
-//
-//    }
+    @GetMapping("/post")
+    public ResponseEntity<List<PostDto>> getPostList(
+
+    ){
+        List<PostDto> postDtoList = postService.getPostDtoList();
+        return ResponseEntity.ok(postDtoList);
+    }
 
     @GetMapping("/post/{postId}")
     public ResponseEntity<PostDto> getPost(
@@ -47,12 +46,13 @@ public class PostController {
         return ResponseEntity.status(OK).body(postDto);
     }
 
-    @PutMapping("/post")
+    @PutMapping("/post/{postId}")
     public ResponseEntity<PostDto> updatePost(
-            @RequestBody PostUpdateDto postUpdateDto
+            @RequestBody PostUpdateDto postUpdateDto,
+            @PathVariable Long postId
     )
     {
-        return ResponseEntity.ok(PostDto.of(postService.updatePost(postUpdateDto)));
+        return ResponseEntity.ok(PostDto.of(postService.updatePost(postId, postUpdateDto)));
     }
 
     @DeleteMapping("/post/{postId}")

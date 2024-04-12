@@ -5,20 +5,13 @@ import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
-import com.ttodampartners.ttodamttodam.domain.product.dto.ProductAddDto;
-import com.ttodampartners.ttodamttodam.domain.product.dto.ProductDto;
 import com.ttodampartners.ttodamttodam.domain.product.dto.ProductUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
-import com.ttodampartners.ttodamttodam.domain.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +29,13 @@ public class PostService {
         PostEntity postEntity = PostCreateDto.from(postCreateDto);
         return postRepository.save(postEntity);
         }
-
+    @Transactional
+    public List<PostDto> getPostDtoList() {
+        List<PostEntity> postList = postRepository.findAll();
+        return postList.stream()
+                .map(PostDto::of)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     public PostDto getPost(Long postId) {
@@ -47,9 +46,9 @@ public class PostService {
 
      // userID 추가
     @Transactional
-    public PostEntity updatePost(PostUpdateDto postUpdateDto) {
+    public PostEntity updatePost(Long postId, PostUpdateDto postUpdateDto) {
         //        UserEntity userEntity = getUser(userId);
-        PostEntity post = postRepository.findById(postUpdateDto.getPostId())
+        PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
         post.setTitle(postUpdateDto.getTitle());
         post.setParticipants(postUpdateDto.getParticipants());

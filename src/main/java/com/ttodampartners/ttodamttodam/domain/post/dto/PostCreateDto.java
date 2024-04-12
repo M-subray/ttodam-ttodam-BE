@@ -67,7 +67,6 @@ public class PostCreateDto {
                 .collect(Collectors.toList());
 
         postEntity.setProducts(productEntities);
-
         return postEntity;
     }
 

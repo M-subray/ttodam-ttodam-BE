@@ -1,11 +1,8 @@
 package com.ttodampartners.ttodamttodam.domain.product.dto;
 
-import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-
-import java.util.List;
 
 
 @Getter

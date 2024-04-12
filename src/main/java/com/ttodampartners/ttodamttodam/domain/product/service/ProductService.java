@@ -1,9 +1,5 @@
 package com.ttodampartners.ttodamttodam.domain.product.service;
 
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
-import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
-import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
 import com.ttodampartners.ttodamttodam.domain.product.dto.ProductUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
 import com.ttodampartners.ttodamttodam.domain.product.repository.ProductRepository;

@@ -1,7 +1,5 @@
 package com.ttodampartners.ttodamttodam.domain.product.dto;
 
-import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 
