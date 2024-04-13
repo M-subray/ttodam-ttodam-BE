@@ -1,6 +1,6 @@
-package com.ttodampartners.ttodamttodam.domain.chat.repository;
+package com.ttodampartners.ttodamttodam.domain.post.repository;
 
-import com.ttodampartners.ttodamttodam.domain.chat.entity.PostEntity;
+import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

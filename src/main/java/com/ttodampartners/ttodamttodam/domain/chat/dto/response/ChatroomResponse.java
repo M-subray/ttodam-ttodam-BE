@@ -5,6 +5,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/*
+* 채탕방 생성 성공 후 response body
+* */
+
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -16,5 +20,4 @@ public class ChatroomResponse {
     private String chatName;
     private LocalDateTime createdAt;
     private List<ChatroomResponseProfile> profiles;
-
 }

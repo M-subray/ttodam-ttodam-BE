@@ -1,8 +1,7 @@
-package com.ttodampartners.ttodamttodam.domain.chat.entity;
+package com.ttodampartners.ttodamttodam.domain.post.entity;
 
+import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,8 +9,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -28,9 +25,9 @@ public class PostEntity{
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;
 
-    // CHATROOMS 테이블과 연결
-//    @OneToMany(mappedBy = "postEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ChatroomsEntity> chatroomsEntityList = new ArrayList<>();
+    // PRODUCT 테이블과 연결
+//    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+//    private List<ProductEntity> products = new ArrayList<>();
 
     @Column(nullable = false)
     private String title;
@@ -42,6 +39,11 @@ public class PostEntity{
     @Column(nullable = false)
     private Integer participants;
 
+    /*
+        편의를 위해
+        place, pLocation, deadline, content, postImgUrl은
+        일단 nullable=true 설정
+     */
     @Column
     private String place;
 
@@ -61,6 +63,8 @@ public class PostEntity{
     @Column(nullable = false)
     private String status;
 
+    @Column(name = "product_img_url")
+    private String productImgUrl;
 
     @Column(name = "create_at", nullable = false)
     @CreatedDate

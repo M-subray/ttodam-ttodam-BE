@@ -20,9 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChatroomController {
     private final ChatroomService chatroomService;
 
-    @PostMapping
-    public ResponseEntity<ChatResponse<ChatroomResponse>> createChatroom(@RequestBody ChatroomCreateRequest request) {
+    @PostMapping // POST /chatroom 채팅방 생성
+    public ResponseEntity<ChatroomResponse> createChatroom(@RequestBody ChatroomCreateRequest request) {
         ChatroomResponse chatroomResponse = chatroomService.createChatroom(request);
-        return ResponseEntity.ok(ChatResponse.res(HttpStatus.OK, HttpStatus.OK.toString(), chatroomResponse));
+//        return ResponseEntity.ok(ChatResponse.res(HttpStatus.OK, HttpStatus.OK.toString(), chatroomResponse));
+        return ResponseEntity.ok(chatroomResponse);
     }
 }

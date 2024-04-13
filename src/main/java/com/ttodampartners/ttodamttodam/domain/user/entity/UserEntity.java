@@ -1,16 +1,13 @@
-package com.ttodampartners.ttodamttodam.domain.chat.entity;
+package com.ttodampartners.ttodamttodam.domain.user.entity;
 
+import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Getter
 @NoArgsConstructor
 @Entity(name = "USER")
 public class UserEntity {
