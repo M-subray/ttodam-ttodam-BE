@@ -4,7 +4,6 @@ import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -12,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity(name = "CHATROOM")
-public class ChatroomEntity extends BaseEntity {
+public class ChatroomEntity extends ChatBaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @AttributeOverride(name = "createAt", column = @Column(name = "create_at"))
 @Entity(name = "chat_message")
-public class ChatMessageEntity extends BaseEntity{
+public class ChatMessageEntity extends ChatBaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

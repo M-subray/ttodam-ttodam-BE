@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -32,11 +31,11 @@ public class ChatroomService {
     @Transactional
     public ChatroomResponse createChatroom(ChatroomCreateRequest request) {
         // 문의자
-        UserEntity user = userRepository.findByUserId(request.getUserId()).orElseThrow(IllegalArgumentException::new);
+        UserEntity user = userRepository.findById(request.getUserId()).orElseThrow(IllegalArgumentException::new);
 
-        PostEntity post = postRepository.findByPostId(request.getPostId()).orElseThrow(IllegalArgumentException::new);
+        PostEntity post = postRepository.findById(request.getPostId()).orElseThrow(IllegalArgumentException::new);
         // 게시글 작성자
-        UserEntity host = userRepository.findByUserId(post.getUserEntity().getUserId()).orElseThrow(IllegalArgumentException::new);
+        UserEntity host = userRepository.findById(post.getUser().getId()).orElseThrow(IllegalArgumentException::new);
 
         // CHATROOM 테이블에 컬럼 추가
         ChatroomEntity chatroom = chatroomRepository.save(
@@ -56,12 +55,12 @@ public class ChatroomService {
 
         // 해당 채팅방에 소속된 유저(공구 주최자, 문의자)의 프로필 정보
         List<ChatroomResponseProfile> profileList = new ArrayList<>();
-        profileList.add(ChatroomResponseProfile.builder().userId(host.getUserId()).nickname(host.getNickname()).profileImage(host.getProfileImgUrl()).build());
-        profileList.add(ChatroomResponseProfile.builder().userId(user.getUserId()).nickname(user.getNickname()).profileImage(user.getProfileImgUrl()).build());
+        profileList.add(ChatroomResponseProfile.builder().userId(host.getId()).nickname(host.getNickname()).profileImage(host.getProfileImgUrl()).build());
+        profileList.add(ChatroomResponseProfile.builder().userId(user.getId()).nickname(user.getNickname()).profileImage(user.getProfileImgUrl()).build());
 
         return ChatroomResponse.builder()
                 .userChatroomId(chatroom.getChatroomId())
-                .hostId(post.getUserEntity().getUserId()).userCount(2)
+                .hostId(post.getUser().getId()).userCount(2)
                 .chatName(post.getTitle())
                 .createdAt(chatroom.getCreateAt())
                 .profiles(profileList)
