@@ -13,11 +13,13 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -26,9 +28,12 @@ public class SecurityConfig {
         .csrf(CsrfConfigurer::disable)
         .cors(Customizer.withDefaults())
         .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .authorizeHttpRequests(authorize ->
             authorize
                 .requestMatchers("/users/**").permitAll()
+                .requestMatchers("/login/**").permitAll()
+                .requestMatchers("/users/{userId}/**").authenticated()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         );
     return http.build();
