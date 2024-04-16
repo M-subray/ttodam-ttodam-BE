@@ -7,8 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "chatroom_member")
@@ -20,7 +20,7 @@ public class ChatroomMemberEntity {
 
     // CHATROOMS 테이블과 연결
     @ManyToOne
-    @JoinColumn(name = "chatroom_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "chatroom_id", nullable = false)
     private ChatroomEntity chatroomEntity;
 
     // USER 테이블과 연결
@@ -28,6 +28,7 @@ public class ChatroomMemberEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;
 
+    // 더이상 대화할 수 없는 채팅방이면 true
     @Column(name = "chat_active")
     private boolean chatActive;
 

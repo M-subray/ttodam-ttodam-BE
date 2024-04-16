@@ -6,21 +6,24 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /*
-    채탕방 생성 성공 후 response body
+    채팅방 리스트 조회 response body
+    실제 response body에는 ChatroomListResponse가 담긴 리스트 형식 반환
 */
 
 @Getter
 @Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class ChatroomResponse {
+public class ChatroomListResponse {
     private Long userChatroomId;
-    private Long hostId;
-    private int userCount;
+    private String postImage;
     private String chatName;
+    private String product;
+    private Long hostId;
+    private String hostNickname;
+    private int userCount;
     private LocalDateTime createAt;
-    private List<ChatroomResponseProfile> profiles;
+    private LocalDateTime modifiedAt;
 }
