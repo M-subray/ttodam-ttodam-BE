@@ -1,8 +1,9 @@
 package com.ttodampartners.ttodamttodam.domain.chat.service;
 
 import com.ttodampartners.ttodamttodam.domain.chat.dto.request.ChatroomCreateRequest;
+import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomListResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomResponse;
-import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomResponseProfile;
+import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomProfileResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomMemberEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomMemberRepository;
@@ -55,14 +56,15 @@ public class ChatroomService {
                 .toList();
 
         // 해당 채팅방에 소속된 유저(공구 주최자, 문의자)의 프로필 정보 리스트
-        List<ChatroomResponseProfile> profileList = new ArrayList<>();
+        // ChatroomMemebrEntity로 리팩토링 필요!!
+        List<ChatroomProfileResponse> profileList = new ArrayList<>();
         profileList.add(
-                ChatroomResponseProfile.builder()
+                ChatroomProfileResponse.builder()
                 .userId(host.getId()).nickname(host.getNickname()).profileImage(host.getProfileImgUrl())
                 .build()
         );
         profileList.add(
-                ChatroomResponseProfile.builder()
+                ChatroomProfileResponse.builder()
                 .userId(user.getId()).nickname(user.getNickname()).profileImage(user.getProfileImgUrl())
                 .build()
         );
@@ -78,7 +80,32 @@ public class ChatroomService {
 
     // 유저가 속한 채팅방 목록 조회 -> List 반환
     @Transactional
-    public void getChatrooms(Long userId) {
+    public List<ChatroomListResponse> getChatrooms(Long userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
+        List<ChatroomMemberEntity> userChatrooms = chatroomMemberRepository.findAllByUserEntity(user);
 
+        if (userChatrooms.size() == 0) {
+            // 추후 error response로 변경!!
+            List<ChatroomListResponse> noChatrooms = new ArrayList<>(
+                    Arrays.asList(ChatroomListResponse.builder().build())
+            );
+            return noChatrooms;
+        }
+
+        // 기능상으로 문제 없으나 ChatroomMemberEntity로 옮겨 반드시 수정!!!
+        List<ChatroomListResponse> chatroomListResponses = userChatrooms.stream().map(
+                chatroom -> ChatroomListResponse.builder()
+                        .userChatroomId(chatroom.getChatroomEntity().getChatroomId())
+                        .postImage(chatroom.getChatroomEntity().getPostEntity().getPostImgUrl())
+                        .chatName(chatroom.getChatroomEntity().getChatName())
+                        .hostId(chatroom.getChatroomEntity().getPostEntity().getUser().getId())
+                        .hostNickname(chatroom.getChatroomEntity().getPostEntity().getUser().getNickname())
+                        .userCount(chatroom.getChatroomEntity().getUserCount())
+                        .createAt(chatroom.getChatroomEntity().getCreateAt())
+                        .modifiedAt(chatroom.getChatroomEntity().getModifiedAt())
+                        .build()
+        ).toList();
+
+        return chatroomListResponses;
     }
 }

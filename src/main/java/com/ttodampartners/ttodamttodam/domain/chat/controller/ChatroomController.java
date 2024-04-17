@@ -4,8 +4,10 @@ import com.ttodampartners.ttodamttodam.domain.chat.dto.request.ChatroomCreateReq
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomListResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.service.ChatroomService;
+import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +31,7 @@ public class ChatroomController {
 
     @GetMapping // GET /chatroom/{userId} (채팅방 목록 조회)
     public ResponseEntity<List<ChatroomListResponse>> getChatrooms(@RequestParam Long userId) {
-        // 수정 필요!!!!
-        List<ChatroomListResponse> chatroomListResponses = new ArrayList<>();
+        List<ChatroomListResponse> chatroomListResponses = chatroomService.getChatrooms(userId);
         return ResponseEntity.ok(chatroomListResponses);
     }
 }

@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -28,11 +30,12 @@ public class ChatroomMemberEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;
 
-    // 더이상 대화할 수 없는 채팅방이면 true
+    // 더이상 대화할 수 없는 채팅방이면 false
     @Column(name = "chat_active")
     private boolean chatActive;
 
     public ChatroomMemberEntity(boolean chatActive) {
-        this.chatActive = false;
+        this.chatActive = true;
     }
+
 }

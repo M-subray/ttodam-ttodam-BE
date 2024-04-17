@@ -22,5 +22,5 @@ public class ChatroomResponse {
     private int userCount;
     private String chatName;
     private LocalDateTime createAt;
-    private List<ChatroomResponseProfile> profiles;
+    private List<ChatroomProfileResponse> profiles;
 }

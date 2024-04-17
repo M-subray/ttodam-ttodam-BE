@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatroomResponseProfile {
+public class ChatroomProfileResponse {
     private Long userId;
     private String nickname;
     private String profileImage;
