@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "CHATROOM_MEMBER")
+@Entity(name = "chatroom_member")
 public class ChatroomMemberEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
