@@ -19,5 +19,3 @@ assignees: ''
 ## TO-DO
 - [ ] 할일 1 
 - [ ] 할일 2
-
-## ETC
