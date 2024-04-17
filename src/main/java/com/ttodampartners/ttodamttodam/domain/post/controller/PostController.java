@@ -4,8 +4,10 @@ import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.post.service.PostService;
+import com.ttodampartners.ttodamttodam.global.dto.UserDetailsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,12 +22,11 @@ public class PostController {
 
     @PostMapping("/post")
     public ResponseEntity<PostDto> createPost(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
             @RequestBody PostCreateDto postCreateDto
-//                @AuthenticationPrincipal
         ) {
-//        postService.createPost(postCreateDto);
-//        postService.createPost(userId, postCreateDto);
-        return ResponseEntity.ok(PostDto.of(postService.createPost(postCreateDto)));
+        Long userId = userDetails.getId();
+        return ResponseEntity.ok(PostDto.of(postService.createPost(userId, postCreateDto)));
        }
 
 
@@ -33,8 +34,8 @@ public class PostController {
     public ResponseEntity<List<PostDto>> getPostList(
 
     ){
-        List<PostDto> postDtoList = postService.getPostDtoList();
-        return ResponseEntity.ok(postDtoList);
+        List<PostDto> postList = postService.getPostList();
+        return ResponseEntity.ok(postList);
     }
 
     @GetMapping("/post/{postId}")

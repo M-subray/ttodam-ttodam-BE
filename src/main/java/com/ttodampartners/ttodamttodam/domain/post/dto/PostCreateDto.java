@@ -3,6 +3,7 @@ package com.ttodampartners.ttodamttodam.domain.post.dto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.product.dto.ProductAddDto;
 import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
+import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class PostCreateDto {
 
     private Long postId;
+    private UserEntity user;
 
     @NotBlank(message = "제목을 입력해 주세요!")
     private String title;
@@ -33,6 +35,7 @@ public class PostCreateDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime deadline;
 
+    private PostEntity.Status status;
     private PostEntity.Category category;
     private String content;
     private String postImgUrl;
@@ -40,7 +43,7 @@ public class PostCreateDto {
     private List<ProductAddDto> products;
 
 
-    public static PostEntity from(PostCreateDto postCreateDto) {
+    public static PostEntity of(UserEntity user, PostCreateDto postCreateDto) {
 
         List<ProductAddDto> products = postCreateDto.getProducts();
         if (products == null) {
@@ -49,10 +52,12 @@ public class PostCreateDto {
 
         PostEntity postEntity = PostEntity.builder()
                 .postId(postCreateDto.getPostId())
+                .user(user)
                 .title(postCreateDto.getTitle())
                 .participants(postCreateDto.getParticipants())
                 .place(postCreateDto.getPlace())
                 .deadline(postCreateDto.getDeadline())
+                .status(postCreateDto.getStatus())
                 .category(postCreateDto.getCategory())
                 .content(postCreateDto.getContent())
                 .postImgUrl(postCreateDto.getPostImgUrl())
@@ -69,5 +74,5 @@ public class PostCreateDto {
         postEntity.setProducts(productEntities);
         return postEntity;
     }
-
 }
+
