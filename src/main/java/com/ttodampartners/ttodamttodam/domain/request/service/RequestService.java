@@ -1,7 +1,9 @@
 package com.ttodampartners.ttodamttodam.domain.request.service;
 
+import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
+import com.ttodampartners.ttodamttodam.domain.request.dto.RequestDto;
 import com.ttodampartners.ttodamttodam.domain.request.dto.RequestSendDto;
 import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
 import com.ttodampartners.ttodamttodam.domain.request.repository.RequestRepository;
@@ -10,6 +12,9 @@ import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -31,5 +36,15 @@ public class RequestService {
 
         return requestRepository.save(request);
     }
+
+    @Transactional
+    public List<RequestDto> getRequestList(Long postId) {
+        List<RequestEntity> requestList = requestRepository.findAllByPost_postId(postId);
+        return requestList.stream()
+                .map(RequestDto::of)
+                .collect(Collectors.toList());
+    }
+
+
 
 }

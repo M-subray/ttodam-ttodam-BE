@@ -1,5 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.request.controller;
 
+import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.request.dto.RequestDto;
 import com.ttodampartners.ttodamttodam.domain.request.dto.RequestSendDto;
 import com.ttodampartners.ttodamttodam.domain.request.service.RequestService;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -26,5 +29,13 @@ public class RequestController {
 
         return ResponseEntity.ok(RequestDto.of(requestService.sendRequest(userId,postId, requestSendDto)));
        }
+
+    @GetMapping("/post/{postId}/request")
+    public ResponseEntity<List<RequestDto>> getRequestList(
+            @PathVariable Long postId
+    ){
+        List<RequestDto> requestList = requestService.getRequestList(postId);
+        return ResponseEntity.ok(requestList);
+    }
 
 }
