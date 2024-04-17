@@ -56,5 +56,12 @@ public class RequestService {
         return request;
     }
 
+    @Transactional
+    public void deleteRequest(Long requestId) {
+        RequestEntity request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found"));
+        requestRepository.delete(request);
+    }
+
 
 }

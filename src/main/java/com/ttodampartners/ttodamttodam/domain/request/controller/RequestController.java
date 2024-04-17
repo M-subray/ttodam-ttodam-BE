@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.OK;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -43,8 +45,16 @@ public class RequestController {
             @PathVariable Long requestId,
             @PathVariable String requestStatus
     ) {
-
         return ResponseEntity.ok(RequestDto.of(requestService.updateRequestStatus(requestId, requestStatus)));
+    }
+
+    @DeleteMapping("/request/{requestId}")
+    public ResponseEntity<Void> deleteRequest(
+            @PathVariable Long requestId
+    )
+    {
+        requestService.deleteRequest(requestId);
+        return ResponseEntity.status(OK).build();
     }
 
 }

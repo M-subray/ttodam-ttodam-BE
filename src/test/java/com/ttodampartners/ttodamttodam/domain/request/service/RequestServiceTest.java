@@ -27,7 +27,7 @@ class RequestServiceTest {
 
         // 테스트 참여요청 생성
         RequestSendDto testRequest = testRequest();
-        RequestEntity request = requestService.sendRequest(3L,57L,testRequest);
+        RequestEntity request = requestService.sendRequest(3L,58L,testRequest);
 
         Optional<RequestEntity> optionalRequest = requestRepository.findById(request.getRequestId());
         assertTrue(optionalRequest.isPresent());
@@ -54,10 +54,18 @@ class RequestServiceTest {
         RequestEntity updateRequest = requestService.updateRequestStatus(2L,"수락");
 
         Optional<RequestEntity> optionalRequest = requestRepository.findById(updateRequest.getRequestId());
-        assertTrue(optionalRequest.isPresent(), "Updated request should exist in the database");
+        assertTrue(optionalRequest.isPresent());
 
         RequestEntity result = optionalRequest.get();
         assertEquals(RequestEntity.RequestStatus.ACCEPT, result.getRequestStatus());
+    }
+
+    @Test
+    void DELETE_REQUEST_TEST(){
+        requestService.deleteRequest(3L);
+
+        assertFalse(requestRepository.existsById(3L));
+
     }
 
 }
