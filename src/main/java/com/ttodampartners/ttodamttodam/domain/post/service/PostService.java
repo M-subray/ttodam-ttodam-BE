@@ -28,7 +28,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final CoordinateFinderUtil coordinateFinderUtil;
 
-    // userID 추가
+
     @Transactional
     public PostEntity createPost(Long userId, PostCreateDto postCreateDto) {
         UserEntity user = userRepository.findById(userId)

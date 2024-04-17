@@ -1,0 +1,28 @@
+package com.ttodampartners.ttodamttodam.domain.request.dto;
+
+import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
+import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
+import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
+import lombok.*;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class RequestSendDto {
+
+    @Builder.Default
+    private RequestEntity.RequestStatus requestStatus = RequestEntity.RequestStatus.WAIT;
+
+
+    public static RequestEntity of(UserEntity requestUser, PostEntity post, RequestSendDto requestSendDto) {
+
+        return RequestEntity.builder()
+                .requestUser(requestUser)
+                .post(post)
+                .requestStatus(requestSendDto.getRequestStatus())
+                .build();
+    }
+}
+
