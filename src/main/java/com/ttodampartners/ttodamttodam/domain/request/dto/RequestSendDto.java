@@ -15,7 +15,6 @@ public class RequestSendDto {
     @Builder.Default
     private RequestEntity.RequestStatus requestStatus = RequestEntity.RequestStatus.WAIT;
 
-
     public static RequestEntity of(UserEntity requestUser, PostEntity post, RequestSendDto requestSendDto) {
 
         return RequestEntity.builder()

@@ -57,5 +57,13 @@ public class RequestEntity {
 
             this.label = label;
         }
+        public static RequestStatus fromLabel(String label) {
+            for (RequestStatus status : RequestStatus.values()) {
+                if (status.label.equals(label)) {
+                    return status;
+                }
+            }
+            throw new IllegalArgumentException("Unknown request status label: " + label);
+        }
     }
 }

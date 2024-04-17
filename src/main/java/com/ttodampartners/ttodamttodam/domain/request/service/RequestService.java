@@ -1,6 +1,5 @@
 package com.ttodampartners.ttodamttodam.domain.request.service;
 
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
 import com.ttodampartners.ttodamttodam.domain.request.dto.RequestDto;
@@ -11,7 +10,9 @@ import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +46,15 @@ public class RequestService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public RequestEntity updateRequestStatus(Long requestId,String requestStatus){
+        RequestEntity  request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found"));
+
+        RequestEntity.RequestStatus status = RequestEntity.RequestStatus.fromLabel(requestStatus);
+        request.setRequestStatus(status);
+        return request;
+    }
 
 
 }
