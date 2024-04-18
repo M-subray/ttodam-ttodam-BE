@@ -82,6 +82,7 @@ public class ChatroomService {
     @Transactional
     public List<ChatroomListResponse> getChatrooms(Long userId) {
         UserEntity user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
+        // 유저가 속한 CHATROOM_MEMBER 엔티티 리스트
         List<ChatroomMemberEntity> userChatrooms = chatroomMemberRepository.findAllByUserEntity(user);
 
         if (userChatrooms.size() == 0) {
@@ -92,18 +93,8 @@ public class ChatroomService {
             return noChatrooms;
         }
 
-        // 기능상으로 문제 없으나 ChatroomMemberEntity로 옮겨 반드시 수정!!!
         List<ChatroomListResponse> chatroomListResponses = userChatrooms.stream().map(
-                chatroom -> ChatroomListResponse.builder()
-                        .userChatroomId(chatroom.getChatroomEntity().getChatroomId())
-                        .postImage(chatroom.getChatroomEntity().getPostEntity().getPostImgUrl())
-                        .chatName(chatroom.getChatroomEntity().getChatName())
-                        .hostId(chatroom.getChatroomEntity().getPostEntity().getUser().getId())
-                        .hostNickname(chatroom.getChatroomEntity().getPostEntity().getUser().getNickname())
-                        .userCount(chatroom.getChatroomEntity().getUserCount())
-                        .createAt(chatroom.getChatroomEntity().getCreateAt())
-                        .modifiedAt(chatroom.getChatroomEntity().getModifiedAt())
-                        .build()
+                ChatroomMemberEntity::getChatroomInfos
         ).toList();
 
         return chatroomListResponses;
