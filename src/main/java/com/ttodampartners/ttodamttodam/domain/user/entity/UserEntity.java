@@ -34,23 +34,23 @@ public class UserEntity extends BaseEntity {
   @Column(nullable = false)
   private String password;
 
-  @Column(unique = true, nullable = false)
+  @Column(unique = true, nullable = true)
   private String phone;
 
-  @Column(nullable = false)
+  @Column(nullable = true)
   private String location;
 
-  @Column(unique = true, nullable = false)
+  @Column(unique = true, nullable = true)
   @Size(min = 3, max = 8)
   private String nickname;
 
   @Column(nullable = true)
   private String profileImgUrl;
 
-  @Column(name = "location_x", nullable = false)
+  @Column(name = "location_x", nullable = true)
   private double locationX;
 
-  @Column(name = "location_y", nullable = false)
+  @Column(name = "location_y", nullable = true)
   private double locationY;
 
   @Column(nullable = false, columnDefinition = "DOUBLE DEFAULT 0")
