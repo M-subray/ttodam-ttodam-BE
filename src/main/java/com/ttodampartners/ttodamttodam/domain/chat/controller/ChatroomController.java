@@ -6,7 +6,6 @@ import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomResponse
 import com.ttodampartners.ttodamttodam.domain.chat.service.ChatroomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
