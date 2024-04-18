@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public class PostCreateDto {
 
     private Long postId;
-    private UserEntity user;
 
     @NotBlank(message = "제목을 입력해 주세요!")
     private String title;
@@ -36,14 +35,15 @@ public class PostCreateDto {
     private LocalDateTime deadline;
 
     private PostEntity.Status status;
+
     private PostEntity.Category category;
+
     private String content;
-    private String postImgUrl;
 
     private List<ProductAddDto> products;
 
 
-    public static PostEntity of(UserEntity user, PostCreateDto postCreateDto) {
+    public static PostEntity of(UserEntity user, String postImgUrl, PostCreateDto postCreateDto) {
 
         List<ProductAddDto> products = postCreateDto.getProducts();
         if (products == null) {
@@ -60,7 +60,7 @@ public class PostCreateDto {
                 .status(postCreateDto.getStatus())
                 .category(postCreateDto.getCategory())
                 .content(postCreateDto.getContent())
-                .postImgUrl(postCreateDto.getPostImgUrl())
+                .postImgUrl(postImgUrl)
                 .build();
 
         List<ProductEntity> productEntities = products.stream()

@@ -10,6 +10,8 @@ import com.ttodampartners.ttodamttodam.domain.user.util.CoordinateFinderUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -31,24 +33,26 @@ class PostServiceTest {
 
     @Test
     void CREATE_POST_TEST(){
-        // 테스트 유저
-        UserEntity testUser = userRepository.findById(1L).orElseThrow(() -> new NoSuchElementException("User not found"));
         // 테스트 상품 생성
         ProductAddDto testProduct = testProduct("test product");
         // 테스트 게시물 생성
-        PostCreateDto testPost = testPost(1L, testUser, "test title",testProduct);
-        PostEntity post = postService.createPost(1L, testPost);
+        PostCreateDto testPost = testPost("test title5",testProduct);
+
+        // 가짜 이미지 파일 생성
+        byte[] imageBytes = "test image".getBytes();
+        MockMultipartFile imageFile = new MockMultipartFile("imageFile", "test-image.jpg", "image/jpeg", imageBytes);
+
+        PostEntity post = postService.createPost(3L,imageFile,testPost);
+
 
         Optional<PostEntity> optionalPost = postRepository.findById(post.getPostId());
         assertTrue(optionalPost.isPresent());
 
         PostEntity result = optionalPost.get();
-        assertEquals("test title", result.getTitle());
+        assertEquals("test title5", result.getTitle());
     }
-    private static PostCreateDto testPost(Long postId, UserEntity user, String title, ProductAddDto product){
+    private static PostCreateDto testPost(String title, ProductAddDto product){
         return PostCreateDto.builder()
-                .postId(postId)
-                .user(user)
                 .title(title)
                 .participants(2)
                 .place("서울특별시 중구 소공동 세종대로18길 2")
@@ -56,7 +60,6 @@ class PostServiceTest {
                 .status(PostEntity.Status.IN_PROGRESS)
                 .category(PostEntity.Category.DAILY)
                 .content("test content")
-                .postImgUrl("https://smartstore.naver.com/sskorea777/products/6364217638")
                 .products(Collections.singletonList(product))
                 .build();
     }

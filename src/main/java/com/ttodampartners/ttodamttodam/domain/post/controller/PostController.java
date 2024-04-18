@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,10 +24,11 @@ public class PostController {
     @PostMapping("/post")
     public ResponseEntity<PostDto> createPost(
             @AuthenticationPrincipal UserDetailsDto userDetails,
+            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile,
             @RequestBody PostCreateDto postCreateDto
         ) {
         Long userId = userDetails.getId();
-        return ResponseEntity.ok(PostDto.of(postService.createPost(userId, postCreateDto)));
+        return ResponseEntity.ok(PostDto.of(postService.createPost(userId, imageFile, postCreateDto)));
        }
 
 
