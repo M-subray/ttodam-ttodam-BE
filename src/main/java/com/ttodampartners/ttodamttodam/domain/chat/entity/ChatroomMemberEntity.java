@@ -9,8 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @Builder
 @NoArgsConstructor
@@ -22,7 +20,7 @@ public class ChatroomMemberEntity {
     @Column(name = "id", nullable = false)
     private Long chatroomMemberId;
 
-    // CHATROOMS 테이블과 연결
+    // CHATROOM 테이블과 연결
     @ManyToOne
     @JoinColumn(name = "chatroom_id", nullable = false)
     private ChatroomEntity chatroomEntity;
