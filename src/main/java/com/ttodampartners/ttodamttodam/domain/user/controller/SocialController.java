@@ -26,7 +26,8 @@ public class SocialController {
     headers.add("Authorization", "Bearer " + token);
     log.info("소셜 로그인 성공");
 
-    return ResponseEntity.ok().headers(headers).body("로그인 성공");
+    return ResponseEntity.ok().headers(headers).body("로그인 성공" + "임시로 토큰 발송 : \n" +
+        token);
   }
 }
 

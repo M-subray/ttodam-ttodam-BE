@@ -42,6 +42,7 @@ public class SocialService {
 
     Optional<UserEntity> byEmail = userRepository.findByEmail(email);
 
+    // 가져온 이메일이 DB에 없다면 회원가입
     if (byEmail.isEmpty()) {
       userRepository.save(UserEntity.builder().email(email).build());
       log.info("소셜 회원가입 성공, 이메일 : " + email);

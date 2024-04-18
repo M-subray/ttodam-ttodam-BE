@@ -17,6 +17,7 @@ public enum ErrorCode {
   NOT_MATCH_PASSWORD("비밀번호가 일치하지 않습니다."),
   SIGNIN_TIME_OUT("재로그인이 필요합니다."),
   PERMISSION_DENIED("권한이 없습니다."),
+  SOCIAL_ACCOUNTS_IMPOSSIBLE("소셜 계정은 비밀번호 설정이 불가합니다."),
 
   /*
   Mail Exception
