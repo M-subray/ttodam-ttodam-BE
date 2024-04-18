@@ -7,7 +7,6 @@ import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import com.ttodampartners.ttodamttodam.domain.user.util.AuthenticationUtil;
 import com.ttodampartners.ttodamttodam.domain.user.util.CoordinateFinderUtil;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
-import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,45 +20,49 @@ public class ProfileUpdateService {
   private final PasswordEncoder passwordEncoder;
   private final CoordinateFinderUtil coordinateFinderUtil;
 
+  /*
+  (비밀번호 이외의 값들)
+  수정할 때의 정보들이 기존과 같다면 DB 와의 연결을 피하기 위해
+  기존의 값 != 새로운 값 일 때만 업데이트
+   */
   @Transactional
   public void profileUpdate (Long userId, ProfileDto profileDto) {
     UserEntity user = getUser(userId);
     isMatchEmail(user);
 
-    if (!user.getNickname().equals(profileDto.getNickname())) {
+    if (!profileDto.getNickname().equals(user.getNickname())) {
       existsNickname(profileDto.getNickname());
-      updateIfNotNullAndDifferent(user::setNickname,
-          profileDto.getNickname(), user.getNickname());
+      user.setNickname(profileDto.getNickname());
     }
 
+    /*
+    비밀번호는 조회때 기입돼 있지 않기 때문에 null 이 아닌 경우 수정의 의도가 있는 것으로
+    판단해 수정 로직 진행
+     */
     if (profileDto.getPassword() != null) {
-      updateIfNotNullAndDifferent(user::setPassword,
-          passwordEncoder.encode(profileDto.getPassword()), user.getPassword());
+      // 소셜 계정은 비밀번호 수정 불가 (기존 비밀번호가 null 인경우 소셜 계정임)
+      if (user.getPassword() == null) {
+        throw new UserException(ErrorCode.SOCIAL_ACCOUNTS_IMPOSSIBLE);
+      }
+      if (!user.getPassword().equals(passwordEncoder.encode(profileDto.getPassword()))) {
+        user.setPassword(passwordEncoder.encode(profileDto.getPassword()));
+      }
     }
 
-    if (!user.getLocation().equals(profileDto.getLocation())) {
+    if (!profileDto.getLocation().equals(user.getLocation())) {
       double[] coordinates =
           coordinateFinderUtil.getCoordinates(profileDto.getLocation());
       user.setLocationY(coordinates[0]);
       user.setLocationX(coordinates[1]);
-      updateIfNotNullAndDifferent(user::setLocation,
-          profileDto.getLocation(), user.getLocation());
+      user.setLocation(profileDto.getLocation());
     }
 
-    if (!user.getPhone().equals(profileDto.getPhone())) {
+    if (!profileDto.getPhone().equals(user.getPhone())) {
       existsPhone(profileDto.getPhone());
-      updateIfNotNullAndDifferent(user::setPhone,
-          profileDto.getPhone(), user.getPhone());
+      user.setPhone(profileDto.getPhone());
     }
 
     userRepository.save(user);
-  }
-
-  private void updateIfNotNullAndDifferent(Consumer<String> setter,
-      String newValue, String oldValue) {
-    if (newValue != null && !newValue.equals(oldValue)) {
-      setter.accept(newValue);
-    }
   }
 
   private void existsNickname(String nickname) {
