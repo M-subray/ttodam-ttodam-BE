@@ -25,7 +25,7 @@ public class ChatroomServiceTest {
         ChatroomResponse chatroomResponse = chatroomService.createChatroom(chatroomCreateRequest);
 
         assertNotNull(chatroomResponse);
-        assertNotNull(chatroomResponse.getUserChatroomId());
+        assertNotNull(chatroomResponse.getChatroomId());
         assertNotNull(chatroomResponse.getProfiles());
     }
 }

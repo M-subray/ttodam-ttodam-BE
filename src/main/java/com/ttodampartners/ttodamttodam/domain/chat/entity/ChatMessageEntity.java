@@ -34,6 +34,9 @@ public class ChatMessageEntity {
     private ChatroomEntity chatroomEntity;
 
     @Column
+    private String nickname;
+
+    @Column
     private String content;
 
     @Column(name = "create_at", nullable = false)
