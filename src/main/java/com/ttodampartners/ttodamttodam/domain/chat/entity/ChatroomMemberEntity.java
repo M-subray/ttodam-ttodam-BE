@@ -41,7 +41,6 @@ public class ChatroomMemberEntity {
 
     // 채팅방 정보를 ChatroomListResponse에 담아서 리턴
     public ChatroomListResponse getChatroomInfos() {
-        ChatroomMemberEntity user = this;
         ChatroomEntity userChatroom = this.chatroomEntity;
         PostEntity userChatroomPost = userChatroom.getPostEntity();
 

@@ -99,4 +99,15 @@ public class ChatroomService {
 
         return chatroomListResponses;
     }
+
+    // 유저가 속한 chatroomId 채팅방 나가기
+    @Transactional
+    public void leaveChatroom(Long chatroomId, Long userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
+        ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(IllegalArgumentException::new);
+
+        ChatroomMemberEntity userChatroom = chatroomMemberRepository.findByUserEntityAndChatroomEntity(user, chatroom).orElseThrow(IllegalArgumentException::new);
+
+        chatroomMemberRepository.delete(userChatroom);
+    }
 }

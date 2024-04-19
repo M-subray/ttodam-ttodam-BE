@@ -31,4 +31,9 @@ public class ChatroomController {
         List<ChatroomListResponse> chatroomListResponses = chatroomService.getChatrooms(userId);
         return ResponseEntity.ok(chatroomListResponses);
     }
+
+    @DeleteMapping("/exit") // DELETE /chatrooms/exit/{chatroomId}/{userId} (채팅방 나가기)
+    public void leaveChatroom(@RequestParam Long chatroomId, @RequestParam Long userId) {
+        chatroomService.leaveChatroom(chatroomId, userId);
+    }
 }
