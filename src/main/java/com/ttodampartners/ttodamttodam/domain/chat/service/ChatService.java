@@ -18,14 +18,17 @@ public class ChatService {
     private final ChatroomRepository chatroomRepository;
     private final ChatMessageRepository chatMessageRepository;
 
-    // -> CHATROOM 테이블의 modifiedAt 수정
     @Transactional // 채팅 메시지 저장
     public void saveChatMessage(Long chatroomId, ChatMessageRequest request) {
         UserEntity user = userRepository.findById(request.getSenderId()).orElseThrow(IllegalArgumentException::new);
         ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(IllegalArgumentException::new);
-        chatMessageRepository.save(
+
+        // CHAT_MESSAGE 테이블에 insert
+        Long chatMessageId = chatMessageRepository.save(
                 ChatMessageEntity.builder().userEntity(user).chatroomEntity(chatroom).content(request.getContent()).nickname(request.getNickname()).build()
-        );
+        ).getChatMessageId();
+        // CHATROOM 테이블의 lastMessageId 업데이트
+        chatroom.updateLastMessage(chatMessageId);
     }
 
     // 채팅 메시지 불러오기
