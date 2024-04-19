@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChatController {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    // "/chattings/{userChatroomId}/messages"로 전송되는 메시지 처리 핸들러
-    @MessageMapping("/{userChatroomId}/messages")
-    public void chat(@DestinationVariable Long userChatroomId, ChatMessageRequest request) {
+    // "/chattings/{chatroomId}/messages"로 전송되는 메시지 처리 핸들러
+    @MessageMapping("/{chatroomId}/messages")
+    public void chat(@DestinationVariable Long chatroomId, ChatMessageRequest request) {
         // 받은 메시지를 "/chatroom/{userChatroomId}" 엔드포인트로 전송
-        simpMessagingTemplate.convertAndSend("/chatroom" + userChatroomId, request.getContent());
+        simpMessagingTemplate.convertAndSend("/chatroom" + chatroomId, request.getContent());
 
-        log.info("Message [{}] send by member: {}(id: {}) to chatting room id: {}", request.getContent(), request.getNickname(), request.getSenderId(), userChatroomId);
+        log.info("Message [{}] send by member: {}(id: {}) to chatting room id: {}", request.getContent(), request.getNickname(), request.getSenderId(), chatroomId);
     }
 }

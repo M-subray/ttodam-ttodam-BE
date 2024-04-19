@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class ChatroomResponse {
-    private Long userChatroomId;
+    private Long chatroomId;
     private Long hostId;
     private int userCount;
     private String chatName;

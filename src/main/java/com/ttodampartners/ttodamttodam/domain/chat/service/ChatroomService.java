@@ -70,7 +70,7 @@ public class ChatroomService {
         );
 
         return ChatroomResponse.builder()
-                .userChatroomId(chatroom.getChatroomId())
+                .chatroomId(chatroom.getChatroomId())
                 .hostId(post.getUser().getId()).userCount(2)
                 .chatName(post.getTitle())
                 .createAt(chatroom.getCreateAt())

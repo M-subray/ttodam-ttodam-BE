@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChatroomEnterController {
     private final ChatroomEnterService chatroomEnterService;
 
-    // {userChatroomId} 채팅방 입장 시 채팅방에 속한 유저들 프로필 리스트 반환
-    @GetMapping // GET /chatroom/{userChatroomId}
-    public ResponseEntity<ChatroomEnterResponse> getChatroomDetails(@RequestParam Long userChatroomId) {
-        ChatroomEnterResponse chatroomEnterResponse = chatroomEnterService.getChatroomDetails(userChatroomId);
+    // {chatroomId} 채팅방 입장 시 채팅방에 속한 유저들 프로필 리스트 반환
+    @GetMapping // GET /chatroom?chatroomId={chatroomId}
+    public ResponseEntity<ChatroomEnterResponse> getChatroomDetails(@RequestParam Long chatroomId) {
+        ChatroomEnterResponse chatroomEnterResponse = chatroomEnterService.getChatroomDetails(chatroomId);
         return ResponseEntity.ok(chatroomEnterResponse);
     }
 }
