@@ -8,8 +8,12 @@ import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomRepository
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Service
@@ -32,4 +36,12 @@ public class ChatService {
     }
 
     // 채팅 메시지 불러오기
+
+    // 30일 지난 채팅 메시지 자동 삭제
+    @Transactional
+    @Async
+    @Scheduled(cron = "0 0 12 * * *") // 매일 오후 12시 자동 실행
+    public void autoChatDelete() {
+        chatMessageRepository.deleteByCreateAtLessThanEqual(LocalDateTime.now().minusMonths(1));
+    }
 }
