@@ -27,11 +27,7 @@ public class ChatroomEnterService {
         // 채팅방 소속 유저가 한 명도 없을 경우 처리 필요!!
 
         List<ChatroomProfileResponse> profileList = chatroomMemberEntities.stream().map(
-                chatroomMember -> ChatroomProfileResponse.builder()
-                        .userId(chatroomMember.getUserEntity().getId())
-                        .nickname(chatroomMember.getUserEntity().getNickname())
-                        .profileImage(chatroomMember.getUserEntity().getProfileImgUrl())
-                        .build()
+                ChatroomMemberEntity::getChatroomProfile
         ).toList();
         return ChatroomEnterResponse.builder().profiles(profileList).build();
     }
