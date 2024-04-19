@@ -1,6 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.chat.entity;
 
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomListResponse;
+import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomProfileResponse;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
