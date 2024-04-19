@@ -6,23 +6,24 @@ import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
+import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
-import com.ttodampartners.ttodamttodam.domain.product.dto.ProductUpdateDto;
-import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
+import com.ttodampartners.ttodamttodam.domain.post.dto.ProductUpdateDto;
+import com.ttodampartners.ttodamttodam.domain.post.entity.ProductEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
+import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import com.ttodampartners.ttodamttodam.domain.user.util.CoordinateFinderUtil;
+import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,15 +41,16 @@ public class PostService {
     private String bucket;
 
     @Transactional
-    public PostEntity createPost(Long userId, MultipartFile imageFile, PostCreateDto postCreateDto) {
+    public PostEntity createPost(Long userId, List<MultipartFile> imageFiles, PostCreateDto postCreateDto) {
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
         try {
-            String postImgUrl = uploadImageFileToS3(imageFile);
+            // S3에 저장된 이미지 url
+            List<String> postImgUrls = uploadImageFilesToS3(imageFiles);
 
-            PostEntity post = PostCreateDto.of(user,postImgUrl,postCreateDto);
-
+            PostEntity post = PostCreateDto.of(user,postImgUrls,postCreateDto);
+            // 저장된 만남장소 주소정보로 위도,경도 저장
             double[] coordinates = coordinateFinderUtil.getCoordinates(postCreateDto.getPlace());
             post.setPLocationX(coordinates[1]); // 경도 설정
             post.setPLocationY(coordinates[0]); // 위도 설정
@@ -60,18 +62,76 @@ public class PostService {
         }
     }
 
-    private String uploadImageFileToS3(MultipartFile imageFile) throws IOException {
-        String originalFilename = imageFile.getOriginalFilename();
-        String uuid = UUID.randomUUID().toString();
-        String imageFileName = uuid + originalFilename;
+    private List<String> uploadImageFilesToS3(List<MultipartFile> imageFiles) throws IOException {
+        List<String> imageUrls = new ArrayList<>();
 
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(imageFile.getSize());
-        metadata.setContentType(imageFile.getContentType());
+        for (MultipartFile imageFile : imageFiles) {
+            String originalFilename = imageFile.getOriginalFilename();
+            String uuid = UUID.randomUUID().toString();
+            String imageFileName = uuid + originalFilename;
 
-        amazonS3.putObject(bucket, imageFileName, imageFile.getInputStream(), metadata);
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(imageFile.getSize());
+            metadata.setContentType(imageFile.getContentType());
 
-        return amazonS3.getUrl(bucket, imageFileName).toString();
+            amazonS3.putObject(bucket, imageFileName, imageFile.getInputStream(), metadata);
+
+            String imageUrl = amazonS3.getUrl(bucket, imageFileName).toString();
+            imageUrls.add(imageUrl);
+        }
+
+        return imageUrls;
+    }
+
+    @Transactional
+    public List<PostDto> getPostList() {
+        List<PostEntity> postList = postRepository.findAll();
+        return postList.stream()
+                .map(PostDto::of)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public PostDto getPost(Long postId) {
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_POST));
+        return PostDto.of(post);
+    }
+
+    @Transactional
+    public PostEntity updatePost(Long userId, Long postId, PostUpdateDto postUpdateDto) {
+
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_POST));
+
+        validateAuthority(userId, post);
+
+        post.setTitle(postUpdateDto.getTitle());
+        post.setParticipants(postUpdateDto.getParticipants());
+        post.setPlace(postUpdateDto.getPlace());
+        post.setDeadline(postUpdateDto.getDeadline());
+        post.setCategory(postUpdateDto.getCategory());
+        post.setContent(postUpdateDto.getContent());
+
+        for(ProductUpdateDto productUpdateDto : postUpdateDto.getProducts()){
+            ProductEntity product = post.getProducts().stream()
+                    .filter(pi->pi.getProductId().equals(productUpdateDto.getProductId()))
+                    .findFirst().orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_PRODUCT));
+            product.setProductName(productUpdateDto.getProductName());
+            product.setCount(productUpdateDto.getCount());
+            product.setPrice(productUpdateDto.getPrice());
+            product.setPurchaseLink(productUpdateDto.getPurchaseLink());
+
+        }
+        return post;
+    }
+
+    // userID 추가
+    @Transactional
+    public void deletePost(Long postId) {
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_POST));
+        postRepository.delete(post);
     }
 
     private void deleteImageFileFromS3(String postImgUrl) {
@@ -92,53 +152,14 @@ public class PostService {
         }
     }
 
-    @Transactional
-    public List<PostDto> getPostList() {
-        List<PostEntity> postList = postRepository.findAll();
-        return postList.stream()
-                .map(PostDto::of)
-                .collect(Collectors.toList());
-    }
+    private void validateAuthority(Long userId, PostEntity post) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
-    @Transactional
-    public PostDto getPost(Long postId) {
-        PostEntity post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
-        return PostDto.of(post);
-    }
+        Long postAuthorId = post.getUser().getId();
 
-     // userID 추가
-    @Transactional
-    public PostEntity updatePost(Long postId, PostUpdateDto postUpdateDto) {
-        //        UserEntity userEntity = getUser(userId);
-        PostEntity post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
-        post.setTitle(postUpdateDto.getTitle());
-        post.setParticipants(postUpdateDto.getParticipants());
-        post.setPlace(postUpdateDto.getPlace());
-        post.setDeadline(postUpdateDto.getDeadline());
-        post.setCategory(postUpdateDto.getCategory());
-        post.setContent(postUpdateDto.getContent());
-
-        for(ProductUpdateDto productUpdateDto : postUpdateDto.getProducts()){
-            ProductEntity product = post.getProducts().stream()
-                    .filter(pi->pi.getProductId().equals(productUpdateDto.getProductId()))
-                    .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
-            product.setProductName(productUpdateDto.getProductName());
-            product.setCount(productUpdateDto.getCount());
-            product.setPrice(productUpdateDto.getPrice());
-            product.setPurchaseLink(productUpdateDto.getPurchaseLink());
-
+        if (!userId.equals(postAuthorId)) {
+            throw new PostException(ErrorCode.POST_PERMISSION_DENIED);
         }
-        return post;
     }
-
-    // userID 추가
-    @Transactional
-    public void deletePost(Long postId) {
-        PostEntity post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
-        postRepository.delete(post);
-    }
-
-    }
+}

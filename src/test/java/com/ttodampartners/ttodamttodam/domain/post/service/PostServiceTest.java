@@ -3,10 +3,8 @@ package com.ttodampartners.ttodamttodam.domain.post.service;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
-import com.ttodampartners.ttodamttodam.domain.product.dto.ProductAddDto;
-import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
+import com.ttodampartners.ttodamttodam.domain.post.dto.ProductAddDto;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
-import com.ttodampartners.ttodamttodam.domain.user.util.CoordinateFinderUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,9 +12,9 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,11 +37,14 @@ class PostServiceTest {
         PostCreateDto testPost = testPost("test title5",testProduct);
 
         // 가짜 이미지 파일 생성
-        byte[] imageBytes = "test image".getBytes();
-        MockMultipartFile imageFile = new MockMultipartFile("imageFile", "test-image.jpg", "image/jpeg", imageBytes);
+        List<MultipartFile> imageFiles = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            byte[] imageBytes = ("test image " + (i + 1)).getBytes();
+            MultipartFile imageFile = new MockMultipartFile("imageFiles", "test-image-" + (i + 1) + ".jpg", "image/jpeg", imageBytes);
+            imageFiles.add(imageFile);
+        }
 
-        PostEntity post = postService.createPost(3L,imageFile,testPost);
-
+        PostEntity post = postService.createPost(3L, imageFiles, testPost);
 
         Optional<PostEntity> optionalPost = postRepository.findById(post.getPostId());
         assertTrue(optionalPost.isPresent());

@@ -1,8 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.post.dto;
 
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
-import com.ttodampartners.ttodamttodam.domain.product.dto.ProductAddDto;
-import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
+import com.ttodampartners.ttodamttodam.domain.post.entity.ProductEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -43,12 +42,7 @@ public class PostCreateDto {
     private List<ProductAddDto> products;
 
 
-    public static PostEntity of(UserEntity user, String postImgUrl, PostCreateDto postCreateDto) {
-
-        List<ProductAddDto> products = postCreateDto.getProducts();
-        if (products == null) {
-            products = Collections.emptyList();
-        }
+    public static PostEntity of(UserEntity user, List<String> postImgUrls, PostCreateDto postCreateDto) {
 
         PostEntity postEntity = PostEntity.builder()
                 .postId(postCreateDto.getPostId())
@@ -60,15 +54,12 @@ public class PostCreateDto {
                 .status(postCreateDto.getStatus())
                 .category(postCreateDto.getCategory())
                 .content(postCreateDto.getContent())
-                .postImgUrl(postImgUrl)
+                .postImgUrls(postImgUrls)
                 .build();
 
-        List<ProductEntity> productEntities = products.stream()
-                .map(productAddDto -> {
-                    ProductEntity productEntity = ProductAddDto.from(productAddDto);
-                    productEntity.setPost(postEntity);
-                    return productEntity;
-                })
+        List<ProductEntity> productEntities = postCreateDto.getProducts().stream()
+                .map(ProductAddDto::from)
+                .peek(productEntity -> productEntity.setPost(postEntity))
                 .collect(Collectors.toList());
 
         postEntity.setProducts(productEntities);

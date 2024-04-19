@@ -1,6 +1,5 @@
 package com.ttodampartners.ttodamttodam.domain.post.entity;
 
-import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,6 +32,7 @@ public class PostEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<ProductEntity> products = new ArrayList<>();
 
@@ -66,8 +66,10 @@ public class PostEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @ElementCollection
+    @Builder.Default
     @Column(name = "post_img_url", nullable = false)
-    private String postImgUrl;
+    private List<String> postImgUrls = new ArrayList<>();
 
     @Column(name = "create_at", nullable = false)
     @CreatedDate

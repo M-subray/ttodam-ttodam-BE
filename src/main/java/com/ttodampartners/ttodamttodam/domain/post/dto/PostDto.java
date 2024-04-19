@@ -1,11 +1,11 @@
 package com.ttodampartners.ttodamttodam.domain.post.dto;
 
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
-import com.ttodampartners.ttodamttodam.domain.product.dto.ProductDto;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +26,7 @@ public class PostDto {
     private LocalDateTime deadline;
     private PostEntity.Category category;
     private String content;
-    private String postImgUrl;
+    private List<String> postImgUrls = new ArrayList<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -45,7 +45,7 @@ public class PostDto {
                 .deadline(postEntity.getDeadline())
                 .category(postEntity.getCategory())
                 .content(postEntity.getContent())
-                .postImgUrl(postEntity.getPostImgUrl())
+                .postImgUrls(postEntity.getPostImgUrls())
                 .createdAt(postEntity.getCreatedAt())
                 .updatedAt(postEntity.getUpdatedAt())
                 .products(products)

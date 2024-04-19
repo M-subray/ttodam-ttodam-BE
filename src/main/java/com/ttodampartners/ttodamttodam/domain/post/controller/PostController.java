@@ -16,6 +16,7 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.*;
 
 
+
 @RequiredArgsConstructor
 @RestController
 public class PostController {
@@ -24,11 +25,11 @@ public class PostController {
     @PostMapping("/post")
     public ResponseEntity<PostDto> createPost(
             @AuthenticationPrincipal UserDetailsDto userDetails,
-            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile,
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
             @RequestBody PostCreateDto postCreateDto
         ) {
         Long userId = userDetails.getId();
-        return ResponseEntity.ok(PostDto.of(postService.createPost(userId, imageFile, postCreateDto)));
+        return ResponseEntity.ok(PostDto.of(postService.createPost(userId, imageFiles, postCreateDto)));
        }
 
 
@@ -51,11 +52,13 @@ public class PostController {
 
     @PutMapping("/post/{postId}")
     public ResponseEntity<PostDto> updatePost(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
             @RequestBody PostUpdateDto postUpdateDto,
             @PathVariable Long postId
     )
     {
-        return ResponseEntity.ok(PostDto.of(postService.updatePost(postId, postUpdateDto)));
+        Long userId = userDetails.getId();
+        return ResponseEntity.ok(PostDto.of(postService.updatePost(userId, postId, postUpdateDto)));
     }
 
     @DeleteMapping("/post/{postId}")
