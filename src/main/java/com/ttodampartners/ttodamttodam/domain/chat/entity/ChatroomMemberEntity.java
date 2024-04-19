@@ -55,4 +55,14 @@ public class ChatroomMemberEntity {
                 .modifiedAt(userChatroom.getModifiedAt())
                 .build();
     }
+
+    // 채팅방 유저 프로필 정보 리턴
+    public ChatroomProfileResponse getChatroomProfile() {
+        UserEntity user = this.userEntity;
+        return ChatroomProfileResponse.builder()
+                .userId(user.getId())
+                .nickname(user.getNickname())
+                .profileImage(user.getProfileImgUrl())
+                .build();
+    }
 }
