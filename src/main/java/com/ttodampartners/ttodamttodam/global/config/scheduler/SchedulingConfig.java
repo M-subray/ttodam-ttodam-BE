@@ -1,4 +1,4 @@
-package com.ttodampartners.ttodamttodam.global.config.db;
+package com.ttodampartners.ttodamttodam.global.config.scheduler;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
