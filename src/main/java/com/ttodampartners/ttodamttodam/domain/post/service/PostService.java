@@ -119,10 +119,9 @@ public class PostService {
         if (postUpdateDto.getImgUrls() != null) {
             allImageUrls.addAll(postUpdateDto.getImgUrls());
         }
-        newImageUrls.addAll(allImageUrls);
+        allImageUrls.addAll(newImageUrls);
 
         updateImages(post, allImageUrls);
-        post.setImgUrls(allImageUrls);
 
         post.setTitle(postUpdateDto.getTitle());
         post.setParticipants(postUpdateDto.getParticipants());
@@ -150,6 +149,7 @@ public class PostService {
                 deleteImageFileFromS3(postImageUrl);
             }
         }
+        post.setImgUrls(allImageUrls);
     }
 
     private void updateProducts(PostEntity post, List<ProductUpdateDto> products) {

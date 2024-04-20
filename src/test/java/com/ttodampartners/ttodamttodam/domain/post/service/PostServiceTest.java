@@ -12,8 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,7 +97,7 @@ class PostServiceTest {
 
         // 새로운 이미지 업로드를 위한 가짜 이미지 파일 생성
         List<MultipartFile> newImageFiles = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             byte[] imageBytes = ("new test image " + (i + 1)).getBytes();
             MultipartFile imageFile = new MockMultipartFile("imageFiles", "new-test-image-" + (i + 1) + ".jpg", "image/jpeg", imageBytes);
             newImageFiles.add(imageFile);
@@ -107,7 +109,7 @@ class PostServiceTest {
         postUpdateDto.setParticipants(5);
         postUpdateDto.setPlace("서울특별시 마포구 양화로 지하188");
         List<String> imgUrls = new ArrayList<>();
-        imgUrls.add("https://ttodam-ttodam.s3.ap-northeast-2.amazonaws.com/cd3a1c32-b63e-4f02-8424-8ff006603377test-image-1.jpg");
+        imgUrls.add("https://ttodam-ttodam.s3.ap-northeast-2.amazonaws.com/남은 기존 이미지.jpg");
         postUpdateDto.setImgUrls(imgUrls);
 
         postService.updatePost(3L, 63L, newImageFiles, postUpdateDto);
