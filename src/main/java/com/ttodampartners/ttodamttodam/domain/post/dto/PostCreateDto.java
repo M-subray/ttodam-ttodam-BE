@@ -42,7 +42,7 @@ public class PostCreateDto {
     private List<ProductAddDto> products;
 
 
-    public static PostEntity of(UserEntity user, List<String> postImgUrls, PostCreateDto postCreateDto) {
+    public static PostEntity of(UserEntity user, List<String> imgUrls, PostCreateDto postCreateDto) {
 
         PostEntity postEntity = PostEntity.builder()
                 .postId(postCreateDto.getPostId())
@@ -54,7 +54,7 @@ public class PostCreateDto {
                 .status(postCreateDto.getStatus())
                 .category(postCreateDto.getCategory())
                 .content(postCreateDto.getContent())
-                .postImgUrls(postImgUrls)
+                .imgUrls(imgUrls)
                 .build();
 
         List<ProductEntity> productEntities = postCreateDto.getProducts().stream()

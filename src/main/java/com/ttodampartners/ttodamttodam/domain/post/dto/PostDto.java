@@ -26,7 +26,7 @@ public class PostDto {
     private LocalDateTime deadline;
     private PostEntity.Category category;
     private String content;
-    private List<String> postImgUrls = new ArrayList<>();
+    private List<String> imgUrls;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -45,7 +45,7 @@ public class PostDto {
                 .deadline(postEntity.getDeadline())
                 .category(postEntity.getCategory())
                 .content(postEntity.getContent())
-                .postImgUrls(postEntity.getPostImgUrls())
+                .imgUrls(postEntity.getImgUrls())
                 .createdAt(postEntity.getCreatedAt())
                 .updatedAt(postEntity.getUpdatedAt())
                 .products(products)

@@ -1,10 +1,13 @@
 package com.ttodampartners.ttodamttodam.domain.post.service;
 
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
+import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
+import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
 import com.ttodampartners.ttodamttodam.domain.post.dto.ProductAddDto;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
+import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,7 +37,7 @@ class PostServiceTest {
         // 테스트 상품 생성
         ProductAddDto testProduct = testProduct("test product");
         // 테스트 게시물 생성
-        PostCreateDto testPost = testPost("test title5",testProduct);
+        PostCreateDto testPost = testPost("이미지 test",testProduct);
 
         // 가짜 이미지 파일 생성
         List<MultipartFile> imageFiles = new ArrayList<>();
@@ -50,7 +53,7 @@ class PostServiceTest {
         assertTrue(optionalPost.isPresent());
 
         PostEntity result = optionalPost.get();
-        assertEquals("test title5", result.getTitle());
+        assertEquals("이미지 test", result.getTitle());
     }
     private static PostCreateDto testPost(String title, ProductAddDto product){
         return PostCreateDto.builder()
@@ -86,6 +89,37 @@ class PostServiceTest {
 
     @Test
     void UPDATE_POST_TEST(){
+        // 게시물 가져오기
+        PostEntity testPost = postRepository.findById(63L)
+                .orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_POST));
+
+        // 새로운 이미지 업로드를 위한 가짜 이미지 파일 생성
+        List<MultipartFile> newImageFiles = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            byte[] imageBytes = ("new test image " + (i + 1)).getBytes();
+            MultipartFile imageFile = new MockMultipartFile("imageFiles", "new-test-image-" + (i + 1) + ".jpg", "image/jpeg", imageBytes);
+            newImageFiles.add(imageFile);
+        }
+
+        // 게시물 업데이트
+        PostUpdateDto postUpdateDto = new PostUpdateDto();
+        postUpdateDto.setTitle("Updated Title");
+        postUpdateDto.setParticipants(5);
+        postUpdateDto.setPlace("서울특별시 마포구 양화로 지하188");
+        List<String> imgUrls = new ArrayList<>();
+        imgUrls.add("https://ttodam-ttodam.s3.ap-northeast-2.amazonaws.com/cd3a1c32-b63e-4f02-8424-8ff006603377test-image-1.jpg");
+        postUpdateDto.setImgUrls(imgUrls);
+
+        postService.updatePost(3L, 63L, newImageFiles, postUpdateDto);
+
+        // 업데이트된 게시물 확인
+        Optional<PostEntity> optionalPost = postRepository.findById(testPost.getPostId());
+        assertTrue(optionalPost.isPresent());
+
+        PostEntity updatedPost = optionalPost.get();
+        assertEquals("Updated Title", updatedPost.getTitle());
+        assertEquals(5, updatedPost.getParticipants());
+        assertEquals("서울특별시 마포구 양화로 지하188", updatedPost.getPlace());
 
     }
 

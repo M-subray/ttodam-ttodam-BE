@@ -99,34 +99,75 @@ public class PostService {
     }
 
     @Transactional
-    public PostEntity updatePost(Long userId, Long postId, PostUpdateDto postUpdateDto) {
+    public PostEntity updatePost(Long userId, Long postId,List<MultipartFile> newImageFiles, PostUpdateDto postUpdateDto) {
 
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_POST));
 
         validateAuthority(userId, post);
 
+        // 새로운 이미지 업로드
+        List<String> newImageUrls = new ArrayList<>();
+        try {
+            newImageUrls = uploadImageFilesToS3(newImageFiles);
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 업로드 중 오류가 발생했습니다.", e);
+        }
+
+        // 이미지목록 업데이트
+        List<String> allImageUrls = new ArrayList<>();
+        if (postUpdateDto.getImgUrls() != null) {
+            allImageUrls.addAll(postUpdateDto.getImgUrls());
+        }
+        newImageUrls.addAll(allImageUrls);
+
+        updateImages(post, allImageUrls);
+        post.setImgUrls(allImageUrls);
+
         post.setTitle(postUpdateDto.getTitle());
         post.setParticipants(postUpdateDto.getParticipants());
-        post.setPlace(postUpdateDto.getPlace());
         post.setDeadline(postUpdateDto.getDeadline());
         post.setCategory(postUpdateDto.getCategory());
         post.setContent(postUpdateDto.getContent());
 
-        for(ProductUpdateDto productUpdateDto : postUpdateDto.getProducts()){
+        // 만남 장소 정보가 변경되었을 때 위도와 경도를 업데이트
+        if (!post.getPlace().equals(postUpdateDto.getPlace())) {
+            double[] coordinates = coordinateFinderUtil.getCoordinates(postUpdateDto.getPlace());
+            post.setPLocationX(coordinates[1]); // 경도 설정
+            post.setPLocationY(coordinates[0]); // 위도 설정
+        }
+        post.setPlace(postUpdateDto.getPlace());
+
+        // 상품목록 업데이트
+       updateProducts(post, postUpdateDto.getProducts());
+
+        return post;
+    }
+
+    private void updateImages(PostEntity post, List<String> allImageUrls) {
+        for (String postImageUrl : post.getImgUrls()) {
+            if (!allImageUrls.contains(postImageUrl)) {
+                deleteImageFileFromS3(postImageUrl);
+            }
+        }
+    }
+
+    private void updateProducts(PostEntity post, List<ProductUpdateDto> products) {
+        if (post.getProducts() == null) {
+            post.setProducts(new ArrayList<>());
+        }
+
+        for (ProductUpdateDto productUpdateDto : products) {
             ProductEntity product = post.getProducts().stream()
-                    .filter(pi->pi.getProductId().equals(productUpdateDto.getProductId()))
+                    .filter(pi -> pi.getProductId().equals(productUpdateDto.getProductId()))
                     .findFirst().orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_PRODUCT));
             product.setProductName(productUpdateDto.getProductName());
             product.setCount(productUpdateDto.getCount());
             product.setPrice(productUpdateDto.getPrice());
             product.setPurchaseLink(productUpdateDto.getPurchaseLink());
-
         }
-        return post;
     }
 
-    // userID 추가
     @Transactional
     public void deletePost(Long postId) {
         PostEntity post = postRepository.findById(postId)

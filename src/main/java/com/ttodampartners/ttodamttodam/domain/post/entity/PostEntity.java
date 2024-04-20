@@ -1,6 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.post.entity;
 
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
+import com.ttodampartners.ttodamttodam.global.config.StringListConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -66,10 +67,10 @@ public class PostEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @ElementCollection
+    @Convert(converter = StringListConverter.class)
     @Builder.Default
     @Column(name = "post_img_url", nullable = false)
-    private List<String> postImgUrls = new ArrayList<>();
+    private List<String> imgUrls = new ArrayList<>();
 
     @Column(name = "create_at", nullable = false)
     @CreatedDate

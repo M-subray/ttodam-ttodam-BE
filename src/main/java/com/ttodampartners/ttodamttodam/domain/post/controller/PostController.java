@@ -53,12 +53,13 @@ public class PostController {
     @PutMapping("/post/{postId}")
     public ResponseEntity<PostDto> updatePost(
             @AuthenticationPrincipal UserDetailsDto userDetails,
-            @RequestBody PostUpdateDto postUpdateDto,
-            @PathVariable Long postId
+            @PathVariable Long postId,
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> newImageFiles,
+            @RequestBody PostUpdateDto postUpdateDto
     )
     {
         Long userId = userDetails.getId();
-        return ResponseEntity.ok(PostDto.of(postService.updatePost(userId, postId, postUpdateDto)));
+        return ResponseEntity.ok(PostDto.of(postService.updatePost(userId, postId, newImageFiles, postUpdateDto)));
     }
 
     @DeleteMapping("/post/{postId}")

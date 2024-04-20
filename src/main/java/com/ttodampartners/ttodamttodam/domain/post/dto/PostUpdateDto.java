@@ -28,7 +28,7 @@ public class PostUpdateDto {
 
     private String content;
 
-    private List<String> postImgUrls = new ArrayList<>();
+    private List<String> imgUrls;
 
     private List<ProductUpdateDto> products;
 }
