@@ -15,6 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+/*
+    송신한 채팅 메시지를 저장하고 일정 기간이 지나면 삭제
+*/
+
+
 @RequiredArgsConstructor
 @Service
 public class ChatService {
@@ -35,10 +40,8 @@ public class ChatService {
         chatroom.updateLastMessage(chatMessageId);
     }
 
-    // 채팅 메시지 불러오기
 
-    // 30일 지난 채팅 메시지 자동 삭제
-    @Transactional
+    @Transactional // 30일 지난 채팅 메시지 자동 삭제
     @Async
     @Scheduled(cron = "0 0 12 * * *") // 매일 오후 12시 자동 실행
     public void autoChatDelete() {

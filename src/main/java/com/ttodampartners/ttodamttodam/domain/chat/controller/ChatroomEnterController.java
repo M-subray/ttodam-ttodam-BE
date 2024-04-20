@@ -1,14 +1,14 @@
 package com.ttodampartners.ttodamttodam.domain.chat.controller;
 
+import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatMessageResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomEnterResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.service.ChatroomEnterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Slf4j
@@ -23,5 +23,12 @@ public class ChatroomEnterController {
     public ResponseEntity<ChatroomEnterResponse> getChatroomDetails(@RequestParam Long chatroomId) {
         ChatroomEnterResponse chatroomEnterResponse = chatroomEnterService.getChatroomDetails(chatroomId);
         return ResponseEntity.ok(chatroomEnterResponse);
+    }
+
+    // {chatroomId} 채팅방 입장 후 해당 채팅방에서 송수신된 메시지 반환
+    @GetMapping("/{chatroomId}/message-history")
+    public ResponseEntity<List<ChatMessageResponse>> getChatMessageHistory(@PathVariable Long chatroomId) {
+        List<ChatMessageResponse> chatMessageResponses = chatroomEnterService.getChatMessageHistory(chatroomId);
+        return ResponseEntity.ok(chatMessageResponses);
     }
 }
