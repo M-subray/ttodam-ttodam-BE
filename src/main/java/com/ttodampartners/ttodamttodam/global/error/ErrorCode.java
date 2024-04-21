@@ -35,7 +35,12 @@ public enum ErrorCode {
   Coordinate Exception
    */
   API_REQUEST_FAILED("API 요청 실패"),
-  NOT_FOUND_ADDRESS("주소 정보를 찾을 수 없습니다.")
+  NOT_FOUND_ADDRESS("주소 정보를 찾을 수 없습니다."),
+
+  /*
+  Chatroom Exception
+   */
+  CHATROOM_ALREADY_EXIST("개인 채팅방이 이미 존재합니다."),
   ;
 
   private final String description;

@@ -1,18 +1,23 @@
 package com.ttodampartners.ttodamttodam.domain.chat.service;
 
+import com.ttodampartners.ttodamttodam.domain.chat.dto.ChatExceptionResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.request.ChatroomCreateRequest;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomListResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomProfileResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomMemberEntity;
+import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomExistedException;
+import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomExistedResponseBody;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomMemberRepository;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomRepository;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
+import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -20,6 +25,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.ttodampartners.ttodamttodam.global.error.ErrorCode.CHATROOM_ALREADY_EXIST;
 
 @RequiredArgsConstructor
 @Service
@@ -30,6 +37,7 @@ public class ChatroomService {
     private final ChatroomMemberRepository chatroomMemberRepository;
 
     // 일대일 개인 채팅방 생성 -> response body 반환
+    // 추후 게시글 상태가 모집중인지 체크!!
     @Transactional
     public ChatroomResponse createChatroom(ChatroomCreateRequest request) {
         UserEntity user = userRepository.findById(request.getUserId()).orElseThrow(IllegalArgumentException::new); // 문의자
@@ -37,6 +45,21 @@ public class ChatroomService {
         PostEntity post = postRepository.findById(request.getPostId()).orElseThrow(IllegalArgumentException::new);
 
         UserEntity host = userRepository.findById(post.getUser().getId()).orElseThrow(IllegalArgumentException::new); // 게시글 작성자
+
+        // 이미 user가 해당 post에 일대일 채팅방 생성한 적 있는지 체크
+        List<ChatroomEntity> chatroomEntities = chatroomRepository.findByPostEntity(post); // 이 게시글에서 생성된 채팅방 리스트
+        ErrorCode code = CHATROOM_ALREADY_EXIST;
+        if (!CollectionUtils.isEmpty(chatroomEntities)) { // 이 게시글에서 생성된 채팅방이 하나라도 존재한다면
+            for (ChatroomEntity chatroom: chatroomEntities) {
+                // 추후 chat_active도 체크!!
+                if (chatroomMemberRepository.existsByUserEntityAndChatroomEntity(user, chatroom)) {
+                    throw new ChatroomExistedException(
+                            code,
+                            ChatExceptionResponse.res(HttpStatus.BAD_REQUEST, code.getDescription(), ChatroomExistedResponseBody.builder().chatroomId(chatroom.getChatroomId()).build())
+                    );
+                }
+            }
+        };
 
         // CHATROOM 테이블에 컬럼 추가
         ChatroomEntity chatroom = chatroomRepository.save(
@@ -48,23 +71,10 @@ public class ChatroomService {
                 Arrays.asList(user, host)
         );
         // CHATROOM_MEMBER 테이블에 컬럼 추가
-        List<ChatroomMemberEntity> memberEntityList = members.stream().map(
-                        member -> chatroomMemberRepository.save(
-                                ChatroomMemberEntity.builder()
-                                        .chatroomEntity(chatroom)
-                                        .userEntity(member)
-                                        .build()))
-                .toList();
+        List<ChatroomMemberEntity> memberEntityList = saveChatroomMembers(members, chatroom);
 
-        // 해당 채팅방에 소속된 유저(공구 주최자, 문의자)의 프로필 정보 리스트
-        List<ChatroomProfileResponse> profileList = members.stream().map(
-                member -> ChatroomProfileResponse.builder()
-                        .userId(member.getId())
-                        .nickname(member.getNickname())
-                        .profileImage(member.getProfileImgUrl())
-                        .build()
-
-        ).toList();
+        // 해당 채팅방에 소속된 유저(공구 주최자, 문의자)의 프로필 정보 리스트 받아오기
+        List<ChatroomProfileResponse> profileList = getChatroomProfiles(members);
 
         return ChatroomResponse.builder()
                 .chatroomId(chatroom.getChatroomId())
@@ -106,5 +116,26 @@ public class ChatroomService {
         ChatroomMemberEntity userChatroom = chatroomMemberRepository.findByUserEntityAndChatroomEntity(user, chatroom).orElseThrow(IllegalArgumentException::new);
 
         chatroomMemberRepository.delete(userChatroom);
+    }
+
+    public List<ChatroomMemberEntity> saveChatroomMembers(List<UserEntity> members, ChatroomEntity chatroom) {
+        return members.stream().map(
+                        member -> chatroomMemberRepository.save(
+                                ChatroomMemberEntity.builder()
+                                        .chatroomEntity(chatroom)
+                                        .userEntity(member)
+                                        .build()))
+                .toList();
+    }
+
+    public List<ChatroomProfileResponse> getChatroomProfiles(List<UserEntity> members) {
+        return members.stream().map(
+                member -> ChatroomProfileResponse.builder()
+                        .userId(member.getId())
+                        .nickname(member.getNickname())
+                        .profileImage(member.getProfileImgUrl())
+                        .build()
+
+        ).toList();
     }
 }
