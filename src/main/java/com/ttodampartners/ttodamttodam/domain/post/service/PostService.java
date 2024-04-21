@@ -211,9 +211,16 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(Long postId) {
+    public void deletePost(Long userId, Long postId) {
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_POST));
+
+        validateAuthority(userId, post);
+
+        //게시글 이미지 S3에서 삭제
+        for (String deleteImageUrl : post.getImgUrls()) {
+            deleteImageFileFromS3(deleteImageUrl);
+        }
         postRepository.delete(post);
     }
 

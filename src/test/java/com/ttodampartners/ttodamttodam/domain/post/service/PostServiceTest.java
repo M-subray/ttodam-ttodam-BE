@@ -79,7 +79,6 @@ class PostServiceTest {
                 .build();
     }
 
-
     @Test
     void GET_POST_LIST_TEST(){
         Long userId = 3L;
@@ -138,6 +137,12 @@ class PostServiceTest {
 
     @Test
     void DELETE_POST_TEST(){
+        Long userId = 1L;
+        Long postId = 57L;
+
+        postService.deletePost(userId, postId);
+
+        assertFalse(postRepository.existsById(57L));
 
     }
 
