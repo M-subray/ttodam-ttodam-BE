@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class ChatroomListResponse {
-    private Long userChatroomId;
+    private Long chatroomId;
     private String postImage;
     private String chatName;
     private String product;

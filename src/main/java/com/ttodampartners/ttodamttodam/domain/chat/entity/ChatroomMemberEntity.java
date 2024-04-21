@@ -1,6 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.chat.entity;
 
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomListResponse;
+import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomProfileResponse;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
@@ -40,12 +41,11 @@ public class ChatroomMemberEntity {
 
     // 채팅방 정보를 ChatroomListResponse에 담아서 리턴
     public ChatroomListResponse getChatroomInfos() {
-        ChatroomMemberEntity user = this;
         ChatroomEntity userChatroom = this.chatroomEntity;
         PostEntity userChatroomPost = userChatroom.getPostEntity();
 
         return ChatroomListResponse.builder()
-                .userChatroomId(userChatroom.getChatroomId())
+                .chatroomId(userChatroom.getChatroomId())
                 .postImage(userChatroomPost.getPostImgUrl())
                 .chatName(userChatroomPost.getTitle())
                 .hostId(userChatroomPost.getUser().getId())
