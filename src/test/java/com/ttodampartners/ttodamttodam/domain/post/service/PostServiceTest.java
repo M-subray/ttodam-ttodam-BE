@@ -91,6 +91,12 @@ class PostServiceTest {
 
     @Test
     void GET_POST_TEST(){
+        Long userId = 3L;
+        Long postId = 63L;
+
+        PostDto testPost = postService.getPost(userId, postId);
+
+        assertEquals("Updated Title", testPost.getTitle());
 
     }
 

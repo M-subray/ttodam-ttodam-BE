@@ -13,11 +13,13 @@ import com.ttodampartners.ttodamttodam.domain.post.entity.ProductEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
+import com.ttodampartners.ttodamttodam.domain.user.util.AuthenticationUtil;
 import com.ttodampartners.ttodamttodam.domain.user.util.CoordinateFinderUtil;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -108,6 +110,24 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public PostDto getPost(Long userId, Long postId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        String userRoadName = roadName(user.getLocation());
+
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_POST));
+
+        String postRoadName = roadName(post.getPlace());
+        // 로그인 유저 거주지와 만남장소 비교
+        if (!userRoadName.equals(postRoadName)) {
+            throw new PostException(ErrorCode.POST_READ_PERMISSION_DENIED);
+        }
+        return PostDto.of(post);
+    }
+
     // 도로명 주소에서 -로 부분 추출
     private String roadName(String address) {
         Pattern pattern = Pattern.compile("(\\S+로)");
@@ -118,13 +138,6 @@ public class PostService {
         } else {
             return "";
         }
-    }
-
-    @Transactional
-    public PostDto getPost(Long postId) {
-        PostEntity post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_POST));
-        return PostDto.of(post);
     }
 
     @Transactional
