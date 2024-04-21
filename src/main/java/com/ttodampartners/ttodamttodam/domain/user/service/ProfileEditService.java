@@ -1,5 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.user.service;
 
+import com.ttodampartners.ttodamttodam.domain.user.dto.ProfileDto;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
@@ -9,16 +10,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
 @Service
-public class WithdrawService {
+@RequiredArgsConstructor
+public class ProfileEditService {
   private final UserRepository userRepository;
 
-  public void withdraw(Long userId) {
+  public ProfileDto getProfile(Long userId) {
     UserEntity user = getUser(userId);
     isMatchEmail(user);
 
-    userRepository.delete(user);
+    return ProfileDto.getProfile(user);
   }
 
   private UserEntity getUser(Long userId) {
