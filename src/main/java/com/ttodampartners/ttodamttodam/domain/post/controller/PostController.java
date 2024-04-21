@@ -35,9 +35,10 @@ public class PostController {
 
     @GetMapping("/post")
     public ResponseEntity<List<PostDto>> getPostList(
-
+            @AuthenticationPrincipal UserDetailsDto userDetails
     ){
-        List<PostDto> postList = postService.getPostList();
+        Long userId = userDetails.getId();
+        List<PostDto> postList = postService.getPostList(userId);
         return ResponseEntity.ok(postList);
     }
 

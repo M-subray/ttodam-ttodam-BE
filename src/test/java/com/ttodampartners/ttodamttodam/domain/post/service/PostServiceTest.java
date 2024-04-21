@@ -1,6 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.post.service;
 
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
+import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
@@ -81,7 +82,11 @@ class PostServiceTest {
 
     @Test
     void GET_POST_LIST_TEST(){
+        Long userId = 3L;
 
+        List<PostDto> postList = postService.getPostList(userId);
+
+        assertEquals(1, postList.size());
     }
 
     @Test

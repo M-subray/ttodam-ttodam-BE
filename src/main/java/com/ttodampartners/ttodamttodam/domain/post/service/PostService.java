@@ -26,6 +26,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -83,12 +85,39 @@ public class PostService {
         return imageUrls;
     }
 
+    //로그인된 유저의 도로명 주소(-로)를 기준으로 게시글의 만남장소를 특정하여 게시글 목록 불러오기
     @Transactional
-    public List<PostDto> getPostList() {
+    public List<PostDto> getPostList(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        String userRoadName = roadName(user.getLocation());
+
         List<PostEntity> postList = postRepository.findAll();
-        return postList.stream()
+
+        // 유저와 동일한 도로명을 가진 게시글 필터링
+        List<PostEntity> filteredPosts = postList.stream()
+                .filter(post -> {
+                    String postRoadName = roadName(post.getPlace());
+                    return postRoadName.equals(userRoadName);
+                })
+                .collect(Collectors.toList());
+
+        return filteredPosts.stream()
                 .map(PostDto::of)
                 .collect(Collectors.toList());
+    }
+
+    // 도로명 주소에서 -로 부분 추출
+    private String roadName(String address) {
+        Pattern pattern = Pattern.compile("(\\S+로)");
+        Matcher matcher = pattern.matcher(address);
+
+        if (matcher.find()) {
+            return matcher.group();
+        } else {
+            return "";
+        }
     }
 
     @Transactional
@@ -138,7 +167,7 @@ public class PostService {
         post.setPlace(postUpdateDto.getPlace());
 
         // 상품목록 업데이트
-       updateProducts(post, postUpdateDto.getProducts());
+        updateProducts(post, postUpdateDto.getProducts());
 
         return post;
     }
