@@ -4,13 +4,17 @@ import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.post.service.PostService;
+import com.ttodampartners.ttodamttodam.global.dto.UserDetailsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
+
 
 
 @RequiredArgsConstructor
@@ -20,47 +24,55 @@ public class PostController {
 
     @PostMapping("/post")
     public ResponseEntity<PostDto> createPost(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
             @RequestBody PostCreateDto postCreateDto
-//                @AuthenticationPrincipal
         ) {
-//        postService.createPost(postCreateDto);
-//        postService.createPost(userId, postCreateDto);
-        return ResponseEntity.ok(PostDto.of(postService.createPost(postCreateDto)));
+        Long userId = userDetails.getId();
+        return ResponseEntity.ok(PostDto.of(postService.createPost(userId, imageFiles, postCreateDto)));
        }
 
 
     @GetMapping("/post")
     public ResponseEntity<List<PostDto>> getPostList(
-
+            @AuthenticationPrincipal UserDetailsDto userDetails
     ){
-        List<PostDto> postDtoList = postService.getPostDtoList();
-        return ResponseEntity.ok(postDtoList);
+        Long userId = userDetails.getId();
+        List<PostDto> postList = postService.getPostList(userId);
+        return ResponseEntity.ok(postList);
     }
 
     @GetMapping("/post/{postId}")
     public ResponseEntity<PostDto> getPost(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
             @PathVariable Long postId
     )
     {
-        PostDto postDto = postService.getPost(postId);
+        Long userId = userDetails.getId();
+        PostDto postDto = postService.getPost(userId, postId);
         return ResponseEntity.status(OK).body(postDto);
     }
 
     @PutMapping("/post/{postId}")
     public ResponseEntity<PostDto> updatePost(
-            @RequestBody PostUpdateDto postUpdateDto,
-            @PathVariable Long postId
+            @AuthenticationPrincipal UserDetailsDto userDetails,
+            @PathVariable Long postId,
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> newImageFiles,
+            @RequestBody PostUpdateDto postUpdateDto
     )
     {
-        return ResponseEntity.ok(PostDto.of(postService.updatePost(postId, postUpdateDto)));
+        Long userId = userDetails.getId();
+        return ResponseEntity.ok(PostDto.of(postService.updatePost(userId, postId, newImageFiles, postUpdateDto)));
     }
 
     @DeleteMapping("/post/{postId}")
     public ResponseEntity<Void> deletePost(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
             @PathVariable Long postId
     )
     {
-        postService.deletePost(postId);
+        Long userId = userDetails.getId();
+        postService.deletePost(userId, postId);
         return ResponseEntity.status(OK).build();
     }
 

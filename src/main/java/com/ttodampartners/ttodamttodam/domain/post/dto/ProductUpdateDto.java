@@ -1,4 +1,4 @@
-package com.ttodampartners.ttodamttodam.domain.product.dto;
+package com.ttodampartners.ttodamttodam.domain.post.dto;
 
 import lombok.*;
 

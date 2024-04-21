@@ -1,7 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.post.entity;
 
-// import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
-import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
+import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
+import com.ttodampartners.ttodamttodam.global.config.StringListConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -29,10 +29,11 @@ public class PostEntity {
     @Column(name = "id", nullable = false)
     private Long postId;
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private UserEntity user;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<ProductEntity> products = new ArrayList<>();
 
@@ -54,8 +55,9 @@ public class PostEntity {
     @Column(nullable = false)
     private LocalDateTime deadline;
 
-//    @Column(nullable = false)
-//    private Status status;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -65,8 +67,10 @@ public class PostEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @Convert(converter = StringListConverter.class)
+    @Builder.Default
     @Column(name = "post_img_url", nullable = false)
-    private String postImgUrl;
+    private List<String> imgUrls = new ArrayList<>();
 
     @Column(name = "create_at", nullable = false)
     @CreatedDate
@@ -89,20 +93,22 @@ public class PostEntity {
 
         private final String label;
         Category(String label) {
+
             this.label = label;
         }
     }
 
-//    @Getter
-//    public enum Status {
-//        IN_PROGRESS("진행중"),
-//        COMPLETED("완료"),
-//        FAILED("실패");
-//
-//        private final String label;
-//        Status(String label) {
-//            this.label = label;
-//        }
-//    }
+    @Getter
+    public enum Status {
+        IN_PROGRESS("진행중"),
+        COMPLETED("완료"),
+        FAILED("실패");
+
+        private final String label;
+        Status(String label) {
+
+            this.label = label;
+        }
+    }
 
 }

@@ -1,8 +1,8 @@
 package com.ttodampartners.ttodamttodam.domain.post.dto;
 
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
-import com.ttodampartners.ttodamttodam.domain.product.dto.ProductAddDto;
-import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
+import com.ttodampartners.ttodamttodam.domain.post.entity.ProductEntity;
+import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -33,41 +33,37 @@ public class PostCreateDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime deadline;
 
+    private PostEntity.Status status;
+
     private PostEntity.Category category;
+
     private String content;
-    private String postImgUrl;
 
     private List<ProductAddDto> products;
 
 
-    public static PostEntity from(PostCreateDto postCreateDto) {
-
-        List<ProductAddDto> products = postCreateDto.getProducts();
-        if (products == null) {
-            products = Collections.emptyList();
-        }
+    public static PostEntity of(UserEntity user, List<String> imgUrls, PostCreateDto postCreateDto) {
 
         PostEntity postEntity = PostEntity.builder()
                 .postId(postCreateDto.getPostId())
+                .user(user)
                 .title(postCreateDto.getTitle())
                 .participants(postCreateDto.getParticipants())
                 .place(postCreateDto.getPlace())
                 .deadline(postCreateDto.getDeadline())
+                .status(postCreateDto.getStatus())
                 .category(postCreateDto.getCategory())
                 .content(postCreateDto.getContent())
-                .postImgUrl(postCreateDto.getPostImgUrl())
+                .imgUrls(imgUrls)
                 .build();
 
-        List<ProductEntity> productEntities = products.stream()
-                .map(productAddDto -> {
-                    ProductEntity productEntity = ProductAddDto.from(productAddDto);
-                    productEntity.setPost(postEntity);
-                    return productEntity;
-                })
+        List<ProductEntity> productEntities = postCreateDto.getProducts().stream()
+                .map(ProductAddDto::from)
+                .peek(productEntity -> productEntity.setPost(postEntity))
                 .collect(Collectors.toList());
 
         postEntity.setProducts(productEntities);
         return postEntity;
     }
-
 }
+
