@@ -15,6 +15,7 @@ import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,7 +71,7 @@ public class ChatroomService {
         );
 
         return ChatroomResponse.builder()
-                .userChatroomId(chatroom.getChatroomId())
+                .chatroomId(chatroom.getChatroomId())
                 .hostId(post.getUser().getId()).userCount(2)
                 .chatName(post.getTitle())
                 .createAt(chatroom.getCreateAt())
@@ -85,7 +86,7 @@ public class ChatroomService {
         // 유저가 속한 CHATROOM_MEMBER 엔티티 리스트
         List<ChatroomMemberEntity> userChatrooms = chatroomMemberRepository.findAllByUserEntity(user);
 
-        if (userChatrooms.size() == 0) {
+        if (CollectionUtils.isEmpty(userChatrooms)) {
             // 추후 error response로 변경!!
             List<ChatroomListResponse> noChatrooms = new ArrayList<>(
                     Arrays.asList(ChatroomListResponse.builder().build())
@@ -98,5 +99,16 @@ public class ChatroomService {
         ).toList();
 
         return chatroomListResponses;
+    }
+
+    // 유저가 속한 chatroomId 채팅방 나가기
+    @Transactional
+    public void leaveChatroom(Long chatroomId, Long userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
+        ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(IllegalArgumentException::new);
+
+        ChatroomMemberEntity userChatroom = chatroomMemberRepository.findByUserEntityAndChatroomEntity(user, chatroom).orElseThrow(IllegalArgumentException::new);
+
+        chatroomMemberRepository.delete(userChatroom);
     }
 }

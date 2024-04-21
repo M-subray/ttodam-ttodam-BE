@@ -42,4 +42,10 @@ public class ChatroomEntity extends BaseEntity {
     @Column(name = "user_count")
     private int userCount;
 
+    @Column(name = "last_message_id")
+    private Long lastMessageId;
+
+    public void updateLastMessage(Long lastMessageId) {
+        this.lastMessageId = lastMessageId;
+    }
 }

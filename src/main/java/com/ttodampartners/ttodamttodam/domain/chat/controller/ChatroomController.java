@@ -26,9 +26,14 @@ public class ChatroomController {
         return ResponseEntity.ok(chatroomResponse);
     }
 
-    @GetMapping // GET /chatrooms/{userId} (채팅방 목록 조회)
+    @GetMapping // GET /chatrooms?userId={userId} (채팅방 목록 조회)
     public ResponseEntity<List<ChatroomListResponse>> getChatrooms(@RequestParam Long userId) {
         List<ChatroomListResponse> chatroomListResponses = chatroomService.getChatrooms(userId);
         return ResponseEntity.ok(chatroomListResponses);
+    }
+
+    @DeleteMapping("/{chatroomId}/{userId}/exit") // DELETE /chatrooms/{chatroomId}/{userId}/exit (채팅방 나가기)
+    public void leaveChatroom(@PathVariable Long chatroomId, @PathVariable Long userId) {
+        chatroomService.leaveChatroom(chatroomId, userId);
     }
 }

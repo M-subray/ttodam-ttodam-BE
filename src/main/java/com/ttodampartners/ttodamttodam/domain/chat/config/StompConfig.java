@@ -28,7 +28,6 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker (MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/chatroom"); // sub: 메시지 브로커가 Subscriber들에게 메시지를 전달할 URL 접두사
-
         registry.setApplicationDestinationPrefixes("/chattings"); // pub: 클라이언트가 서버로 메시지 보낼 URL 접두사
     }
 }
