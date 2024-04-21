@@ -16,6 +16,7 @@ import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -39,23 +40,27 @@ public class ChatroomService {
     // 일대일 개인 채팅방 생성 -> response body 반환
     // 추후 게시글 상태가 모집중인지 체크!!
     @Transactional
-    public ChatroomResponse createChatroom(ChatroomCreateRequest request) {
-        UserEntity user = userRepository.findById(request.getUserId()).orElseThrow(IllegalArgumentException::new); // 문의자
+    public ChatroomResponse createChatroom(@Valid ChatroomCreateRequest request) {
+        UserEntity user = userRepository.findById(request.getUserId()).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다.")); // 문의자
 
-        PostEntity post = postRepository.findById(request.getPostId()).orElseThrow(IllegalArgumentException::new);
+        PostEntity post = postRepository.findById(request.getPostId()).orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
         UserEntity host = userRepository.findById(post.getUser().getId()).orElseThrow(IllegalArgumentException::new); // 게시글 작성자
 
         // 이미 user가 해당 post에 일대일 채팅방 생성한 적 있는지 체크
-        List<ChatroomEntity> chatroomEntities = chatroomRepository.findByPostEntity(post); // 이 게시글에서 생성된 채팅방 리스트
+        List<ChatroomEntity> chatroomEntities = chatroomRepository.findByPostEntity(post); // 이 post에서 생성된 채팅방 리스트
         ErrorCode code = CHATROOM_ALREADY_EXIST;
-        if (!CollectionUtils.isEmpty(chatroomEntities)) { // 이 게시글에서 생성된 채팅방이 하나라도 존재한다면
+        if (!CollectionUtils.isEmpty(chatroomEntities)) { // 이 post에서 생성된 채팅방이 하나라도 존재한다면
             for (ChatroomEntity chatroom: chatroomEntities) {
                 // 추후 chat_active도 체크!!
                 if (chatroomMemberRepository.existsByUserEntityAndChatroomEntity(user, chatroom)) {
                     throw new ChatroomExistedException(
                             code,
-                            ChatExceptionResponse.res(HttpStatus.BAD_REQUEST, code.getDescription(), ChatroomExistedResponseBody.builder().chatroomId(chatroom.getChatroomId()).build())
+                            ChatExceptionResponse.res(
+                                    HttpStatus.BAD_REQUEST,
+                                    code.getDescription(),
+                                    ChatroomExistedResponseBody.builder().chatroomId(chatroom.getChatroomId()).build()
+                            )
                     );
                 }
             }
@@ -72,7 +77,6 @@ public class ChatroomService {
         );
         // CHATROOM_MEMBER 테이블에 컬럼 추가
         List<ChatroomMemberEntity> memberEntityList = saveChatroomMembers(members, chatroom);
-
         // 해당 채팅방에 소속된 유저(공구 주최자, 문의자)의 프로필 정보 리스트 받아오기
         List<ChatroomProfileResponse> profileList = getChatroomProfiles(members);
 
@@ -85,7 +89,7 @@ public class ChatroomService {
                 .build();
     }
 
-    // 유저가 속한 채팅방 목록 조회 -> List 반환
+    // 유저가 속한 채팅방 목록 조회
     @Transactional
     public List<ChatroomListResponse> getChatrooms(Long userId) {
         UserEntity user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
@@ -118,6 +122,10 @@ public class ChatroomService {
         chatroomMemberRepository.delete(userChatroom);
     }
 
+    /*
+        채팅방에 소속된 유저들 관련 메소드
+    */
+    @Transactional
     public List<ChatroomMemberEntity> saveChatroomMembers(List<UserEntity> members, ChatroomEntity chatroom) {
         return members.stream().map(
                         member -> chatroomMemberRepository.save(
@@ -128,6 +136,7 @@ public class ChatroomService {
                 .toList();
     }
 
+    @Transactional
     public List<ChatroomProfileResponse> getChatroomProfiles(List<UserEntity> members) {
         return members.stream().map(
                 member -> ChatroomProfileResponse.builder()
