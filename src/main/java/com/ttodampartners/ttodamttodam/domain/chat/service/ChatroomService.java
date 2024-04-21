@@ -7,6 +7,7 @@ import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomResponse
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomProfileResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomMemberEntity;
+import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomException;
 import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomExistedException;
 import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomExistedResponseBody;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomMemberRepository;
@@ -15,6 +16,7 @@ import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
+import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.ttodampartners.ttodamttodam.global.error.ErrorCode.CHATROOM_ALREADY_EXIST;
+import static com.ttodampartners.ttodamttodam.global.error.ErrorCode.*;
+import static java.lang.String.format;
 
 @RequiredArgsConstructor
 @Service
@@ -41,9 +44,9 @@ public class ChatroomService {
     // 추후 게시글 상태가 모집중인지 체크!!
     @Transactional
     public ChatroomResponse createChatroom(@Valid ChatroomCreateRequest request) {
-        UserEntity user = userRepository.findById(request.getUserId()).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다.")); // 문의자
+        UserEntity user = userRepository.findById(request.getUserId()).orElseThrow(() -> new UserException(NOT_FOUND_USER)); // 문의자
 
-        PostEntity post = postRepository.findById(request.getPostId()).orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        PostEntity post = postRepository.findById(request.getPostId()).orElseThrow(() -> new IllegalArgumentException("postId의 게시글이 존재하지 않습니다."));
 
         UserEntity host = userRepository.findById(post.getUser().getId()).orElseThrow(IllegalArgumentException::new); // 게시글 작성자
 
@@ -92,16 +95,12 @@ public class ChatroomService {
     // 유저가 속한 채팅방 목록 조회
     @Transactional
     public List<ChatroomListResponse> getChatrooms(Long userId) {
-        UserEntity user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserException(NOT_FOUND_USER));
         // 유저가 속한 CHATROOM_MEMBER 엔티티 리스트
         List<ChatroomMemberEntity> userChatrooms = chatroomMemberRepository.findAllByUserEntity(user);
 
         if (CollectionUtils.isEmpty(userChatrooms)) {
-            // 추후 error response로 변경!!
-            List<ChatroomListResponse> noChatrooms = new ArrayList<>(
-                    Arrays.asList(ChatroomListResponse.builder().build())
-            );
-            return noChatrooms;
+            throw new ChatroomException(USER_CHATROOM_NOT_EXIST);
         }
 
         List<ChatroomListResponse> chatroomListResponses = userChatrooms.stream().map(
@@ -114,10 +113,10 @@ public class ChatroomService {
     // 유저가 속한 chatroomId 채팅방 나가기
     @Transactional
     public void leaveChatroom(Long chatroomId, Long userId) {
-        UserEntity user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
-        ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(IllegalArgumentException::new);
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserException(NOT_FOUND_USER));
+        ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(() -> new ChatroomException(CHATROOM_NOT_EXIST));
 
-        ChatroomMemberEntity userChatroom = chatroomMemberRepository.findByUserEntityAndChatroomEntity(user, chatroom).orElseThrow(IllegalArgumentException::new);
+        ChatroomMemberEntity userChatroom = chatroomMemberRepository.findByUserEntityAndChatroomEntity(user, chatroom).orElseThrow(() -> new ChatroomException(USER_NOT_IN_CHATROOM));
 
         chatroomMemberRepository.delete(userChatroom);
     }
