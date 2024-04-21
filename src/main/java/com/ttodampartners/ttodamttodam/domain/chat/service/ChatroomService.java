@@ -9,7 +9,7 @@ import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomMemberEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomException;
 import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomExistedException;
-import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomExistedResponseBody;
+import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomExistedResponseBody;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomMemberRepository;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomRepository;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;

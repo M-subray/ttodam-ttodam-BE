@@ -1,6 +1,5 @@
-package com.ttodampartners.ttodamttodam.domain.chat.exception;
+package com.ttodampartners.ttodamttodam.domain.chat.dto.response;
 
-import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
