@@ -9,6 +9,7 @@ import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomProfileR
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomMemberEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomException;
+import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomStringException;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomMemberRepository;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomRepository;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
@@ -109,7 +110,7 @@ public class ChatroomService {
     @Transactional
     public void leaveChatroom(Long chatroomId, Long userId) {
         UserEntity user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
-        ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(IllegalArgumentException::new);
+        ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(() -> new ChatroomStringException(CHATROOM_NOT_EXIST));
 
         ChatroomMemberEntity userChatroom = chatroomMemberRepository.findByUserEntityAndChatroomEntity(user, chatroom).orElseThrow(IllegalArgumentException::new);
 
