@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Builder
 @AllArgsConstructor
 public class UserDetailsDto implements UserDetails {
+  private Long id;
   private String email;
   private String password;
 
@@ -25,6 +26,10 @@ public class UserDetailsDto implements UserDetails {
   @Override
   public String getUsername() {
     return email;
+  }
+
+  public Long getId() {
+    return id;
   }
 
   @Override
