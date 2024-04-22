@@ -29,4 +29,5 @@ public class AuthenticationService implements UserDetailsService {
     return userRepository.findByEmail(email)
         .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_EMAIL));
   }
+
 }
