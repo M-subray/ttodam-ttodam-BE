@@ -41,9 +41,9 @@ public class ChatroomService {
     // 일대일 개인 채팅방 생성 -> response body 반환
     // 추후 게시글 상태 '모집중'인지 체크!!
     @Transactional
-    public ChatroomResponse createChatroom(ChatroomCreateRequest request) {
+    public ChatroomResponse createChatroom(ChatroomCreateRequest request, Long userId) {
         // 문의자
-        UserEntity user = userRepository.findById(request.getUserId()).orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
         PostEntity post = postRepository.findById(request.getPostId()).orElseThrow(IllegalArgumentException::new);
         // 게시글 작성자

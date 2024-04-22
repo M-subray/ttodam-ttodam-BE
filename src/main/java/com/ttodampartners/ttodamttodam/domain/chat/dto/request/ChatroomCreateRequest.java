@@ -13,6 +13,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class ChatroomCreateRequest {
-    private Long userId;
     private Long postId;
 }
