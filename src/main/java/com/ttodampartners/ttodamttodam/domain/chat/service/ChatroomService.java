@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.ttodampartners.ttodamttodam.global.error.ErrorCode.CHATROOM_ALREADY_EXIST;
+import static com.ttodampartners.ttodamttodam.global.error.ErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -93,23 +93,16 @@ public class ChatroomService {
     // 유저가 속한 채팅방 목록 조회 -> List 반환
     @Transactional
     public List<ChatroomListResponse> getChatrooms(Long userId) {
-        UserEntity user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserException(NOT_FOUND_USER));
         // 유저가 속한 CHATROOM_MEMBER 엔티티 리스트
         List<ChatroomMemberEntity> userChatrooms = chatroomMemberRepository.findAllByUserEntity(user);
 
         if (CollectionUtils.isEmpty(userChatrooms)) {
-            // 추후 error response로 변경!!
-            List<ChatroomListResponse> noChatrooms = new ArrayList<>(
-                    Arrays.asList(ChatroomListResponse.builder().build())
-            );
-            return noChatrooms;
+            ErrorCode code = USER_CHATROOM_NOT_EXIST;
+            throw new ChatroomException(code, ChatExceptionResponse.res(HttpStatus.NOT_FOUND, code.getDescription()));
         }
 
-        List<ChatroomListResponse> chatroomListResponses = userChatrooms.stream().map(
-                ChatroomMemberEntity::getChatroomInfos
-        ).toList();
-
-        return chatroomListResponses;
+        return userChatrooms.stream().map(ChatroomMemberEntity::getChatroomInfos).toList();
     }
 
     // 유저가 속한 chatroomId 채팅방 나가기
