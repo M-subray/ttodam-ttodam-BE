@@ -46,7 +46,6 @@ public class ChatroomMemberEntity {
 
         return ChatroomListResponse.builder()
                 .chatroomId(userChatroom.getChatroomId())
-                .postImage(userChatroomPost.getPostImgUrl())
                 .chatName(userChatroomPost.getTitle())
                 .hostId(userChatroomPost.getUser().getId())
                 .hostNickname(userChatroomPost.getUser().getNickname())
