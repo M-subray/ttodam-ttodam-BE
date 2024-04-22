@@ -112,7 +112,9 @@ public class ChatroomService {
         UserEntity user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
         ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(() -> new ChatroomStringException(CHATROOM_NOT_EXIST));
 
-        ChatroomMemberEntity userChatroom = chatroomMemberRepository.findByUserEntityAndChatroomEntity(user, chatroom).orElseThrow(IllegalArgumentException::new);
+        ChatroomMemberEntity userChatroom = chatroomMemberRepository.findByUserEntityAndChatroomEntity(user, chatroom).orElseThrow(
+                () -> new ChatroomException(USER_NOT_IN_CHATROOM, ChatExceptionResponse.res(HttpStatus.BAD_REQUEST, USER_NOT_IN_CHATROOM.getDescription()))
+        );
 
         chatroomMemberRepository.delete(userChatroom);
     }
