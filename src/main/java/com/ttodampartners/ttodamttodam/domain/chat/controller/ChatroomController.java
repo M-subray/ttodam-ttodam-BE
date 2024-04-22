@@ -21,9 +21,8 @@ public class ChatroomController {
     @PostMapping // POST /chatrooms (채팅방 생성)
     public ResponseEntity<ChatroomResponse> createChatroom(@RequestBody ChatroomCreateRequest request) {
         ChatroomResponse chatroomResponse = chatroomService.createChatroom(request);
-
-        // ChatCommonResponse 공통 응답 사용한다면 return 이렇게
-        // return ResponseEntity.ok(ChatCommonResponse.res(HttpStatus.OK, HttpStatus.OK.toString(), chatroomResponse));
+         // ChatResponse 공통 응답 사용한다면 return 이렇게
+         // return ResponseEntity.ok(ChatResponse.res(HttpStatus.OK, HttpStatus.OK.toString(), chatroomResponse));
         return ResponseEntity.ok(chatroomResponse);
     }
 
