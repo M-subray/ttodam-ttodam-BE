@@ -5,7 +5,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +28,7 @@ public class TokenProvider {
     Claims claims = Jwts.claims().setSubject(username);
     Date now = new Date();
     Date expiredDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME);
+
     return Jwts.builder()
         .setClaims(claims)
         .setIssuedAt(now)
@@ -55,28 +55,11 @@ public class TokenProvider {
     return !claims.getExpiration().before(new Date());
   }
 
-  public Claims parseClaims(String token) {
+  private Claims parseClaims(String token) {
     try {
-      return Jwts.parserBuilder().
-          setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+      return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
     } catch (ExpiredJwtException e) {
       return e.getClaims();
     }
-  }
-
-  // request 에서 token 가져오기
-  public String resolveTokenFromRequest(HttpServletRequest request) {
-    String token = request.getHeader("Authorization");
-    if (token != null && token.startsWith("Bearer ")) {
-      return token.substring(7);
-    } else {
-      return null;
-    }
-  }
-
-  // 토큰의 남은 시간 가져오기 (토큰 blacklist Redis 저장 때 duration 지정 위해 쓰임)
-  public long calculateRemainingTime(Date expiration) {
-    Date now = new Date();
-    return expiration.getTime() - now.getTime();
   }
 }
