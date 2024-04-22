@@ -1,8 +1,11 @@
 package com.ttodampartners.ttodamttodam.domain.chat.controller;
 
 import com.ttodampartners.ttodamttodam.domain.chat.dto.request.ChatMessageRequest;
+import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomStringException;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomRepository;
 import com.ttodampartners.ttodamttodam.domain.chat.service.ChatService;
+import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -23,9 +26,9 @@ public class ChatController {
     */
 
     @MessageMapping("/{chatroomId}/messages")
-    public void chat(@DestinationVariable Long chatroomId, ChatMessageRequest request) {
+    public void chat(@DestinationVariable Long chatroomId, @Valid ChatMessageRequest request) {
         // 채팅방 존재 여부 확인
-        chatroomRepository.findByChatroomId(chatroomId).orElseThrow(IllegalArgumentException::new);
+        chatroomRepository.findByChatroomId(chatroomId).orElseThrow(() -> new ChatroomStringException(ErrorCode.CHATROOM_NOT_FOUND));
 
         // 채팅 메시지 DB 저장
         chatService.saveChatMessage(chatroomId, request);

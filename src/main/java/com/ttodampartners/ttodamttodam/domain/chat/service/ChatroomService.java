@@ -110,7 +110,7 @@ public class ChatroomService {
     @Transactional
     public void leaveChatroom(Long chatroomId, Long userId) {
         UserEntity user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
-        ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(() -> new ChatroomStringException(CHATROOM_NOT_EXIST));
+        ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(() -> new ChatroomStringException(CHATROOM_NOT_FOUND));
 
         ChatroomMemberEntity userChatroom = chatroomMemberRepository.findByUserEntityAndChatroomEntity(user, chatroom).orElseThrow(
                 () -> new ChatroomException(USER_NOT_IN_CHATROOM, ChatExceptionResponse.res(HttpStatus.BAD_REQUEST, USER_NOT_IN_CHATROOM.getDescription()))
