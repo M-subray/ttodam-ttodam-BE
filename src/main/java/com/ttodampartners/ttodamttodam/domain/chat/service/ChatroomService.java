@@ -72,31 +72,14 @@ public class ChatroomService {
                 ChatroomEntity.builder().postEntity(post).chatName(post.getTitle()).userCount(2).build()
         );
 
-        // CHATROOM_MEMBER 테이블에 컬럼 추가
+        // 채팅방 소속 멤버들
         List<UserEntity> members = new ArrayList<>(
                 Arrays.asList(user, host)
         );
-        List<ChatroomMemberEntity> memberEntityList = members.stream().map(
-                        member -> chatroomMemberRepository.save(
-                                ChatroomMemberEntity.builder()
-                                        .chatroomEntity(chatroom)
-                                        .userEntity(member)
-                                        .build()))
-                .toList();
-
+        // CHATROOM_MEMBER 테이블에 컬럼 추가
+        saveChatroomMembers(members, chatroom);
         // 해당 채팅방에 소속된 유저(공구 주최자, 문의자)의 프로필 정보 리스트
-        // ChatroomMemebrEntity로 리팩토링 필요!!
-        List<ChatroomProfileResponse> profileList = new ArrayList<>();
-        profileList.add(
-                ChatroomProfileResponse.builder()
-                .userId(host.getId()).nickname(host.getNickname()).profileImage(host.getProfileImgUrl())
-                .build()
-        );
-        profileList.add(
-                ChatroomProfileResponse.builder()
-                .userId(user.getId()).nickname(user.getNickname()).profileImage(user.getProfileImgUrl())
-                .build()
-        );
+        List<ChatroomProfileResponse> profileList = getChatroomProfiles(members);
 
         return ChatroomResponse.builder()
                 .chatroomId(chatroom.getChatroomId())
@@ -138,5 +121,31 @@ public class ChatroomService {
         ChatroomMemberEntity userChatroom = chatroomMemberRepository.findByUserEntityAndChatroomEntity(user, chatroom).orElseThrow(IllegalArgumentException::new);
 
         chatroomMemberRepository.delete(userChatroom);
+    }
+
+    /*
+        채팅방에 소속된 유저들 관련 메소드
+    */
+    @Transactional
+    public void saveChatroomMembers(List<UserEntity> members, ChatroomEntity chatroom) {
+        members.stream().map(
+                member -> chatroomMemberRepository.save(
+                        ChatroomMemberEntity.builder()
+                                .chatroomEntity(chatroom)
+                                .userEntity(member)
+                                .build())
+        );
+    }
+
+    @Transactional
+    public List<ChatroomProfileResponse> getChatroomProfiles(List<UserEntity> members) {
+        return members.stream().map(
+                member -> ChatroomProfileResponse.builder()
+                        .userId(member.getId())
+                        .nickname(member.getNickname())
+                        .profileImage(member.getProfileImgUrl())
+                        .build()
+
+        ).toList();
     }
 }
