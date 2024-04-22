@@ -3,6 +3,7 @@ package com.ttodampartners.ttodamttodam.domain.chat.controller;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.request.ChatroomCreateRequest;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomListResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomResponse;
+import com.ttodampartners.ttodamttodam.domain.chat.service.ChatroomLeaveService;
 import com.ttodampartners.ttodamttodam.domain.chat.service.ChatroomService;
 import com.ttodampartners.ttodamttodam.global.dto.UserDetailsDto;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 public class ChatroomController {
     private final ChatroomService chatroomService;
+    private final ChatroomLeaveService chatroomLeaveService;
 
     @PostMapping // POST /chatrooms (채팅방 생성)
     public ResponseEntity<ChatroomResponse> createChatroom(@RequestBody ChatroomCreateRequest request, @AuthenticationPrincipal UserDetailsDto userDetailsDto) {
@@ -37,6 +39,6 @@ public class ChatroomController {
 
     @DeleteMapping("/{chatroomId}/exit") // DELETE /chatrooms/{chatroomId}/{userId}/exit (채팅방 나가기)
     public void leaveChatroom(@PathVariable Long chatroomId, @AuthenticationPrincipal UserDetailsDto userDetailsDto) {
-        chatroomService.leaveChatroom(chatroomId, userDetailsDto.getId());
+        chatroomLeaveService.leaveChatroom(chatroomId, userDetailsDto.getId());
     }
 }

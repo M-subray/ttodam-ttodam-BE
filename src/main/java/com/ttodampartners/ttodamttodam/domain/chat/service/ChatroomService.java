@@ -84,7 +84,8 @@ public class ChatroomService {
 
         return ChatroomResponse.builder()
                 .chatroomId(chatroom.getChatroomId())
-                .hostId(post.getUser().getId()).userCount(2)
+                .hostId(post.getUser().getId())
+                .userCount(2)
                 .chatName(post.getTitle())
                 .createAt(chatroom.getCreateAt())
                 .profiles(profileList)
@@ -104,19 +105,6 @@ public class ChatroomService {
         }
 
         return userChatrooms.stream().map(ChatroomMemberEntity::getChatroomInfos).toList();
-    }
-
-    // 유저가 속한 chatroomId 채팅방 나가기
-    @Transactional
-    public void leaveChatroom(Long chatroomId, Long userId) {
-        UserEntity user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
-        ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(() -> new ChatroomStringException(CHATROOM_NOT_FOUND));
-
-        ChatroomMemberEntity userChatroom = chatroomMemberRepository.findByUserEntityAndChatroomEntity(user, chatroom).orElseThrow(
-                () -> new ChatroomException(USER_NOT_IN_CHATROOM, ChatExceptionResponse.res(HttpStatus.BAD_REQUEST, USER_NOT_IN_CHATROOM.getDescription()))
-        );
-
-        chatroomMemberRepository.delete(userChatroom);
     }
 
     /*
