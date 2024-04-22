@@ -38,6 +38,14 @@ public enum ErrorCode {
   NOT_FOUND_ADDRESS("주소 정보를 찾을 수 없습니다."),
 
   /*
+  Post Exception
+   */
+  NOT_FOUND_POST("해당 게시글을 찾지 못했습니다."),
+  NOT_FOUND_PRODUCT("해당 게시글 상품을 찾지 못했습니다."),
+  POST_PERMISSION_DENIED("해당 게시글에 권한이 없습니다."),
+  POST_READ_PERMISSION_DENIED("본인의 거주지 주변 게시글만 조회가 가능합니다."),
+
+  /*
   Chatroom Exception
    */
   CHATROOM_ALREADY_EXIST("개인 채팅방이 이미 존재합니다."),
