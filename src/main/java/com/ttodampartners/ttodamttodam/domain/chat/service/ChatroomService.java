@@ -1,0 +1,147 @@
+package com.ttodampartners.ttodamttodam.domain.chat.service;
+
+import com.ttodampartners.ttodamttodam.domain.chat.dto.ChatExceptionResponse;
+import com.ttodampartners.ttodamttodam.domain.chat.dto.request.ChatroomCreateRequest;
+import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomExistedResponse;
+import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomListResponse;
+import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomResponse;
+import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomProfileResponse;
+import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomEntity;
+import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomMemberEntity;
+import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomException;
+import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomStringException;
+import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomMemberRepository;
+import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomRepository;
+import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
+import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
+import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
+import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
+import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
+import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static com.ttodampartners.ttodamttodam.global.error.ErrorCode.*;
+
+@RequiredArgsConstructor
+@Service
+public class ChatroomService {
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final ChatroomRepository chatroomRepository;
+    private final ChatroomMemberRepository chatroomMemberRepository;
+
+    // 일대일 개인 채팅방 생성 -> response body 반환
+    // 추후 게시글 상태 '모집중'인지 체크!!
+    @Transactional
+    public ChatroomResponse createChatroom(ChatroomCreateRequest request) {
+        // 문의자
+        UserEntity user = userRepository.findById(request.getUserId()).orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        PostEntity post = postRepository.findById(request.getPostId()).orElseThrow(IllegalArgumentException::new);
+        // 게시글 작성자
+        UserEntity host = userRepository.findById(post.getUser().getId()).orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        // 이미 user가 해당 post에 일대일 채팅방 생성한 적 있는지 체크
+        List<ChatroomEntity> chatroomEntities = chatroomRepository.findByPostEntity(post); // 이 post에서 생성된 채팅방 리스트
+        ErrorCode code = CHATROOM_ALREADY_EXIST;
+        if (!CollectionUtils.isEmpty(chatroomEntities)) { // 이 post에서 생성된 채팅방이 하나라도 존재한다면
+            for (ChatroomEntity chatroom: chatroomEntities) {
+                // 추후 chat_active도 체크!!
+                if (chatroomMemberRepository.existsByUserEntityAndChatroomEntity(user, chatroom)) {
+                    throw new ChatroomException(
+                            code,
+                            ChatExceptionResponse.res(
+                                    HttpStatus.BAD_REQUEST,
+                                    code.getDescription(),
+                                    ChatroomExistedResponse.builder().chatroomId(chatroom.getChatroomId()).build()
+                            )
+                    );
+                }
+            }
+        }
+
+        // CHATROOM 테이블에 컬럼 추가
+        ChatroomEntity chatroom = chatroomRepository.save(
+                ChatroomEntity.builder().postEntity(post).chatName(post.getTitle()).userCount(2).build()
+        );
+
+        // 채팅방 소속 멤버들
+        List<UserEntity> members = new ArrayList<>(
+                Arrays.asList(user, host)
+        );
+        // CHATROOM_MEMBER 테이블에 컬럼 추가
+        saveChatroomMembers(members, chatroom);
+        // 해당 채팅방에 소속된 유저(공구 주최자, 문의자)의 프로필 정보 리스트
+        List<ChatroomProfileResponse> profileList = getChatroomProfiles(members);
+
+        return ChatroomResponse.builder()
+                .chatroomId(chatroom.getChatroomId())
+                .hostId(post.getUser().getId()).userCount(2)
+                .chatName(post.getTitle())
+                .createAt(chatroom.getCreateAt())
+                .profiles(profileList)
+                .build();
+    }
+
+    // 유저가 속한 채팅방 목록 조회 -> List 반환
+    @Transactional
+    public List<ChatroomListResponse> getChatrooms(Long userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserException(NOT_FOUND_USER));
+        // 유저가 속한 CHATROOM_MEMBER 엔티티 리스트
+        List<ChatroomMemberEntity> userChatrooms = chatroomMemberRepository.findAllByUserEntity(user);
+
+        if (CollectionUtils.isEmpty(userChatrooms)) {
+            ErrorCode code = USER_CHATROOM_NOT_EXIST;
+            throw new ChatroomException(code, ChatExceptionResponse.res(HttpStatus.NOT_FOUND, code.getDescription()));
+        }
+
+        return userChatrooms.stream().map(ChatroomMemberEntity::getChatroomInfos).toList();
+    }
+
+    // 유저가 속한 chatroomId 채팅방 나가기
+    @Transactional
+    public void leaveChatroom(Long chatroomId, Long userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(IllegalArgumentException::new);
+        ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(() -> new ChatroomStringException(CHATROOM_NOT_EXIST));
+
+        ChatroomMemberEntity userChatroom = chatroomMemberRepository.findByUserEntityAndChatroomEntity(user, chatroom).orElseThrow(
+                () -> new ChatroomException(USER_NOT_IN_CHATROOM, ChatExceptionResponse.res(HttpStatus.BAD_REQUEST, USER_NOT_IN_CHATROOM.getDescription()))
+        );
+
+        chatroomMemberRepository.delete(userChatroom);
+    }
+
+    /*
+        채팅방에 소속된 유저들 관련 메소드
+    */
+    @Transactional
+    public void saveChatroomMembers(List<UserEntity> members, ChatroomEntity chatroom) {
+        members.stream().map(
+                member -> chatroomMemberRepository.save(
+                        ChatroomMemberEntity.builder()
+                                .chatroomEntity(chatroom)
+                                .userEntity(member)
+                                .build())
+        );
+    }
+
+    @Transactional
+    public List<ChatroomProfileResponse> getChatroomProfiles(List<UserEntity> members) {
+        return members.stream().map(
+                member -> ChatroomProfileResponse.builder()
+                        .userId(member.getId())
+                        .nickname(member.getNickname())
+                        .profileImage(member.getProfileImgUrl())
+                        .build()
+
+        ).toList();
+    }
+}

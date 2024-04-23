@@ -1,8 +1,7 @@
-package com.ttodampartners.ttodamttodam.domain.chat;
+package com.ttodampartners.ttodamttodam.domain.chat.service;
 
 import com.ttodampartners.ttodamttodam.domain.chat.dto.request.ChatroomCreateRequest;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomResponse;
-import com.ttodampartners.ttodamttodam.domain.chat.service.ChatroomService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class ChatroomServiceTest {
         ChatroomResponse chatroomResponse = chatroomService.createChatroom(chatroomCreateRequest);
 
         assertNotNull(chatroomResponse);
-        assertNotNull(chatroomResponse.getUserChatroomId());
+        assertNotNull(chatroomResponse.getChatroomId());
         assertNotNull(chatroomResponse.getProfiles());
     }
 }
