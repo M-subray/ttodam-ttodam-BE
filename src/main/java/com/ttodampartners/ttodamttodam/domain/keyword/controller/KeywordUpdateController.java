@@ -6,8 +6,8 @@ import com.ttodampartners.ttodamttodam.domain.keyword.service.KeywordUpdateServi
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -17,7 +17,7 @@ public class KeywordUpdateController {
 
   @PutMapping("users/keywords")
   public ResponseEntity<?> keywordUpdate(
-      @RequestBody @Valid KeywordUpdateRequestDto keywordUpdateRequestDto) {
+      @ModelAttribute @Valid KeywordUpdateRequestDto keywordUpdateRequestDto) {
 
     KeywordCreateResponseDto keywordCreateResponseDto =
         keywordUpdateService.keywordUpdate(keywordUpdateRequestDto);

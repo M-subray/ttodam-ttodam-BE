@@ -3,6 +3,7 @@ package com.ttodampartners.ttodamttodam.domain.keyword.service;
 import com.ttodampartners.ttodamttodam.domain.keyword.dto.request.KeywordCreateRequestDto;
 import com.ttodampartners.ttodamttodam.domain.keyword.dto.response.KeywordCreateResponseDto;
 import com.ttodampartners.ttodamttodam.domain.keyword.entity.KeywordEntity;
+import com.ttodampartners.ttodamttodam.domain.keyword.exception.KeywordException;
 import com.ttodampartners.ttodamttodam.domain.keyword.repository.KeywordRepository;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
@@ -22,9 +23,13 @@ public class KeywordCreateService {
 
   @Transactional
   public KeywordCreateResponseDto createKeyword (KeywordCreateRequestDto keywordName) {
+    // 로그인된 계정의 UserEntity 가져오기
+    UserEntity user = getUser();
+    // 이미 등록된 키워드인지 확인
+    existsKeyword(keywordName.getKeywordName(), user.getId());
 
     KeywordEntity keywordEntity = KeywordEntity.builder()
-        .user(getUser())
+        .user(user)
         .keywordName(keywordName.getKeywordName())
         .build();
 
@@ -42,9 +47,15 @@ public class KeywordCreateService {
         .build();
   }
 
-  private UserEntity getUser() {
+  private UserEntity getUser () {
     Authentication authentication = AuthenticationUtil.getAuthentication();
     return userRepository.findByEmail(authentication.getName()).orElseThrow(() ->
         new UserException(ErrorCode.NOT_FOUND_USER));
+  }
+
+  private void existsKeyword (String keywordName, Long userId) {
+    if (keywordRepository.existsByKeywordNameAndUserId(keywordName, userId)) {
+      throw new KeywordException(ErrorCode.ALREADY_EXISTS_KEYWORD);
+    }
   }
 }
