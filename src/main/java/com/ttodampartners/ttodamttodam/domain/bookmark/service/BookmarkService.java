@@ -1,7 +1,9 @@
 package com.ttodampartners.ttodamttodam.domain.bookmark.service;
 
+import com.ttodampartners.ttodamttodam.domain.bookmark.dto.BookmarkDto;
 import com.ttodampartners.ttodamttodam.domain.bookmark.entity.BookmarkEntity;
 import com.ttodampartners.ttodamttodam.domain.bookmark.repository.BookmarkRepository;
+import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
@@ -12,6 +14,9 @@ import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -36,6 +41,16 @@ public class BookmarkService {
                 .build();
 
         return bookmarkRepository.save(bookmark);
+    }
+
+    @Transactional
+    public List<BookmarkDto> getBookmarkList(Long userId) {
+
+        List<BookmarkEntity> bookmarkList = bookmarkRepository.findByUserId(userId);
+
+        return bookmarkList.stream()
+                .map(BookmarkDto::of)
+                .collect(Collectors.toList());
     }
 
 }
