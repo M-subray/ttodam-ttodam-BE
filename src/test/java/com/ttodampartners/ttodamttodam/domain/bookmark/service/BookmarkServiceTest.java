@@ -38,4 +38,15 @@ class BookmarkServiceTest {
 
         assertEquals(2, bookmarkList.size());
     }
+
+    @Test
+    void DELETE_BOOKMARK_TEST(){
+        Long userId = 3L;
+        Long bookmarkId = 3L;
+
+        bookmarkService.deleteBookmark(userId, bookmarkId);
+
+        assertFalse(bookmarkRepository.existsById(3L));
+
+    }
 }

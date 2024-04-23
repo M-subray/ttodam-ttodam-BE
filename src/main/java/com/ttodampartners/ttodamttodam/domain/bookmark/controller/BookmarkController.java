@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.OK;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -26,7 +28,6 @@ public class BookmarkController {
         return ResponseEntity.ok(BookmarkDto.of(bookmarkService.createBookmark(userId, postId)));
        }
 
-
     @GetMapping("/post/bookmark")
     public ResponseEntity<List<BookmarkDto>> getBookmarkList(
             @AuthenticationPrincipal UserDetailsDto userDetails
@@ -34,5 +35,16 @@ public class BookmarkController {
         Long userId = userDetails.getId();
         List<BookmarkDto> bookmarkList = bookmarkService.getBookmarkList(userId);
         return ResponseEntity.ok(bookmarkList);
+    }
+
+    @DeleteMapping("/post/bookmark/{bookmarkId}")
+    public ResponseEntity<Void> deleteBookmark(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
+            @PathVariable Long bookmarkId
+    )
+    {
+        Long userId = userDetails.getId();
+        bookmarkService.deleteBookmark(userId, bookmarkId);
+        return ResponseEntity.status(OK).build();
     }
 }

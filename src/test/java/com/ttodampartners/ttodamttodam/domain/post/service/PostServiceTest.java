@@ -132,12 +132,12 @@ class PostServiceTest {
 
     @Test
     void DELETE_POST_TEST(){
-        Long userId = 1L;
-        Long postId = 57L;
+        Long userId = 2L;
+        Long postId = 58L;
 
         postService.deletePost(userId, postId);
 
-        assertFalse(postRepository.existsById(57L));
+        assertFalse(postRepository.existsById(58L));
 
     }
 
