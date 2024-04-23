@@ -1,6 +1,5 @@
-package com.ttodampartners.ttodamttodam.domain.product.entity;
+package com.ttodampartners.ttodamttodam.domain.post.entity;
 
-import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

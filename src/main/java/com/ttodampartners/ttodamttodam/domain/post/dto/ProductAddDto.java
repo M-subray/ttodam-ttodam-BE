@@ -1,6 +1,6 @@
-package com.ttodampartners.ttodamttodam.domain.product.dto;
+package com.ttodampartners.ttodamttodam.domain.post.dto;
 
-import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
+import com.ttodampartners.ttodamttodam.domain.post.entity.ProductEntity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 

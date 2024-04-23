@@ -1,6 +1,6 @@
-package com.ttodampartners.ttodamttodam.domain.product.repository;
+package com.ttodampartners.ttodamttodam.domain.post.repository;
 
-import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
+import com.ttodampartners.ttodamttodam.domain.post.entity.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
