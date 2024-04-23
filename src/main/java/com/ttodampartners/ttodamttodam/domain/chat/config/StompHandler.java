@@ -40,6 +40,9 @@ public class StompHandler implements ChannelInterceptor {
             if (authorizationHeader == null) {
                 log.info("헤더가 없는 요청입니다.");
                 throw new IllegalArgumentException("JWT");
+            } else {
+                Long userId = Long.valueOf(tokenProvider.parseClaims(authorizationHeader).getId());
+                log.info("userId: {}", userId);
             }
 
             /*
