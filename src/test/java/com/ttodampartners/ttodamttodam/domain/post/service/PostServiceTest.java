@@ -13,10 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,8 +29,6 @@ class PostServiceTest {
     private PostService postService;
     @Autowired
     private PostRepository postRepository;
-    @Autowired
-    private UserRepository userRepository;
 
     @Test
     void CREATE_POST_TEST(){
