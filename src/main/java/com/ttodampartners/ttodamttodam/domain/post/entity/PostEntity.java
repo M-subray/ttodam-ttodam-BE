@@ -1,7 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.post.entity;
 
-import com.ttodampartners.ttodamttodam.domain.product.entity.ProductEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
+import com.ttodampartners.ttodamttodam.global.config.StringListConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -33,6 +33,7 @@ public class PostEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<ProductEntity> products = new ArrayList<>();
 
@@ -66,8 +67,10 @@ public class PostEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @Convert(converter = StringListConverter.class)
+    @Builder.Default
     @Column(name = "post_img_url", nullable = false)
-    private String postImgUrl;
+    private List<String> imgUrls = new ArrayList<>();
 
     @Column(name = "create_at", nullable = false)
     @CreatedDate

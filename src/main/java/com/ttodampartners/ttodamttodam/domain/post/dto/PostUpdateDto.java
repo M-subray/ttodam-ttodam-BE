@@ -1,10 +1,10 @@
 package com.ttodampartners.ttodamttodam.domain.post.dto;
 
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
-import com.ttodampartners.ttodamttodam.domain.product.dto.ProductUpdateDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -25,8 +25,10 @@ public class PostUpdateDto {
     private LocalDateTime deadline;
 
     private PostEntity.Category category;
+
     private String content;
-    private String postImgUrl;
+
+    private List<String> imgUrls;
 
     private List<ProductUpdateDto> products;
 }

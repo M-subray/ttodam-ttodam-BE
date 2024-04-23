@@ -18,6 +18,7 @@ public enum ErrorCode {
   SIGNIN_TIME_OUT("재로그인이 필요합니다."),
   PERMISSION_DENIED("권한이 없습니다."),
   SOCIAL_ACCOUNTS_IMPOSSIBLE("소셜 계정은 비밀번호 설정이 불가합니다."),
+  ALREADY_LOGOUT("해당 계정은 이미 로그아웃됐습니다."),
 
   /*
   Mail Exception
@@ -35,9 +36,37 @@ public enum ErrorCode {
   Coordinate Exception
    */
   API_REQUEST_FAILED("API 요청 실패"),
-  NOT_FOUND_ADDRESS("주소 정보를 찾을 수 없습니다.")
+  NOT_FOUND_ADDRESS("주소 정보를 찾을 수 없습니다."),
+
+  /*
+  Keyword Exception
+  */
+  NOT_FOUND_KEYWORD("해당 키워드는 이미 삭제되었습니다."),
+  ALREADY_EXISTS_KEYWORD("이미 등록된 키워드입니다."),
+
+  /*
+  Post Exception
+   */
+  NOT_FOUND_POST("해당 게시글을 찾지 못했습니다."),
+  NOT_FOUND_PRODUCT("해당 게시글 상품을 찾지 못했습니다."),
+  POST_PERMISSION_DENIED("해당 게시글에 권한이 없습니다."),
+  POST_READ_PERMISSION_DENIED("본인의 거주지 주변 게시글만 조회가 가능합니다."),
+
+  /*
+  Bookmark Exception
+   */
+  NOT_FOUND_BOOKMARK("해당 북마크를 찾을 수 없습니다."),
+  BOOKMARK_PERMISSION_DENIED("해당 북마크에 권한이 없습니다."),
+
+
+  /*
+  Chatroom Exception
+   */
+  CHATROOM_ALREADY_EXIST("개인 채팅방이 이미 존재합니다."),
+  USER_CHATROOM_NOT_EXIST("해당 유저가 속한 채팅방이 존재하지 않습니다."),
+  USER_NOT_IN_CHATROOM("해당 유저가 채팅방에 속해있지 않아 채팅방을 삭제할 수 없습니다."),
+  CHATROOM_NOT_EXIST("채팅방이 존재하지 않습니다.")
   ;
 
   private final String description;
-
 }

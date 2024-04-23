@@ -40,7 +40,6 @@ class SocialControllerTest {
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     assertEquals("Bearer " + TOKEN,
         responseEntity.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
-    assertEquals("로그인 성공",
-        responseEntity.getBody());
+    assertEquals("로그인 성공", responseEntity.getBody());
   }
 }

@@ -1,20 +1,23 @@
 package com.ttodampartners.ttodamttodam.domain.post.service;
 
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
+import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
+import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
+import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
-import com.ttodampartners.ttodamttodam.domain.product.dto.ProductAddDto;
-import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
+import com.ttodampartners.ttodamttodam.domain.post.dto.ProductAddDto;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
-import com.ttodampartners.ttodamttodam.domain.user.util.CoordinateFinderUtil;
+import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,29 +29,32 @@ class PostServiceTest {
     private PostService postService;
     @Autowired
     private PostRepository postRepository;
-    @Autowired
-    private UserRepository userRepository;
 
     @Test
     void CREATE_POST_TEST(){
-        // 테스트 유저
-        UserEntity testUser = userRepository.findById(1L).orElseThrow(() -> new NoSuchElementException("User not found"));
         // 테스트 상품 생성
         ProductAddDto testProduct = testProduct("test product");
         // 테스트 게시물 생성
-        PostCreateDto testPost = testPost(1L, testUser, "test title",testProduct);
-        PostEntity post = postService.createPost(1L, testPost);
+        PostCreateDto testPost = testPost("이미지 test",testProduct);
+
+        // 가짜 이미지 파일 생성
+        List<MultipartFile> imageFiles = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            byte[] imageBytes = ("test image " + (i + 1)).getBytes();
+            MultipartFile imageFile = new MockMultipartFile("imageFiles", "test-image-" + (i + 1) + ".jpg", "image/jpeg", imageBytes);
+            imageFiles.add(imageFile);
+        }
+
+        PostEntity post = postService.createPost(3L, imageFiles, testPost);
 
         Optional<PostEntity> optionalPost = postRepository.findById(post.getPostId());
         assertTrue(optionalPost.isPresent());
 
         PostEntity result = optionalPost.get();
-        assertEquals("test title", result.getTitle());
+        assertEquals("이미지 test", result.getTitle());
     }
-    private static PostCreateDto testPost(Long postId, UserEntity user, String title, ProductAddDto product){
+    private static PostCreateDto testPost(String title, ProductAddDto product){
         return PostCreateDto.builder()
-                .postId(postId)
-                .user(user)
                 .title(title)
                 .participants(2)
                 .place("서울특별시 중구 소공동 세종대로18길 2")
@@ -56,7 +62,6 @@ class PostServiceTest {
                 .status(PostEntity.Status.IN_PROGRESS)
                 .category(PostEntity.Category.DAILY)
                 .content("test content")
-                .postImgUrl("https://smartstore.naver.com/sskorea777/products/6364217638")
                 .products(Collections.singletonList(product))
                 .build();
     }
@@ -69,24 +74,70 @@ class PostServiceTest {
                 .build();
     }
 
-
     @Test
     void GET_POST_LIST_TEST(){
+        Long userId = 3L;
 
+        List<PostDto> postList = postService.getPostList(userId);
+
+        assertEquals(1, postList.size());
     }
 
     @Test
     void GET_POST_TEST(){
+        Long userId = 3L;
+        Long postId = 63L;
+
+        PostDto testPost = postService.getPost(userId, postId);
+
+        assertEquals("Updated Title", testPost.getTitle());
 
     }
 
     @Test
     void UPDATE_POST_TEST(){
+        // 게시물 가져오기
+        PostEntity testPost = postRepository.findById(63L)
+                .orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_POST));
+
+        // 새로운 이미지 업로드를 위한 가짜 이미지 파일 생성
+        List<MultipartFile> newImageFiles = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            byte[] imageBytes = ("new test image " + (i + 1)).getBytes();
+            MultipartFile imageFile = new MockMultipartFile("imageFiles", "new-test-image-" + (i + 1) + ".jpg", "image/jpeg", imageBytes);
+            newImageFiles.add(imageFile);
+        }
+
+        // 게시물 업데이트
+        PostUpdateDto postUpdateDto = new PostUpdateDto();
+        postUpdateDto.setTitle("Updated Title");
+        postUpdateDto.setParticipants(5);
+        postUpdateDto.setPlace("서울특별시 마포구 양화로 지하188");
+        List<String> imgUrls = new ArrayList<>();
+        imgUrls.add("https://ttodam-ttodam.s3.ap-northeast-2.amazonaws.com/남은 기존 이미지.jpg");
+        postUpdateDto.setImgUrls(imgUrls);
+
+        postService.updatePost(3L, 63L, newImageFiles, postUpdateDto);
+
+        // 업데이트된 게시물 확인
+        Optional<PostEntity> optionalPost = postRepository.findById(testPost.getPostId());
+        assertTrue(optionalPost.isPresent());
+
+        PostEntity updatedPost = optionalPost.get();
+        assertEquals("Updated Title", updatedPost.getTitle());
+        assertEquals(5, updatedPost.getParticipants());
+        assertEquals("서울특별시 마포구 양화로 지하188", updatedPost.getPlace());
 
     }
 
     @Test
     void DELETE_POST_TEST(){
+        Long userId = 2L;
+        Long postId = 58L;
+
+        postService.deletePost(userId, postId);
+
+        assertFalse(postRepository.existsById(58L));
 
     }
 
