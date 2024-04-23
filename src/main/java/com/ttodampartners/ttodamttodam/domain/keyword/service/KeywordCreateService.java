@@ -1,7 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.keyword.service;
 
-import com.ttodampartners.ttodamttodam.domain.keyword.dto.KeywordCreateRequestDto;
-import com.ttodampartners.ttodamttodam.domain.keyword.dto.KeywordCreateResponseDto;
+import com.ttodampartners.ttodamttodam.domain.keyword.dto.request.KeywordCreateRequestDto;
+import com.ttodampartners.ttodamttodam.domain.keyword.dto.response.KeywordCreateResponseDto;
 import com.ttodampartners.ttodamttodam.domain.keyword.entity.KeywordEntity;
 import com.ttodampartners.ttodamttodam.domain.keyword.repository.KeywordRepository;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;

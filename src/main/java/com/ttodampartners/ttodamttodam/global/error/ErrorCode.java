@@ -39,6 +39,11 @@ public enum ErrorCode {
   NOT_FOUND_ADDRESS("주소 정보를 찾을 수 없습니다."),
 
   /*
+  Keyword Exception
+  */
+  NOT_FOUND_KEYWORD("해당 키워드는 이미 삭제되었습니다."),
+
+  /*
   Post Exception
    */
   NOT_FOUND_POST("해당 게시글을 찾지 못했습니다."),
@@ -53,10 +58,7 @@ public enum ErrorCode {
   USER_CHATROOM_NOT_EXIST("해당 유저가 속한 채팅방이 존재하지 않습니다."),
   USER_NOT_IN_CHATROOM("해당 유저가 채팅방에 속해있지 않아 채팅방을 삭제할 수 없습니다."),
   CHATROOM_NOT_EXIST("채팅방이 존재하지 않습니다.")
-
   ;
 
-
   private final String description;
-
 }

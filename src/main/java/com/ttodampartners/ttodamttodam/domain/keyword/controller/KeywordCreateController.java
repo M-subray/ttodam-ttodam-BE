@@ -1,7 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.keyword.controller;
 
-import com.ttodampartners.ttodamttodam.domain.keyword.dto.KeywordCreateRequestDto;
-import com.ttodampartners.ttodamttodam.domain.keyword.dto.KeywordCreateResponseDto;
+import com.ttodampartners.ttodamttodam.domain.keyword.dto.request.KeywordCreateRequestDto;
+import com.ttodampartners.ttodamttodam.domain.keyword.dto.response.KeywordCreateResponseDto;
 import com.ttodampartners.ttodamttodam.domain.keyword.service.KeywordCreateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

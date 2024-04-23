@@ -1,4 +1,4 @@
-package com.ttodampartners.ttodamttodam.domain.keyword.dto;
+package com.ttodampartners.ttodamttodam.domain.keyword.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
