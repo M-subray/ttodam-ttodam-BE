@@ -28,8 +28,8 @@ class KeywordDeleteControllerTest {
     Long keywordId = 1L;
 
     //when
-    Mockito.doNothing().when(keywordDeleteService).keywordDelete(keywordId);
-    ResponseEntity<String> response = keywordDeleteController.keywordDelete(keywordId);
+    Mockito.doNothing().when(keywordDeleteService).deleteKeyword(keywordId);
+    ResponseEntity<String> response = keywordDeleteController.deleteKeyword(keywordId);
 
     //then
     assertEquals(response.getStatusCode(), HttpStatus.OK);

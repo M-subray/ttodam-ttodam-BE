@@ -13,8 +13,8 @@ public class KeywordDeleteController {
   private final KeywordDeleteService keywordDeleteService;
 
   @DeleteMapping("users/keywords")
-  public ResponseEntity<String> keywordDelete(@RequestParam("keywordId") Long keywordId) {
-    keywordDeleteService.keywordDelete(keywordId);
+  public ResponseEntity<String> deleteKeyword(@RequestParam("keywordId") Long keywordId) {
+    keywordDeleteService.deleteKeyword(keywordId);
 
     return ResponseEntity.ok().body("키워드가 삭제되었습니다.");
   }

@@ -22,7 +22,7 @@ public class KeywordUpdateService {
   private final UserRepository userRepository;
 
   @Transactional
-  public KeywordCreateResponseDto keywordUpdate(
+  public KeywordCreateResponseDto updateKeyword(
       KeywordUpdateRequestDto keywordUpdateRequestDto) {
     // 로그인된 계정의 UserEntity 가져오기
     UserEntity user = getUser();
