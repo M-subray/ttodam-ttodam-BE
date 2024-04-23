@@ -42,6 +42,7 @@ public enum ErrorCode {
   Keyword Exception
   */
   NOT_FOUND_KEYWORD("해당 키워드는 이미 삭제되었습니다."),
+  ALREADY_EXISTS_KEYWORD("이미 등록된 키워드입니다."),
 
   /*
   Post Exception

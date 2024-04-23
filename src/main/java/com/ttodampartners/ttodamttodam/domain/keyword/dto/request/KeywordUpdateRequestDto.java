@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class KeywordUpdateRequestDto {
-  private Long id;
+  private Long keywordId;
 
   @NotBlank(message = "등록하려는 키워드를 입력해 주세요")
   @Size(min = 1, max = 15, message = "키워드는 최소 한 글자, 최대 열다섯 글자 사이어야 합니다.")
