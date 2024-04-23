@@ -53,6 +53,13 @@ public enum ErrorCode {
   POST_READ_PERMISSION_DENIED("본인의 거주지 주변 게시글만 조회가 가능합니다."),
 
   /*
+  Bookmark Exception
+   */
+  NOT_FOUND_BOOKMARK("해당 북마크를 찾을 수 없습니다."),
+  BOOKMARK_PERMISSION_DENIED("해당 북마크에 권한이 없습니다."),
+
+
+  /*
   Chatroom Exception
    */
   CHATROOM_ALREADY_EXIST("개인 채팅방이 이미 존재합니다."),
