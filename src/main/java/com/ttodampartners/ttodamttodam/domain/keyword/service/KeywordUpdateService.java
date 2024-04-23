@@ -13,6 +13,7 @@ import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,7 @@ public class KeywordUpdateService {
   private final KeywordRepository keywordRepository;
   private final UserRepository userRepository;
 
+  @Transactional
   public KeywordCreateResponseDto keywordUpdate(
       KeywordUpdateRequestDto keywordUpdateRequestDto) {
     // 로그인된 계정의 UserEntity 가져오기
