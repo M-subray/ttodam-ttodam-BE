@@ -28,8 +28,8 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
 
     @Transactional // 채팅 메시지 저장
-    public void saveChatMessage(Long chatroomId, ChatMessageRequest request) {
-        UserEntity user = userRepository.findById(request.getSenderId()).orElseThrow(IllegalArgumentException::new);
+    public void saveChatMessage(Long chatroomId, ChatMessageRequest request, Long senderId) {
+        UserEntity user = userRepository.findById(senderId).orElseThrow(IllegalArgumentException::new);
         ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(IllegalArgumentException::new);
 
         // CHAT_MESSAGE 테이블에 insert

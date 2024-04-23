@@ -24,9 +24,9 @@ public class StompHandler implements ChannelInterceptor {
             // Stomp 메시지 객체의 헤더 접근
             StompHeaderAccessor accessor = StompHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
             // 이름이 "Authorization"인 헤더
-            String authorizationHeader = accessor.getFirstNativeHeader("Authorization");
-
+            String authorizationHeader = String.valueOf(accessor.getNativeHeader("Authorization"));
             StompCommand command = accessor.getCommand();
+            log.info("HEADER: {}, COMMAND: {}", authorizationHeader, command);
 
             // [구독 취소, 메시지 수신, 메시지 송신, 연결 완료] 시에는 JWT 유효성 검사 X
             if (command.equals(StompCommand.UNSUBSCRIBE) || command.equals(StompCommand.MESSAGE) ||
@@ -38,10 +38,13 @@ public class StompHandler implements ChannelInterceptor {
             }
 
             if (authorizationHeader == null) {
-                log.info("header가 없는 요청입니다.");
+                log.info("헤더가 없는 요청입니다.");
                 throw new IllegalArgumentException("JWT");
             }
 
+            /*
+                authorizationHeader token 분리 필요할 수도 있음.
+            */
             if (command.equals(StompCommand.SUBSCRIBE) || command.equals(StompCommand.CONNECT)) {
                 if (!tokenProvider.validateToken(authorizationHeader)) {
                     // 추후 예외 처리 필요!!
@@ -49,6 +52,7 @@ public class StompHandler implements ChannelInterceptor {
                 }
             }
         } catch (ApplicationContextException e) {
+            // 추후 예외 처리 필요!!
             log.error("JWT 에러");
             throw new IllegalArgumentException("jwt");
         }
