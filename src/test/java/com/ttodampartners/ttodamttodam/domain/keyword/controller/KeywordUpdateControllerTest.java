@@ -2,9 +2,9 @@ package com.ttodampartners.ttodamttodam.domain.keyword.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.ttodampartners.ttodamttodam.domain.keyword.dto.request.KeywordCreateRequestDto;
+import com.ttodampartners.ttodamttodam.domain.keyword.dto.request.KeywordUpdateRequestDto;
 import com.ttodampartners.ttodamttodam.domain.keyword.dto.response.KeywordCreateResponseDto;
-import com.ttodampartners.ttodamttodam.domain.keyword.service.KeywordCreateService;
+import com.ttodampartners.ttodamttodam.domain.keyword.service.KeywordUpdateService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,25 +16,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("키워드 등록 컨트롤러 테스트")
-class KeywordCreateControllerTest {
-
+@DisplayName("키워드 수정 컨트롤러 테스트")
+class KeywordUpdateControllerTest {
   @Mock
-  private KeywordCreateService keywordCreateService;
+  private KeywordUpdateService keywordUpdateService;
 
   @InjectMocks
-  private KeywordCreateController keywordCreateController;
+  private KeywordUpdateController keywordUpdateController;
 
   @Test
-  void keywordCreateTest() {
+  void keywordUpdateTest() {
     //given
+    Long id = 1L;
     String keyword = "테스트";
-    KeywordCreateRequestDto requestDto = new KeywordCreateRequestDto(keyword);
-    KeywordCreateResponseDto responseDto = new KeywordCreateResponseDto(1L, keyword);
+    KeywordUpdateRequestDto requestDto = new KeywordUpdateRequestDto(id, keyword);
+    KeywordCreateResponseDto responseDto = new KeywordCreateResponseDto(id, keyword);
 
     //when
-    Mockito.when(keywordCreateService.createKeyword(requestDto)).thenReturn(responseDto);
-    ResponseEntity<?> response = keywordCreateController.createKeyword(requestDto);
+    Mockito.when(keywordUpdateService.keywordUpdate(requestDto)).thenReturn(responseDto);
+    ResponseEntity<?> response = keywordUpdateController.keywordUpdate(requestDto);
 
     //then
     assertEquals(response.getStatusCode(), HttpStatus.OK);

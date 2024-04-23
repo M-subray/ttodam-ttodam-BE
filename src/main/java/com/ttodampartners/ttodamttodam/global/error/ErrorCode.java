@@ -36,9 +36,13 @@ public enum ErrorCode {
   Coordinate Exception
    */
   API_REQUEST_FAILED("API 요청 실패"),
-  NOT_FOUND_ADDRESS("주소 정보를 찾을 수 없습니다.")
-  ;
+  NOT_FOUND_ADDRESS("주소 정보를 찾을 수 없습니다."),
 
+    /*
+  Keyword Exception
+   */
+  NOT_FOUND_KEYWORD("해당 키워드는 이미 삭제되었습니다.")
+  ;
   private final String description;
 
 }
