@@ -33,7 +33,8 @@ public class PostCreateDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime deadline;
 
-    private PostEntity.Status status;
+    @Builder.Default
+    private PostEntity.Status status = PostEntity.Status. IN_PROGRESS;
 
     private PostEntity.Category category;
 

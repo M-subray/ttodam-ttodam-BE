@@ -44,6 +44,7 @@ public class PostService {
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
 
+
     @Transactional
     public PostEntity createPost(Long userId, List<MultipartFile> imageFiles, PostCreateDto postCreateDto) {
         UserEntity user = userRepository.findById(userId)
