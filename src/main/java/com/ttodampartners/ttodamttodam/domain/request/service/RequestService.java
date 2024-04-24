@@ -102,7 +102,7 @@ public class RequestService {
                 .filter(request -> request.getRequestStatus() == RequestEntity.RequestStatus.ACCEPT)
                 .count();
 
-        // 게시글의 희망 인원과 비교
+        // 게시글의 희망 인원과 비교, 모집상태 변경
         if (acceptedRequestsCount == post.getParticipants()) {
             post.setStatus(PostEntity.Status.COMPLETED);
 
