@@ -14,11 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DisplayName("개인 채팅방 생성 확인")
 public class ChatroomServiceTest {
 
-    /*
-        - 혹시 테스트 실패한다면 아마 PostEntity에서 상품 이미지를 List로 받아오기 때문
-        - 현재는 ChatroomException까지 잘 동작
-    */
-
     @Autowired
     private ChatroomService chatroomService;
 
