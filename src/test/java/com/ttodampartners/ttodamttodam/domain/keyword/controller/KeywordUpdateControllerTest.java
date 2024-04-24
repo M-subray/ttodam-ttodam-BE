@@ -33,8 +33,8 @@ class KeywordUpdateControllerTest {
     KeywordCreateResponseDto responseDto = new KeywordCreateResponseDto(id, keyword);
 
     //when
-    Mockito.when(keywordUpdateService.keywordUpdate(requestDto)).thenReturn(responseDto);
-    ResponseEntity<?> response = keywordUpdateController.keywordUpdate(requestDto);
+    Mockito.when(keywordUpdateService.updateKeyword(requestDto)).thenReturn(responseDto);
+    ResponseEntity<?> response = keywordUpdateController.updateKeyword(requestDto);
 
     //then
     assertEquals(response.getStatusCode(), HttpStatus.OK);

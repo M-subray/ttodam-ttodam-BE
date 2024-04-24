@@ -16,11 +16,11 @@ public class KeywordUpdateController {
   private final KeywordUpdateService keywordUpdateService;
 
   @PutMapping("users/keywords")
-  public ResponseEntity<?> keywordUpdate(
+  public ResponseEntity<?> updateKeyword(
       @ModelAttribute @Valid KeywordUpdateRequestDto keywordUpdateRequestDto) {
 
     KeywordCreateResponseDto keywordCreateResponseDto =
-        keywordUpdateService.keywordUpdate(keywordUpdateRequestDto);
+        keywordUpdateService.updateKeyword(keywordUpdateRequestDto);
 
     return ResponseEntity.ok(keywordCreateResponseDto);
   }

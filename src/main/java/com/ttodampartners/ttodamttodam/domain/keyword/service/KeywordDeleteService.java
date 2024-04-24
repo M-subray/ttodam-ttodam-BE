@@ -14,7 +14,7 @@ public class KeywordDeleteService {
   private final KeywordRepository keywordRepository;
 
   @Transactional
-  public void keywordDelete (Long keywordId) {
+  public void deleteKeyword (Long keywordId) {
     keywordRepository.delete(getKeywordEntity(keywordId));
   }
 
