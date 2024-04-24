@@ -26,8 +26,8 @@ public class ProfileUpdateService {
   기존의 값 != 새로운 값 일 때만 업데이트
    */
   @Transactional
-  public void profileUpdate (Long userId, ProfileDto profileDto) {
-    UserEntity user = getUser(userId);
+  public void profileUpdate (ProfileDto profileDto) {
+    UserEntity user = getUser();
     isMatchEmail(user);
 
     if (!profileDto.getNickname().equals(user.getNickname())) {
@@ -77,8 +77,9 @@ public class ProfileUpdateService {
     }
   }
 
-  private UserEntity getUser(Long userId) {
-    return userRepository.findById(userId).orElseThrow(() ->
+  private UserEntity getUser () {
+    Authentication authentication = AuthenticationUtil.getAuthentication();
+    return userRepository.findByEmail(authentication.getName()).orElseThrow(() ->
         new UserException(ErrorCode.NOT_FOUND_USER));
   }
 

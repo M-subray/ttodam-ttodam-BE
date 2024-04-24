@@ -14,15 +14,16 @@ import org.springframework.stereotype.Service;
 public class WithdrawService {
   private final UserRepository userRepository;
 
-  public void withdraw(Long userId) {
-    UserEntity user = getUser(userId);
+  public void withdraw() {
+    UserEntity user = getUser();
     isMatchEmail(user);
 
     userRepository.delete(user);
   }
 
-  private UserEntity getUser(Long userId) {
-    return userRepository.findById(userId).orElseThrow(() ->
+  private UserEntity getUser () {
+    Authentication authentication = AuthenticationUtil.getAuthentication();
+    return userRepository.findByEmail(authentication.getName()).orElseThrow(() ->
         new UserException(ErrorCode.NOT_FOUND_USER));
   }
 

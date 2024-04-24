@@ -15,16 +15,11 @@ import org.springframework.stereotype.Service;
 public class ProfileEditService {
   private final UserRepository userRepository;
 
-  public ProfileDto getProfile(Long userId) {
-    UserEntity user = getUser(userId);
+  public ProfileDto getProfile() {
+    UserEntity user = getUser();
     isMatchEmail(user);
 
     return ProfileDto.getProfile(user);
-  }
-
-  private UserEntity getUser(Long userId) {
-    return userRepository.findById(userId).orElseThrow(() ->
-        new UserException(ErrorCode.NOT_FOUND_USER));
   }
 
   private void isMatchEmail(UserEntity user) {
@@ -34,5 +29,11 @@ public class ProfileEditService {
     if (!authEmail.equals(user.getEmail())) {
       throw new UserException(ErrorCode.PERMISSION_DENIED);
     }
+  }
+
+  private UserEntity getUser () {
+    Authentication authentication = AuthenticationUtil.getAuthentication();
+    return userRepository.findByEmail(authentication.getName()).orElseThrow(() ->
+        new UserException(ErrorCode.NOT_FOUND_USER));
   }
 }
