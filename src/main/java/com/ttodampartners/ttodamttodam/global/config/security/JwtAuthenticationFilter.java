@@ -29,26 +29,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       FilterChain filterChain) throws ServletException, IOException {
     String token = tokenProvider.resolveTokenFromRequest(request);
 
-    if (StringUtils.hasText(token) && this.tokenProvider.validateToken(token)) {
-
-      // 토큰이 이미 로그아웃 됐는지 체크
-      if (redisUtil.keyExists(token)) {
-        log.error("에러코드: {}, 에러 메시지: {}",
-            ErrorCode.ALREADY_LOGOUT, ErrorCode.ALREADY_LOGOUT.getDescription());
-
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-        httpResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-        httpResponse.setCharacterEncoding("UTF-8");
-        httpResponse.getWriter().write(ErrorCode.ALREADY_LOGOUT.getDescription());
-        Authentication auth = this.tokenProvider.getAuthentication(token);
+    if (StringUtils.hasText(token)) {
+      if (tokenProvider.validateToken(token) && !redisUtil.keyExists(token)) {  // 유효성 검사 + 블랙리스트 확인
+        Authentication auth = tokenProvider.getAuthentication(token);
         SecurityContextHolder.getContext().setAuthentication(auth);
-
-        return;
+      } else {
+        handleInvalidToken(response,
+            // 토큰의 유효기간이 남아있다면 로그아웃 상태, 남아있지 않다면 재로그인이 필요한 상태라고 안내
+            tokenProvider.validateToken(token) ? ErrorCode.ALREADY_LOGOUT : ErrorCode.SIGNIN_TIME_OUT);
+        return;  // 에러 처리 후 리턴
       }
-      Authentication auth = this.tokenProvider.getAuthentication(token);
-      SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
     filterChain.doFilter(request, response);
+  }
+
+  private void handleInvalidToken(HttpServletResponse response, ErrorCode errorCode)
+      throws IOException {
+    log.error("에러코드: {}, 에러 메시지: {}", errorCode, errorCode.getDescription());
+    response.setStatus(HttpStatus.BAD_REQUEST.value());
+    response.setCharacterEncoding("UTF-8");
+    response.getWriter().write(errorCode.getDescription());
   }
 }

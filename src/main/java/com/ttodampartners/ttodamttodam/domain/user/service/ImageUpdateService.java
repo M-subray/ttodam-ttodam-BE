@@ -29,8 +29,8 @@ public class ImageUpdateService {
   private String bucket;
 
   @Transactional
-  public void imageUpdate(Long userId, MultipartFile newImage) {
-    UserEntity user = getUser(userId);
+  public void imageUpdate(MultipartFile newImage) {
+    UserEntity user = getUser();
     isMatchEmail(user);
 
     String oldImage = user.getProfileImgUrl();  // 기존 image 빼오기
@@ -68,8 +68,9 @@ public class ImageUpdateService {
     return parts[parts.length - 1];
   }
 
-  private UserEntity getUser(Long userId) {
-    return userRepository.findById(userId).orElseThrow(() ->
+  private UserEntity getUser () {
+    Authentication authentication = AuthenticationUtil.getAuthentication();
+    return userRepository.findByEmail(authentication.getName()).orElseThrow(() ->
         new UserException(ErrorCode.NOT_FOUND_USER));
   }
 

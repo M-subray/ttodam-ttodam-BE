@@ -1,12 +1,10 @@
 package com.ttodampartners.ttodamttodam.domain.user.controller;
 
-
 import com.ttodampartners.ttodamttodam.domain.user.service.WithdrawService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -15,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class WithdrawController {
   private final WithdrawService withdrawService;
 
-  @DeleteMapping("/users/{userId}")
-  public ResponseEntity<String> withdraw (@PathVariable Long userId) {
-    withdrawService.withdraw(userId);
+  @DeleteMapping("/users/withdraw")
+  public ResponseEntity<String> withdraw () {
+    withdrawService.withdraw();
 
-    log.info("회원탈퇴 완료, userId : {}", userId);
+    log.info("회원탈퇴 완료");
     return ResponseEntity.ok().body("탈퇴 완료");
   }
 }

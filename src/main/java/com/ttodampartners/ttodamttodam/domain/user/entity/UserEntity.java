@@ -2,6 +2,7 @@ package com.ttodampartners.ttodamttodam.domain.user.entity;
 
 import com.ttodampartners.ttodamttodam.domain.keyword.entity.KeywordEntity;
 import com.ttodampartners.ttodamttodam.domain.user.dto.model.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -59,6 +60,6 @@ public class UserEntity extends BaseEntity {
   @Column(nullable = false, columnDefinition = "DOUBLE DEFAULT 0")
   private double manners;
 
-  @OneToMany
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
   private List<KeywordEntity> keyword;
 }

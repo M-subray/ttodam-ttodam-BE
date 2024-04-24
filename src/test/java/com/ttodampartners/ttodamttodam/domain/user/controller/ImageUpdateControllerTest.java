@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
+import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.service.ImageUpdateService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,13 +30,12 @@ class ImageUpdateControllerTest {
   @Test
   void imageUpdateTest() {
     //given
-    Long userId = 1L;
     MultipartFile file = new MockMultipartFile("file", "test.jpg",
         "image/jpeg", new byte[0]);
 
     //when
-    doNothing().when(imageUpdateService).imageUpdate(any(Long.class), any(MultipartFile.class));
-    ResponseEntity<String> response = imageUpdateController.imageUpdate(userId, file);
+    doNothing().when(imageUpdateService).imageUpdate(any(MultipartFile.class));
+    ResponseEntity<String> response = imageUpdateController.imageUpdate(file);
 
     //then
     assertEquals(HttpStatus.OK, response.getStatusCode());
