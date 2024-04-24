@@ -1,6 +1,5 @@
 package com.ttodampartners.ttodamttodam.domain.request.service;
 
-import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.request.dto.RequestDto;
 import com.ttodampartners.ttodamttodam.domain.request.dto.RequestSendDto;
 import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
@@ -27,7 +26,7 @@ class RequestServiceTest {
 
         // 테스트 참여요청 생성
         RequestSendDto testRequest = testRequest();
-        RequestEntity request = requestService.sendRequest(3L,58L,testRequest);
+        RequestEntity request = requestService.sendRequest(1L,59L,testRequest);
 
         Optional<RequestEntity> optionalRequest = requestRepository.findById(request.getRequestId());
         assertTrue(optionalRequest.isPresent());
@@ -40,10 +39,10 @@ class RequestServiceTest {
 
     @Test
     void GET_REQUEST_LIST_TEST(){
+        Long userId = 3L;
+        Long postId = 59L;
 
-        Long postId = 57L;
-
-        List<RequestDto> requestList = requestService.getRequestList(postId);
+        List<RequestDto> requestList = requestService.getRequestList(userId, postId);
 
         assertEquals(2, requestList.size());
     }
@@ -51,7 +50,7 @@ class RequestServiceTest {
     @Test
     void UPDATE_REQUEST_STATUS_TEST(){
 
-        RequestEntity updateRequest = requestService.updateRequestStatus(2L,"수락");
+        RequestEntity updateRequest = requestService.updateRequestStatus(3L, 7L,"수락");
 
         Optional<RequestEntity> optionalRequest = requestRepository.findById(updateRequest.getRequestId());
         assertTrue(optionalRequest.isPresent());
@@ -62,7 +61,7 @@ class RequestServiceTest {
 
     @Test
     void DELETE_REQUEST_TEST(){
-        requestService.deleteRequest(3L);
+        requestService.deleteRequest(3L,3L);
 
         assertFalse(requestRepository.existsById(3L));
 

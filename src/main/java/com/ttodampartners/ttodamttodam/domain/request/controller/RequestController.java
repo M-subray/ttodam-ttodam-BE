@@ -28,32 +28,37 @@ public class RequestController {
             @RequestBody RequestSendDto requestSendDto
         ) {
         Long userId = userDetails.getId();
-
         return ResponseEntity.ok(RequestDto.of(requestService.sendRequest(userId,postId,requestSendDto)));
        }
 
     @GetMapping("/post/{postId}/request")
     public ResponseEntity<List<RequestDto>> getRequestList(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
             @PathVariable Long postId
     ){
-        List<RequestDto> requestList = requestService.getRequestList(postId);
+        Long userId = userDetails.getId();
+        List<RequestDto> requestList = requestService.getRequestList(userId,postId);
         return ResponseEntity.ok(requestList);
     }
 
     @PutMapping("/request/{requestId}/{requestStatus}")
     public ResponseEntity<RequestDto> updateRequestStatus(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
             @PathVariable Long requestId,
             @PathVariable String requestStatus
     ) {
-        return ResponseEntity.ok(RequestDto.of(requestService.updateRequestStatus(requestId, requestStatus)));
+        Long userId = userDetails.getId();
+        return ResponseEntity.ok(RequestDto.of(requestService.updateRequestStatus(userId, requestId, requestStatus)));
     }
 
     @DeleteMapping("/request/{requestId}")
     public ResponseEntity<Void> deleteRequest(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
             @PathVariable Long requestId
     )
     {
-        requestService.deleteRequest(requestId);
+        Long userId = userDetails.getId();
+        requestService.deleteRequest(userId, requestId);
         return ResponseEntity.status(OK).build();
     }
 
