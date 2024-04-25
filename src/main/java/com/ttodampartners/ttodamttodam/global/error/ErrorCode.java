@@ -70,6 +70,7 @@ public enum ErrorCode {
   Chatroom Exception
    */
   CHATROOM_ALREADY_EXIST("개인 채팅방이 이미 존재합니다."),
+  GROUP_CHATROOM_ALREADY_EXIST("단체 채팅방이 이미 존재합니다."),
   USER_CHATROOM_NOT_EXIST("해당 유저가 속한 채팅방이 존재하지 않습니다."),
   USER_NOT_IN_CHATROOM("해당 유저가 채팅방에 속해있지 않아 채팅방을 나갈 수 없습니다."),
   CHATROOM_NOT_FOUND("채팅방이 존재하지 않습니다."),

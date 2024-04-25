@@ -1,6 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.request.service;
 
 import com.ttodampartners.ttodamttodam.domain.bookmark.exception.BookmarkException;
+import com.ttodampartners.ttodamttodam.domain.chat.dto.event.GroupChatCreateEvent;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
@@ -15,6 +16,7 @@ import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,6 +31,9 @@ public class RequestService {
     private final RequestRepository requestRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+
+    // 단체 채팅방 생성을 위한 event publisher
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public RequestEntity sendRequest(Long requestUserId, Long postId, RequestSendDto requestSendDto){
@@ -112,6 +117,16 @@ public class RequestService {
                     request.setRequestStatus(RequestEntity.RequestStatus.REFUSE);
                 }
             }
+
+            /*
+                단체 채팅방 생성을 위한 event publish
+             */
+            eventPublisher.publishEvent(
+                    GroupChatCreateEvent.builder()
+                    .post(post)
+                    .requestEntities(requests.stream()
+                    .filter(request -> request.getRequestStatus() == RequestEntity.RequestStatus.ACCEPT).toList()).build()
+            );
         }
     }
 
