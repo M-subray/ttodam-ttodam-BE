@@ -4,7 +4,6 @@ import com.ttodampartners.ttodamttodam.domain.chat.dto.ChatExceptionResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.event.GroupChatCreateEvent;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.request.ChatroomCreateRequest;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomExistedResponse;
-import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomListResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomProfileResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomEntity;
@@ -136,22 +135,6 @@ public class ChatroomService {
 
         List<ChatroomMemberEntity> chatroomMemberEntities = saveChatroomMembers(members, chatroom);
     }
-
-    // 유저가 속한 채팅방 목록 조회 -> List 반환
-    @Transactional
-    public List<ChatroomListResponse> getChatrooms(Long userId) {
-        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserException(NOT_FOUND_USER));
-        // 유저가 속한 CHATROOM_MEMBER 엔티티 리스트
-        List<ChatroomMemberEntity> userChatrooms = chatroomMemberRepository.findAllByUserEntity(user);
-
-        if (CollectionUtils.isEmpty(userChatrooms)) {
-            ErrorCode code = USER_CHATROOM_NOT_EXIST;
-            throw new ChatroomException(code, ChatExceptionResponse.res(HttpStatus.NOT_FOUND, code.getDescription()));
-        }
-
-        return userChatrooms.stream().map(ChatroomMemberEntity::getChatroomInfos).toList();
-    }
-
 
     /*
         채팅방에 소속된 유저들 관련 메소드
