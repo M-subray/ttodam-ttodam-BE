@@ -112,6 +112,29 @@ public class PostService {
     }
 
     @Transactional
+    public List<PostDto> getCategoryPostList(Long userId, String category) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        String userRoadName = roadName(user.getLocation());
+
+        PostEntity.Category currentCategory = PostEntity.Category.fromLabel(category);
+        List<PostEntity> postList = postRepository.findByCategory(currentCategory);
+
+        // 유저와 동일한 도로명을 가진 게시글 필터링
+        List<PostEntity> filteredPosts = postList.stream()
+                .filter(post -> {
+                    String postRoadName = roadName(post.getPlace());
+                    return postRoadName.equals(userRoadName);
+                })
+                .collect(Collectors.toList());
+
+        return filteredPosts.stream()
+                .map(PostDto::of)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
     public List<PostDto> getUsersPostList(Long userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));

@@ -96,6 +96,14 @@ public class PostEntity {
 
             this.label = label;
         }
+        public static Category fromLabel(String label) {
+            for (Category category : Category.values()) {
+                if (category.label.equals(label)) {
+                    return category;
+                }
+            }
+            throw new IllegalArgumentException("Unknown request status label: " + label);
+        }
     }
 
     @Getter

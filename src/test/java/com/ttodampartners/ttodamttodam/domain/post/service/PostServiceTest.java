@@ -84,6 +84,17 @@ class PostServiceTest {
     }
 
     @Test
+    void GET_CATEGORY_POST_LIST_TEST(){
+        Long userId = 1L;
+        String category = "생활용품";
+
+        List<PostDto> postList = postService.getCategoryPostList(userId,category);
+
+        assertEquals(3, postList.size());
+    }
+
+
+    @Test
     void GET_USERS_POST_LIST_TEST(){
         Long userId = 3L;
 

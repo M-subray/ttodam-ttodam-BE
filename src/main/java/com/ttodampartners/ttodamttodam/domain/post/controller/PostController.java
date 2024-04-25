@@ -39,6 +39,16 @@ public class PostController {
         return ResponseEntity.ok(postList);
     }
 
+    @GetMapping("/post/category/{category}")
+    public ResponseEntity<List<PostDto>> getCategoryPostList(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
+            @PathVariable String category
+    ){
+        Long userId = userDetails.getId();
+        List<PostDto> postList = postService.getCategoryPostList(userId,category);
+        return ResponseEntity.ok(postList);
+    }
+
     // 자신이 작성한 게시글 목록 조회
     @GetMapping("/users/post/list")
     public ResponseEntity<List<PostDto>> getUsersPostList(
