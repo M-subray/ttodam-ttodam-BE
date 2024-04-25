@@ -33,7 +33,7 @@ public class PostController {
        }
 
 
-    @GetMapping("/post")
+    @GetMapping("/post/list")
     public ResponseEntity<List<PostDto>> getPostList(
             @AuthenticationPrincipal UserDetailsDto userDetails
     ){

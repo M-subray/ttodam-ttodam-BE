@@ -45,7 +45,7 @@ class PostServiceTest {
             imageFiles.add(imageFile);
         }
 
-        PostEntity post = postService.createPost(3L, imageFiles, testPost);
+        PostEntity post = postService.createPost(5L, imageFiles, testPost);
 
         Optional<PostEntity> optionalPost = postRepository.findById(post.getPostId());
         assertTrue(optionalPost.isPresent());
@@ -80,7 +80,7 @@ class PostServiceTest {
 
         List<PostDto> postList = postService.getPostList(userId);
 
-        assertEquals(1, postList.size());
+        assertEquals(2, postList.size());
     }
 
     @Test
