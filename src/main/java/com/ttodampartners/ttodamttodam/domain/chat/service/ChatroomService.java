@@ -108,7 +108,18 @@ public class ChatroomService {
         PostEntity post = event.getPost();
         List<RequestEntity> requestEntities = event.getRequestEntities();
 
+        // CHATROOM 테이블에 컬럼 추가
+        ChatroomEntity chatroom = chatroomRepository.save(
+                ChatroomEntity.builder().postEntity(post).chatName(post.getTitle()).userCount(requestEntities.size() + 1).build()
+        );
 
+        List<UserEntity> members = new ArrayList<>();
+        members.add(post.getUser());
+        requestEntities.stream().map(
+                request -> members.add(request.getRequestUser())
+        );
+
+        saveChatroomMembers(members, chatroom);
     }
 
     // 유저가 속한 채팅방 목록 조회 -> List 반환
