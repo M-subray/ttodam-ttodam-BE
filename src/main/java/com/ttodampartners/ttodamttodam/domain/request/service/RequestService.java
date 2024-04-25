@@ -111,17 +111,22 @@ public class RequestService {
         if (acceptedRequestsCount == post.getParticipants()) {
             post.setStatus(PostEntity.Status.COMPLETED);
 
-            /*
-                단체 채팅방 생성을 위한 event publish
-             */
-            eventPublisher.publishEvent(GroupChatCreateEvent.builder().post(post).requestEntities(requests).build());
-
             // 남은 모든 요청들의 상태를 거절로 변경
             for (RequestEntity request : requests) {
                 if (request.getRequestStatus() == RequestEntity.RequestStatus.WAIT) {
                     request.setRequestStatus(RequestEntity.RequestStatus.REFUSE);
                 }
             }
+
+            /*
+                단체 채팅방 생성을 위한 event publish
+             */
+            eventPublisher.publishEvent(
+                    GroupChatCreateEvent.builder()
+                    .post(post)
+                    .requestEntities(requests.stream()
+                    .filter(request -> request.getRequestStatus() == RequestEntity.RequestStatus.ACCEPT).toList()).build()
+            );
         }
     }
 

@@ -99,7 +99,7 @@ public class ChatroomService {
     }
 
     // 단체 채팅방 생성
-    @Async // 이벤트 메서드를 새로운 스레드에서 실행
+    @Async // 이벤트 메소드를 새로운 스레드에서 실행
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void createGroupChat(GroupChatCreateEvent event) {
@@ -107,6 +107,12 @@ public class ChatroomService {
 
         PostEntity post = event.getPost();
         List<RequestEntity> requestEntities = event.getRequestEntities();
+
+        // 단체 채팅방 존재 여부 확인
+        ChatroomEntity alreadyExist = chatroomRepository.findByPostEntityAndUserCountGreaterThan2(post);
+        if (alreadyExist != null) {
+            throw new ChatroomException(GROUP_CHATROOM_ALREADY_EXIST, ChatExceptionResponse.res(HttpStatus.BAD_REQUEST, GROUP_CHATROOM_ALREADY_EXIST.getDescription(), ChatroomExistedResponse.builder().chatroomId(alreadyExist.getChatroomId()).build()));
+        }
 
         // CHATROOM 테이블에 컬럼 추가
         ChatroomEntity chatroom = chatroomRepository.save(
@@ -118,6 +124,10 @@ public class ChatroomService {
         requestEntities.stream().map(
                 request -> members.add(request.getRequestUser())
         );
+
+        if (chatroom.getUserCount() != members.size()) {
+            throw new IllegalArgumentException("단체 채팅방 인원 수가 맞지 않습니다.");
+        }
 
         saveChatroomMembers(members, chatroom);
     }
