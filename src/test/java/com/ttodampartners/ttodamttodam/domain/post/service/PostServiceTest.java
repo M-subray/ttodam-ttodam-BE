@@ -1,12 +1,9 @@
 package com.ttodampartners.ttodamttodam.domain.post.service;
 
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
+import com.ttodampartners.ttodamttodam.domain.post.dto.*;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
-import com.ttodampartners.ttodamttodam.domain.post.dto.ProductAddDto;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
@@ -105,13 +102,13 @@ class PostServiceTest {
 
     @Test
     void GET_POST_TEST(){
-        Long userId = 3L;
+        Long userId = 5L;
         Long postId = 63L;
 
-        PostDto testPost = postService.getPost(userId, postId);
+        PostDetailDto testPost = postService.getPost(userId, postId);
 
-        assertEquals("Updated Title", testPost.getTitle());
-
+        assertEquals("NONE", testPost.getLoginUserRequestStatus());
+        assertTrue(testPost.isBookmarked());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.post.controller;
 
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
+import com.ttodampartners.ttodamttodam.domain.post.dto.PostDetailDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.post.service.PostService;
@@ -60,13 +61,13 @@ public class PostController {
     }
 
     @GetMapping("/post/{postId}")
-    public ResponseEntity<PostDto> getPost(
+    public ResponseEntity<PostDetailDto> getPost(
             @AuthenticationPrincipal UserDetailsDto userDetails,
             @PathVariable Long postId
     )
     {
         Long userId = userDetails.getId();
-        PostDto postDto = postService.getPost(userId, postId);
+        PostDetailDto postDto = postService.getPost(userId, postId);
         return ResponseEntity.status(OK).body(postDto);
     }
 
