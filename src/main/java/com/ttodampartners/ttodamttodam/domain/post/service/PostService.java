@@ -2,6 +2,7 @@ package com.ttodampartners.ttodamttodam.domain.post.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.ttodampartners.ttodamttodam.domain.bookmark.service.BookmarkService;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
@@ -13,13 +14,11 @@ import com.ttodampartners.ttodamttodam.domain.post.entity.ProductEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
-import com.ttodampartners.ttodamttodam.domain.user.util.AuthenticationUtil;
 import com.ttodampartners.ttodamttodam.domain.user.util.CoordinateFinderUtil;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -38,11 +37,13 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final BookmarkService bookmarkService;
     private final CoordinateFinderUtil coordinateFinderUtil;
     private final AmazonS3 amazonS3;
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
+
 
     @Transactional
     public PostEntity createPost(Long userId, List<MultipartFile> imageFiles, PostCreateDto postCreateDto) {
@@ -221,6 +222,10 @@ public class PostService {
         for (String deleteImageUrl : post.getImgUrls()) {
             deleteImageFileFromS3(deleteImageUrl);
         }
+
+        // 게시글 관련 북마크 삭제
+        bookmarkService.deleteBookmarksByPost(postId);
+
         postRepository.delete(post);
     }
 

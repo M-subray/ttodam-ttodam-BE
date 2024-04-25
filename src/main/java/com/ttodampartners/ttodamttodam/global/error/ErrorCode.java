@@ -39,12 +39,32 @@ public enum ErrorCode {
   NOT_FOUND_ADDRESS("주소 정보를 찾을 수 없습니다."),
 
   /*
+  Keyword Exception
+  */
+  NOT_FOUND_KEYWORD("해당 키워드는 이미 삭제되었습니다."),
+  ALREADY_EXISTS_KEYWORD("이미 등록된 키워드입니다."),
+
+  /*
   Post Exception
    */
   NOT_FOUND_POST("해당 게시글을 찾지 못했습니다."),
   NOT_FOUND_PRODUCT("해당 게시글 상품을 찾지 못했습니다."),
   POST_PERMISSION_DENIED("해당 게시글에 권한이 없습니다."),
   POST_READ_PERMISSION_DENIED("본인의 거주지 주변 게시글만 조회가 가능합니다."),
+
+  /*
+  Bookmark Exception
+   */
+  NOT_FOUND_BOOKMARK("해당 북마크를 찾을 수 없습니다."),
+  BOOKMARK_PERMISSION_DENIED("해당 북마크에 권한이 없습니다."),
+
+  /*
+  Request Exception
+   */
+  NOT_FOUND_REQUEST("해당 요청은 찾을 수 없습니다."),
+  POST_STATUS_COMPLETED("모집이 완료된 게시글입니다."),
+  POST_STATUS_FAILED("모집이 종료된 게시글입니다."),
+  REQUEST_PERMISSION_DENIED("해당 참여요청에 권한이 없습니다."),
 
   /*
   Chatroom Exception

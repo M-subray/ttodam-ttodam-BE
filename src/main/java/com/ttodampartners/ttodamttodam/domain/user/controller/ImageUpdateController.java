@@ -16,13 +16,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageUpdateController {
   private final ImageUpdateService imageUpdateService;
 
-  @PostMapping("users/{userId}/profiles/img-update")
+  @PostMapping("users/profiles/img-update")
   public ResponseEntity<String> imageUpdate (
-      @PathVariable Long userId,
       @RequestParam("file")MultipartFile file) {
 
-    imageUpdateService.imageUpdate(userId, file);
-    log.info("프로필 사진 수정 완료, userId : {}", userId);
+    imageUpdateService.imageUpdate(file);
+    log.info("프로필 사진 수정 완료");
 
     return ResponseEntity.ok().body("정상적으로 수정되었습니다.");
   }

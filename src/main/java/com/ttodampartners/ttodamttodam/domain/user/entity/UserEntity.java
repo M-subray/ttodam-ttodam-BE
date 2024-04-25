@@ -1,12 +1,16 @@
 package com.ttodampartners.ttodamttodam.domain.user.entity;
 
+import com.ttodampartners.ttodamttodam.domain.keyword.entity.KeywordEntity;
 import com.ttodampartners.ttodamttodam.domain.user.dto.model.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +24,7 @@ import org.hibernate.envers.AuditOverride;
 @NoArgsConstructor
 @AllArgsConstructor
 @AuditOverride(forClass = BaseEntity.class)
-@Entity(name = "User")
+@Entity(name = "user")
 public class UserEntity extends BaseEntity {
 
   @Id
@@ -55,4 +59,7 @@ public class UserEntity extends BaseEntity {
 
   @Column(nullable = false, columnDefinition = "DOUBLE DEFAULT 0")
   private double manners;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+  private List<KeywordEntity> keyword;
 }
