@@ -84,7 +84,12 @@ public class ChatroomService {
                 Arrays.asList(user, host)
         );
         // CHATROOM_MEMBER 테이블에 컬럼 추가
-        saveChatroomMembers(members, chatroom);
+        List<ChatroomMemberEntity> chatroomMemberEntities = saveChatroomMembers(members, chatroom);
+        if (chatroomMemberEntities.isEmpty()) {
+            log.info("save 실패");
+        } else {
+            log.info("save 성공 -> row 개수: {}", chatroomMemberEntities.size());
+        }
         // 해당 채팅방에 소속된 유저(공구 주최자, 문의자)의 프로필 정보 리스트
         List<ChatroomProfileResponse> profileList = getChatroomProfiles(members);
 
@@ -129,7 +134,7 @@ public class ChatroomService {
             throw new IllegalArgumentException("단체 채팅방 인원 수가 맞지 않습니다.");
         }
 
-        saveChatroomMembers(members, chatroom);
+        List<ChatroomMemberEntity> chatroomMemberEntities = saveChatroomMembers(members, chatroom);
     }
 
     // 유저가 속한 채팅방 목록 조회 -> List 반환
@@ -152,14 +157,15 @@ public class ChatroomService {
         채팅방에 소속된 유저들 관련 메소드
     */
     @Transactional
-    public void saveChatroomMembers(List<UserEntity> members, ChatroomEntity chatroom) {
-        members.stream().map(
+    public List<ChatroomMemberEntity> saveChatroomMembers(List<UserEntity> members, ChatroomEntity chatroom) {
+        return members.stream().map(
                 member -> chatroomMemberRepository.save(
                         ChatroomMemberEntity.builder()
                                 .chatroomEntity(chatroom)
                                 .userEntity(member)
-                                .build())
-        );
+                                .build()
+                )
+        ).toList();
     }
 
     @Transactional

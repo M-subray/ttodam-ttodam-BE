@@ -26,8 +26,8 @@ public class ChatroomController {
     public ResponseEntity<ChatroomResponse> createChatroom(@RequestBody ChatroomCreateRequest request, @AuthenticationPrincipal UserDetailsDto userDetailsDto) {
         Long userId = userDetailsDto.getId();
         ChatroomResponse chatroomResponse = chatroomService.createChatroom(request, userId);
-         // ChatResponse 공통 응답 사용한다면 return 이렇게
-         // return ResponseEntity.ok(ChatResponse.res(HttpStatus.OK, HttpStatus.OK.toString(), chatroomResponse));
+
+        log.info("채팅방 생성 성공 -> chatroomId: {}, userCount: {}", chatroomResponse.getChatroomId(), chatroomResponse.getUserCount());
         return ResponseEntity.ok(chatroomResponse);
     }
 
