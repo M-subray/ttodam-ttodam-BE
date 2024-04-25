@@ -5,6 +5,7 @@ import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomListResp
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.service.ChatroomLeaveService;
 import com.ttodampartners.ttodamttodam.domain.chat.service.ChatroomService;
+import com.ttodampartners.ttodamttodam.domain.chat.service.ChatroomCreateService;
 import com.ttodampartners.ttodamttodam.global.dto.UserDetailsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +21,13 @@ import java.util.List;
 @RestController
 public class ChatroomController {
     private final ChatroomService chatroomService;
+    private final ChatroomCreateService chatroomCreateService;
     private final ChatroomLeaveService chatroomLeaveService;
 
     @PostMapping // POST /chatrooms (채팅방 생성)
     public ResponseEntity<ChatroomResponse> createChatroom(@RequestBody ChatroomCreateRequest request, @AuthenticationPrincipal UserDetailsDto userDetailsDto) {
         Long userId = userDetailsDto.getId();
-        ChatroomResponse chatroomResponse = chatroomService.createChatroom(request, userId);
+        ChatroomResponse chatroomResponse = chatroomCreateService.createChatroom(request, userId);
 
         log.info("채팅방 생성 성공 -> chatroomId: {}, userCount: {}", chatroomResponse.getChatroomId(), chatroomResponse.getUserCount());
         return ResponseEntity.ok(chatroomResponse);

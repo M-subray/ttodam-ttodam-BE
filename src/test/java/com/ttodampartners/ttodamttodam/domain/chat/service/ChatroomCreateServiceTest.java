@@ -12,17 +12,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @DisplayName("개인 채팅방 생성 확인")
-public class ChatroomServiceTest {
+public class ChatroomCreateServiceTest {
 
     @Autowired
-    private ChatroomService chatroomService;
+    private ChatroomCreateService chatroomCreateService;
 
     @Test
     @DisplayName("개인 채팅방 생성 완료")
     void CREATE_CHATROOM_TEST() {
         ChatroomCreateRequest chatroomCreateRequest = ChatroomCreateRequest.builder().postId(2L).build();
 
-        ChatroomResponse chatroomResponse = chatroomService.createChatroom(chatroomCreateRequest, 3L);
+        ChatroomResponse chatroomResponse = chatroomCreateService.createChatroom(chatroomCreateRequest, 3L);
 
         assertNotNull(chatroomResponse);
         assertNotNull(chatroomResponse.getChatroomId());
