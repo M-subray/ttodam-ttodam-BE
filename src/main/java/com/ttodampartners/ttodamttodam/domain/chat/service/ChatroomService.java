@@ -1,6 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.chat.service;
 
 import com.ttodampartners.ttodamttodam.domain.chat.dto.ChatExceptionResponse;
+import com.ttodampartners.ttodamttodam.domain.chat.dto.event.GroupChatCreateEvent;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.request.ChatroomCreateRequest;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomExistedResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomListResponse;
@@ -9,19 +10,24 @@ import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomProfileR
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomMemberEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomException;
-import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomStringException;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomMemberRepository;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomRepository;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
+import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -30,6 +36,7 @@ import java.util.List;
 
 import static com.ttodampartners.ttodamttodam.global.error.ErrorCode.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ChatroomService {
@@ -38,7 +45,6 @@ public class ChatroomService {
     private final ChatroomRepository chatroomRepository;
     private final ChatroomMemberRepository chatroomMemberRepository;
 
-    // 일대일 개인 채팅방 생성 -> response body 반환
     // 추후 게시글 상태 '모집중'인지 체크!!
     @Transactional
     public ChatroomResponse createChatroom(ChatroomCreateRequest request, Long userId) {
@@ -92,6 +98,40 @@ public class ChatroomService {
                 .build();
     }
 
+    // 단체 채팅방 생성
+    @Async // 이벤트 메소드를 새로운 스레드에서 실행
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void createGroupChat(GroupChatCreateEvent event) {
+        log.info("TransactionPhase.AFTER_COMMIT ---> {}", event);
+
+        PostEntity post = event.getPost();
+        List<RequestEntity> requestEntities = event.getRequestEntities();
+
+        // 단체 채팅방 존재 여부 확인
+        ChatroomEntity alreadyExist = chatroomRepository.findByPostEntityAndUserCountGreaterThan2(post);
+        if (alreadyExist != null) {
+            throw new ChatroomException(GROUP_CHATROOM_ALREADY_EXIST, ChatExceptionResponse.res(HttpStatus.BAD_REQUEST, GROUP_CHATROOM_ALREADY_EXIST.getDescription(), ChatroomExistedResponse.builder().chatroomId(alreadyExist.getChatroomId()).build()));
+        }
+
+        // CHATROOM 테이블에 컬럼 추가
+        ChatroomEntity chatroom = chatroomRepository.save(
+                ChatroomEntity.builder().postEntity(post).chatName(post.getTitle()).userCount(requestEntities.size() + 1).build()
+        );
+
+        List<UserEntity> members = new ArrayList<>();
+        members.add(post.getUser());
+        requestEntities.stream().map(
+                request -> members.add(request.getRequestUser())
+        );
+
+        if (chatroom.getUserCount() != members.size()) {
+            throw new IllegalArgumentException("단체 채팅방 인원 수가 맞지 않습니다.");
+        }
+
+        saveChatroomMembers(members, chatroom);
+    }
+
     // 유저가 속한 채팅방 목록 조회 -> List 반환
     @Transactional
     public List<ChatroomListResponse> getChatrooms(Long userId) {
@@ -106,6 +146,7 @@ public class ChatroomService {
 
         return userChatrooms.stream().map(ChatroomMemberEntity::getChatroomInfos).toList();
     }
+
 
     /*
         채팅방에 소속된 유저들 관련 메소드
