@@ -8,8 +8,6 @@ import java.util.List;
 
 @Getter
 @Builder
-@RequiredArgsConstructor
-@AllArgsConstructor
 public class GroupChatCreateEvent {
     private final PostEntity post;
     private final List<RequestEntity> requestEntities;
