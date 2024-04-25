@@ -84,6 +84,15 @@ class PostServiceTest {
     }
 
     @Test
+    void GET_USERS_POST_LIST_TEST(){
+        Long userId = 3L;
+
+        List<PostDto> userPostList = postService.getUsersPostList(userId);
+
+        assertEquals(3, userPostList.size());
+    }
+
+    @Test
     void GET_POST_TEST(){
         Long userId = 3L;
         Long postId = 63L;

@@ -112,6 +112,18 @@ public class PostService {
     }
 
     @Transactional
+    public List<PostDto> getUsersPostList(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        List<PostEntity> usersPostList = postRepository.findByUserId(userId);
+
+        return usersPostList.stream()
+                .map(PostDto::of)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
     public PostDto getPost(Long userId, Long postId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));

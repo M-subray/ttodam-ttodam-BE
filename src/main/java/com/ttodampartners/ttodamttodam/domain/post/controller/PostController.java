@@ -15,8 +15,6 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
-
-
 @RequiredArgsConstructor
 @RestController
 public class PostController {
@@ -32,13 +30,22 @@ public class PostController {
         return ResponseEntity.ok(PostDto.of(postService.createPost(userId, imageFiles, postCreateDto)));
        }
 
-
     @GetMapping("/post/list")
     public ResponseEntity<List<PostDto>> getPostList(
             @AuthenticationPrincipal UserDetailsDto userDetails
     ){
         Long userId = userDetails.getId();
         List<PostDto> postList = postService.getPostList(userId);
+        return ResponseEntity.ok(postList);
+    }
+
+    // 자신이 작성한 게시글 목록 조회
+    @GetMapping("/users/post/list")
+    public ResponseEntity<List<PostDto>> getUsersPostList(
+            @AuthenticationPrincipal UserDetailsDto userDetails
+    ){
+        Long userId = userDetails.getId();
+        List<PostDto> postList = postService.getUsersPostList(userId);
         return ResponseEntity.ok(postList);
     }
 
