@@ -81,7 +81,12 @@ public enum ErrorCode {
     Stomp Exception
    */
   INVALID_MESSAGE("유효하지 않은 메시지입니다."),
-  HEADER_NOT_FOUND("유효한 헤더가 존재하지 않습니다.")
+  HEADER_NOT_FOUND("유효한 헤더가 존재하지 않습니다."),
+
+  /*
+  Notification Exception
+   */
+  SSE_SEND_FAILED("알림 전송을 실패했습니다.")
   ;
 
 
