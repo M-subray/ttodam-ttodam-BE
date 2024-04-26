@@ -56,8 +56,17 @@ public class PostController {
             @AuthenticationPrincipal UserDetailsDto userDetails
     ){
         Long userId = userDetails.getId();
-        List<PostDto> postList = postService.getUsersPostList(userId);
-        return ResponseEntity.ok(postList);
+        List<PostDto> userPostList = postService.getUsersPostList(userId);
+        return ResponseEntity.ok(userPostList);
+    }
+
+    //게시글 검색
+    @GetMapping("/post/search")
+    public ResponseEntity<List<PostDto>> searchPostList(
+            @RequestParam(required = false) String search
+    ){
+        List<PostDto> searchPostList = postService.searchPostList(search);
+        return ResponseEntity.ok(searchPostList);
     }
 
     @GetMapping("/post/{postId}")

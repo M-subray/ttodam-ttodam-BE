@@ -101,6 +101,16 @@ class PostServiceTest {
     }
 
     @Test
+    void SEARCH_POST_LIST_TEST() {
+
+        String search = "물티슈";
+
+        List<PostDto> searchPostList = postService.searchPostList(search);
+
+        assertEquals(3, searchPostList.size());
+    }
+
+    @Test
     void GET_POST_TEST(){
         Long userId = 5L;
         Long postId = 63L;
