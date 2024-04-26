@@ -16,7 +16,4 @@ public interface RequestRepository extends JpaRepository<RequestEntity, Long> {
     List<RequestEntity> findAllByPost_postId(Long postId);
     List<RequestEntity> findAllByRequestUser_Id(Long RequestUserId);
 
-    @Query("SELECT DISTINCT r.requestUser FROM request r " +
-            "WHERE r.post.postId = :postId AND r.requestStatus = 'ACCEPT'")
-    List<UserEntity> findAcceptedRequestUsersByPostId(Long postId);
 }
