@@ -125,6 +125,7 @@ public class PostEntity {
 
     @Getter
     public enum PurchaseStatus {
+        PREPARING("진행전"),
         PROCEEDING("진행중"),
         SUCCESS("성공"),
         FAILURE("실패");

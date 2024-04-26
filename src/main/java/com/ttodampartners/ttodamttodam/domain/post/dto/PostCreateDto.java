@@ -35,7 +35,7 @@ public class PostCreateDto {
     private PostEntity.Status status = PostEntity.Status.IN_PROGRESS;
 
     @Builder.Default
-    private PostEntity.PurchaseStatus purchaseStatus = PostEntity.PurchaseStatus.PROCEEDING;
+    private PostEntity.PurchaseStatus purchaseStatus = PostEntity.PurchaseStatus.PREPARING;
 
     private PostEntity.Category category;
 
