@@ -1,5 +1,7 @@
 package com.ttodampartners.ttodamttodam.global.error;
 
+import com.ttodampartners.ttodamttodam.domain.chat.dto.response.StompExceptionResponse;
+import com.ttodampartners.ttodamttodam.domain.chat.exception.StompException;
 import com.ttodampartners.ttodamttodam.domain.keyword.exception.KeywordException;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.ChatExceptionResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomException;
@@ -62,6 +64,15 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> ChatroomStringExceptionHandler(ChatroomStringException e) {
     log.error("에러코드: {}, 에러 메시지: {}", e.getErrorCode(), e.getErrorMessage());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getErrorMessage());
+  }
+
+  /*
+    Stomp 관련 Exception 추가
+  */
+  @ExceptionHandler(StompException.class)
+  public ResponseEntity<ChatExceptionResponse> StompExceptionHandler(StompException e) {
+    log.error("에러코드: {}, 에러 메시지: {}", e.getErrorCode(), e.getErrorMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getResponse());
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
