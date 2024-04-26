@@ -8,6 +8,8 @@ import com.ttodampartners.ttodamttodam.domain.notification.exception.Notificatio
 import com.ttodampartners.ttodamttodam.domain.notification.repository.NotificationRepository;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.ProductAddDto;
+import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
+import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,6 +94,32 @@ public class NotificationService {
         .message(message)
         .type(Type.KEYWORD)
         .build());
+  }
+
+  public void sendNotificationForGroupChat (PostEntity post, List<UserEntity> members) {
+    for (UserEntity member: members) {
+      SseEmitter sseEmitter = getSseEmitter(member.getId());
+      String message = String.format("희망하셨던 %s 게시글에 대한 공동구매가 성사되어 단체 채팅방이 생성되었습니다. 채팅방 목록에서 확인해보세요!", post.getTitle());
+      saveNotificationForGroupChat(member, message);
+
+      if (sseEmitter != null) {
+        try {
+          sseEmitter.send(SseEmitter.event().
+                  name("notification").
+                  data(Map.of("notificationMessage", message)));
+        } catch (IOException e) {
+          log.error("SSE 메시지 전송 실패 (userId : {}", member.getId(), e);
+        }
+      }
+    }
+  }
+
+  private void saveNotificationForGroupChat(UserEntity member, String message) {
+    notificationRepository.save(NotificationEntity.builder()
+            .user(member)
+            .message(message)
+            .type(Type.GROUPCHAT)
+            .build());
   }
 
   @Scheduled(fixedRate = 15000)

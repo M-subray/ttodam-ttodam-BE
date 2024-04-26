@@ -46,7 +46,8 @@ public class NotificationEntity extends NotificationBaseEntity {
   public enum Type {
     KEYWORD("키워드"),
     POST("게시글"),
-    REQUEST("요청");
+    REQUEST("요청"),
+    GROUPCHAT("단체 채팅방");
 
     private final String label;
     Type(String label) {
