@@ -2,7 +2,6 @@ package com.ttodampartners.ttodamttodam.domain.bookmark.controller;
 
 import com.ttodampartners.ttodamttodam.domain.bookmark.dto.BookmarkDto;
 import com.ttodampartners.ttodamttodam.domain.bookmark.service.BookmarkService;
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.global.dto.UserDetailsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

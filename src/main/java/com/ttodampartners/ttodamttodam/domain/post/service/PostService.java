@@ -3,7 +3,6 @@ package com.ttodampartners.ttodamttodam.domain.post.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.ttodampartners.ttodamttodam.domain.bookmark.entity.BookmarkEntity;
-import com.ttodampartners.ttodamttodam.domain.bookmark.exception.BookmarkException;
 import com.ttodampartners.ttodamttodam.domain.bookmark.repository.BookmarkRepository;
 import com.ttodampartners.ttodamttodam.domain.bookmark.service.BookmarkService;
 import com.ttodampartners.ttodamttodam.domain.post.dto.*;
@@ -95,7 +94,7 @@ public class PostService {
 
     //로그인된 유저의 도로명 주소(-로)를 기준으로 게시글의 만남장소를 특정하여 게시글 목록 불러오기
     @Transactional
-    public List<PostDto> getPostList(Long userId) {
+    public List<PostListDto> getPostList(Long userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
@@ -112,12 +111,12 @@ public class PostService {
                 .collect(Collectors.toList());
 
         return filteredPosts.stream()
-                .map(PostDto::of)
+                .map(PostListDto::of)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<PostDto> getCategoryPostList(Long userId, String category) {
+    public List<PostListDto> getCategoryPostList(Long userId, String category) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
@@ -135,28 +134,28 @@ public class PostService {
                 .collect(Collectors.toList());
 
         return filteredPosts.stream()
-                .map(PostDto::of)
+                .map(PostListDto::of)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<PostDto> getUsersPostList(Long userId) {
+    public List<PostListDto> getUsersPostList(Long userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
         List<PostEntity> usersPostList = postRepository.findByUserId(userId);
 
         return usersPostList.stream()
-                .map(PostDto::of)
+                .map(PostListDto::of)
                 .collect(Collectors.toList());
     }
 
-    public List<PostDto> searchPostList(String search) {
+    public List<PostListDto> searchPostList(String search) {
 
         List<PostEntity> searchPostList = postRepository.findBySearch(search);
 
         return searchPostList.stream()
-                .map(PostDto::of)
+                .map(PostListDto::of)
                 .collect(Collectors.toList());
     }
 

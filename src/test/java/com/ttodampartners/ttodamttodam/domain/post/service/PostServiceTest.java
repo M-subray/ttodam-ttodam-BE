@@ -4,8 +4,6 @@ import com.ttodampartners.ttodamttodam.domain.post.dto.*;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
-import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
-import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +74,7 @@ class PostServiceTest {
     void GET_POST_LIST_TEST(){
         Long userId = 3L;
 
-        List<PostDto> postList = postService.getPostList(userId);
+        List<PostListDto> postList = postService.getPostList(userId);
 
         assertEquals(2, postList.size());
     }
@@ -86,7 +84,7 @@ class PostServiceTest {
         Long userId = 1L;
         String category = "생활용품";
 
-        List<PostDto> postList = postService.getCategoryPostList(userId,category);
+        List<PostListDto> postList = postService.getCategoryPostList(userId,category);
 
         assertEquals(3, postList.size());
     }
@@ -96,7 +94,7 @@ class PostServiceTest {
     void GET_USERS_POST_LIST_TEST(){
         Long userId = 3L;
 
-        List<PostDto> userPostList = postService.getUsersPostList(userId);
+        List<PostListDto> userPostList = postService.getUsersPostList(userId);
 
         assertEquals(3, userPostList.size());
     }
@@ -106,7 +104,7 @@ class PostServiceTest {
 
         String search = "물티슈";
 
-        List<PostDto> searchPostList = postService.searchPostList(search);
+        List<PostListDto> searchPostList = postService.searchPostList(search);
 
         assertEquals(3, searchPostList.size());
     }
