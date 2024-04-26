@@ -34,7 +34,7 @@ public class ChatController {
         // 채팅 메시지 DB 저장
         chatService.saveChatMessage(chatroomId, request, senderId);
         // 받은 메시지를 "/chatroom/{userChatroomId}" 엔드포인트로 전송
-        simpMessagingTemplate.convertAndSend("/chatroom" + chatroomId, request.getContent());
+        simpMessagingTemplate.convertAndSend("/chatroom/" + chatroomId, request.getContent());
 
         log.info("Message [{}] send by member: {}(id: {}) to chatting room id: {}", request.getContent(), request.getNickname(), senderId, chatroomId);
     }
