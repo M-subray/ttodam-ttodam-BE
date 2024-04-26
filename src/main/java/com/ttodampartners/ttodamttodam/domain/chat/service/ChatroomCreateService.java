@@ -90,8 +90,6 @@ public class ChatroomCreateService {
         List<ChatroomMemberEntity> chatroomMemberEntities = saveChatroomMembers(members, chatroom);
         if (chatroomMemberEntities.isEmpty()) {
             log.info("save 실패");
-        } else {
-            log.info("save 성공 -> row 개수: {}", chatroomMemberEntities.size());
         }
         // 해당 채팅방에 소속된 유저(공구 주최자, 문의자)의 프로필 정보 리스트
         List<ChatroomProfileResponse> profileList = getChatroomProfiles(members);
