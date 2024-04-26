@@ -11,14 +11,14 @@ import lombok.*;
 @AllArgsConstructor
 public class ProductListDto {
     private String productName;
-    private Integer count;
     private Long price;
+    private Integer count;
 
     public static ProductListDto from(ProductEntity productEntity){
         return ProductListDto.builder()
                 .productName(productEntity.getProductName())
-                .count(productEntity.getCount())
                 .price(productEntity.getPrice())
+                .count(productEntity.getCount())
                 .build();
     }
 

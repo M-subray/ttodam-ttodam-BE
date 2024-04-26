@@ -63,7 +63,6 @@ public class RequestService {
         return usersActivities.stream()
                 .map(ActivitiesDto::of)
                 .collect(Collectors.toList());
-
     }
 
     @Transactional
