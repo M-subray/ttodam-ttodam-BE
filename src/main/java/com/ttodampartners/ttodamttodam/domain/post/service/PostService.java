@@ -3,9 +3,9 @@ package com.ttodampartners.ttodamttodam.domain.post.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.ttodampartners.ttodamttodam.domain.bookmark.entity.BookmarkEntity;
-import com.ttodampartners.ttodamttodam.domain.bookmark.exception.BookmarkException;
 import com.ttodampartners.ttodamttodam.domain.bookmark.repository.BookmarkRepository;
 import com.ttodampartners.ttodamttodam.domain.bookmark.service.BookmarkService;
+import com.ttodampartners.ttodamttodam.domain.notification.service.NotificationService;
 import com.ttodampartners.ttodamttodam.domain.post.dto.*;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
@@ -14,6 +14,7 @@ import com.ttodampartners.ttodamttodam.domain.post.entity.ProductEntity;
 import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
 import com.ttodampartners.ttodamttodam.domain.request.exception.RequestException;
 import com.ttodampartners.ttodamttodam.domain.request.repository.RequestRepository;
+import com.ttodampartners.ttodamttodam.domain.request.service.RequestService;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
@@ -44,12 +45,13 @@ public class PostService {
     private final RequestRepository requestRepository;
     private final BookmarkRepository bookmarkRepository;
     private final BookmarkService bookmarkService;
+    private final RequestService requestService;
     private final CoordinateFinderUtil coordinateFinderUtil;
     private final AmazonS3 amazonS3;
+    private final NotificationService notificationService;
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
-
 
     @Transactional
     public PostEntity createPost(Long userId, List<MultipartFile> imageFiles, PostCreateDto postCreateDto) {
@@ -66,7 +68,10 @@ public class PostService {
             post.setPLocationX(coordinates[1]); // 경도 설정
             post.setPLocationY(coordinates[0]); // 위도 설정
 
-            return postRepository.save(post);
+            postRepository.save(post);
+            // 키워드(프로덕트 이름 리스트)로 알림 발송
+            notificationService.sendNotificationForKeyword(postCreateDto, post.getPostId());
+            return post;
         } catch (IOException e) {
 
             throw new RuntimeException("위치 정보를 가져오는 동안 에러가 발생했습니다.", e);
@@ -96,7 +101,7 @@ public class PostService {
 
     //로그인된 유저의 도로명 주소(-로)를 기준으로 게시글의 만남장소를 특정하여 게시글 목록 불러오기
     @Transactional
-    public List<PostDto> getPostList(Long userId) {
+    public List<PostListDto> getPostList(Long userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
@@ -113,12 +118,12 @@ public class PostService {
                 .collect(Collectors.toList());
 
         return filteredPosts.stream()
-                .map(PostDto::of)
+                .map(PostListDto::of)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<PostDto> getCategoryPostList(Long userId, String category) {
+    public List<PostListDto> getCategoryPostList(Long userId, String category) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
@@ -136,19 +141,28 @@ public class PostService {
                 .collect(Collectors.toList());
 
         return filteredPosts.stream()
-                .map(PostDto::of)
+                .map(PostListDto::of)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<PostDto> getUsersPostList(Long userId) {
+    public List<PostListDto> getUsersPostList(Long userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
         List<PostEntity> usersPostList = postRepository.findByUserId(userId);
 
         return usersPostList.stream()
-                .map(PostDto::of)
+                .map(PostListDto::of)
+                .collect(Collectors.toList());
+    }
+
+    public List<PostListDto> searchPostList(String search) {
+
+        List<PostEntity> searchPostList = postRepository.findBySearch(search);
+
+        return searchPostList.stream()
+                .map(PostListDto::of)
                 .collect(Collectors.toList());
     }
 
@@ -180,7 +194,7 @@ public class PostService {
         // 작성자인지 판별
         boolean isAuthor = post.getUser().getId().equals(userId);
 
-        List<RequestEntity> requestList = requestRepository.findAllByPost_postId(postId);
+        List<RequestEntity> requestList = requestRepository.findAllByPost_PostId(postId);
 
         String loginUserRequestStatus = isAuthor ? "AUTHOR" : "NONE";
 
@@ -323,6 +337,9 @@ public class PostService {
 
         // 게시글 관련 북마크 삭제
         bookmarkService.deleteBookmarksByPost(postId);
+
+        // 게시글 관련 참여요청 삭제
+        requestService.deleteRequestsByPost(postId);
 
         postRepository.delete(post);
     }

@@ -1,7 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.request.dto;
 
 import com.ttodampartners.ttodamttodam.domain.post.dto.MembersDto;
-import com.ttodampartners.ttodamttodam.domain.post.dto.ProductDto;
+import com.ttodampartners.ttodamttodam.domain.post.dto.ProductListDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
 import lombok.*;
@@ -26,7 +26,7 @@ public class ActivitiesDto {
     private PostEntity.Status status;
     private PostEntity.PurchaseStatus purchaseStatus;
     private RequestEntity.RequestStatus requestStatus;
-    private List<ProductDto> products;
+    private List<ProductListDto> products;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -34,8 +34,8 @@ public class ActivitiesDto {
         // 게시글의 다른 수락된 요청자들
 //        List<MembersDto> members = List.of(MembersDto.of(request.getRequestUser()));
 
-        List<ProductDto> products = request.getPost().getProducts()
-                .stream().map(ProductDto::from).collect(Collectors.toList());
+        List<ProductListDto> products = request.getPost().getProducts()
+                .stream().map(ProductListDto::from).collect(Collectors.toList());
 
         return ActivitiesDto.builder()
                 .userId(request.getRequestUser().getId())

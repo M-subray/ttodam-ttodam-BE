@@ -1,5 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.request.service;
 
+import com.ttodampartners.ttodamttodam.domain.bookmark.entity.BookmarkEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.event.GroupChatCreateEvent;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
@@ -84,7 +85,7 @@ public class RequestService {
 
     @Transactional
     public List<RequestDto> getRequestList(Long userId, Long postId) {
-        List<RequestEntity> requestList = requestRepository.findAllByPost_postId(postId);
+        List<RequestEntity> requestList = requestRepository.findAllByPost_PostId(postId);
 
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_POST));
@@ -127,7 +128,7 @@ public class RequestService {
                 .orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_POST));
 
         // 특정 게시글의 참여 요청 목록 조회
-        List<RequestEntity> requests = requestRepository.findAllByPost_postId(postId);
+        List<RequestEntity> requests = requestRepository.findAllByPost_PostId(postId);
 
         // 수락된 요청 계산
         long acceptedRequestsCount = requests.stream()
@@ -166,6 +167,13 @@ public class RequestService {
         if (!userId.equals(postAuthorId)) {
             throw new PostException(ErrorCode.POST_PERMISSION_DENIED);
         }
+    }
+
+    // 게시글 삭제 시 참여요청도 함께 삭제
+    @Transactional
+    public void deleteRequestsByPost(Long postId) {
+        List<RequestEntity> requests = requestRepository.findAllByPost_PostId(postId);
+        requestRepository.deleteAll(requests);
     }
 
 

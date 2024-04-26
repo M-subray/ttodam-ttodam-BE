@@ -9,13 +9,13 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDto {
+public class ProductListDto {
     private String productName;
     private Long price;
     private Integer count;
 
-    public static ProductDto from(ProductEntity productEntity){
-        return ProductDto.builder()
+    public static ProductListDto from(ProductEntity productEntity){
+        return ProductListDto.builder()
                 .productName(productEntity.getProductName())
                 .price(productEntity.getPrice())
                 .count(productEntity.getCount())

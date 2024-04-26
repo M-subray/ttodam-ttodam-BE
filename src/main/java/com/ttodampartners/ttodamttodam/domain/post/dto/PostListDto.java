@@ -1,7 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.post.dto;
 
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
-import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -13,38 +12,25 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostDto {
+public class PostListDto {
     private Long postId;
-    private UserEntity user;
+    private Long authorId;
+    private String authorNickname;
     private List<ProductListDto> products;
     private String title;
-    private Integer participants;
-    private String place;
-    private Double pLocationX;
-    private Double pLocationY;
-    private LocalDateTime deadline;
-    private PostEntity.Category category;
     private String content;
-    private List<String> imgUrls;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-
-    public static PostDto of(PostEntity postEntity) {
+    public static PostListDto of(PostEntity postEntity) {
         List<ProductListDto> products = postEntity.getProducts()
                 .stream().map(ProductListDto::from).collect(Collectors.toList());
-        return PostDto.builder()
+        return PostListDto.builder()
                 .postId(postEntity.getPostId())
-                .user(postEntity.getUser())
+                .authorId(postEntity.getUser().getId())
+                .authorNickname(postEntity.getUser().getNickname())
                 .title(postEntity.getTitle())
-                .participants(postEntity.getParticipants())
-                .place(postEntity.getPlace())
-                .pLocationX(postEntity.getPLocationX())
-                .pLocationY(postEntity.getPLocationY())
-                .deadline(postEntity.getDeadline())
-                .category(postEntity.getCategory())
                 .content(postEntity.getContent())
-                .imgUrls(postEntity.getImgUrls())
                 .createdAt(postEntity.getCreatedAt())
                 .updatedAt(postEntity.getUpdatedAt())
                 .products(products)
