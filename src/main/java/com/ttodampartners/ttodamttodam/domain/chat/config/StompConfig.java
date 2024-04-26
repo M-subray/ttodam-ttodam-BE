@@ -17,6 +17,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 public class StompConfig implements WebSocketMessageBrokerConfigurer {
     private final StompHandler stompHandler;
+    private final StompExceptionHandler stompExceptionHandler;
 
     // Stomp 연결을 처리할 엔드포인트
     @Override
@@ -27,6 +28,7 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
          setAllowedOrigins("*")은 CORS 이슈를 피하기 위함; 배포 때는 * 대신 실제 서버 주소 등록
          맨마지막에 .withSockJS() 추가 필요
         */
+        registry.setErrorHandler(stompExceptionHandler);
     }
 
     // 메시지를 처리할 엔드포인트
