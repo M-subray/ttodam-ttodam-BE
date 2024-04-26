@@ -1,8 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.post.controller;
 
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
+import com.ttodampartners.ttodamttodam.domain.post.dto.*;
 import com.ttodampartners.ttodamttodam.domain.post.service.PostService;
 import com.ttodampartners.ttodamttodam.global.dto.UserDetailsDto;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
-
-
 
 @RequiredArgsConstructor
 @RestController
@@ -32,8 +28,7 @@ public class PostController {
         return ResponseEntity.ok(PostDto.of(postService.createPost(userId, imageFiles, postCreateDto)));
        }
 
-
-    @GetMapping("/post")
+    @GetMapping("/post/list")
     public ResponseEntity<List<PostDto>> getPostList(
             @AuthenticationPrincipal UserDetailsDto userDetails
     ){
@@ -42,14 +37,34 @@ public class PostController {
         return ResponseEntity.ok(postList);
     }
 
+    @GetMapping("/post/category/{category}")
+    public ResponseEntity<List<PostDto>> getCategoryPostList(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
+            @PathVariable String category
+    ){
+        Long userId = userDetails.getId();
+        List<PostDto> postList = postService.getCategoryPostList(userId,category);
+        return ResponseEntity.ok(postList);
+    }
+
+    // 자신이 작성한 게시글 목록 조회
+    @GetMapping("/users/post/list")
+    public ResponseEntity<List<PostDto>> getUsersPostList(
+            @AuthenticationPrincipal UserDetailsDto userDetails
+    ){
+        Long userId = userDetails.getId();
+        List<PostDto> postList = postService.getUsersPostList(userId);
+        return ResponseEntity.ok(postList);
+    }
+
     @GetMapping("/post/{postId}")
-    public ResponseEntity<PostDto> getPost(
+    public ResponseEntity<PostDetailDto> getPost(
             @AuthenticationPrincipal UserDetailsDto userDetails,
             @PathVariable Long postId
     )
     {
         Long userId = userDetails.getId();
-        PostDto postDto = postService.getPost(userId, postId);
+        PostDetailDto postDto = postService.getPost(userId, postId);
         return ResponseEntity.status(OK).body(postDto);
     }
 
@@ -63,6 +78,16 @@ public class PostController {
     {
         Long userId = userDetails.getId();
         return ResponseEntity.ok(PostDto.of(postService.updatePost(userId, postId, newImageFiles, postUpdateDto)));
+    }
+
+    @PutMapping("/post/{postId}/purchase/{purchaseStatus}")
+    public ResponseEntity<PostDto> updatePurchaseStatus(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
+            @PathVariable Long postId,
+            @PathVariable String purchaseStatus
+    ) {
+        Long userId = userDetails.getId();
+        return ResponseEntity.ok(PostDto.of(postService.updatePurchaseStatus(userId, postId, purchaseStatus)));
     }
 
     @DeleteMapping("/post/{postId}")

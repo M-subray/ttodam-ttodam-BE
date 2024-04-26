@@ -74,7 +74,7 @@ public class BookmarkService {
     // 게시글 삭제 시 북마크도 함께 삭제
     @Transactional
     public void deleteBookmarksByPost(Long postId) {
-        List<BookmarkEntity> bookmarks = bookmarkRepository.findByPost_PostId(postId);
+        List<BookmarkEntity> bookmarks = bookmarkRepository.findAllByPost_PostId(postId);
         bookmarkRepository.deleteAll(bookmarks);
     }
     // 회원 탈퇴 시 북마크도 함께 삭제
