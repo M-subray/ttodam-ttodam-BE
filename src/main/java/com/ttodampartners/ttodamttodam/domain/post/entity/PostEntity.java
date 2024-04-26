@@ -34,7 +34,7 @@ public class PostEntity {
     private UserEntity user;
 
     @Builder.Default
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ProductEntity> products = new ArrayList<>();
 
     @Column(nullable = false)

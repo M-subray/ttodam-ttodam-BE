@@ -14,6 +14,7 @@ import com.ttodampartners.ttodamttodam.domain.post.entity.ProductEntity;
 import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
 import com.ttodampartners.ttodamttodam.domain.request.exception.RequestException;
 import com.ttodampartners.ttodamttodam.domain.request.repository.RequestRepository;
+import com.ttodampartners.ttodamttodam.domain.request.service.RequestService;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
@@ -44,6 +45,7 @@ public class PostService {
     private final RequestRepository requestRepository;
     private final BookmarkRepository bookmarkRepository;
     private final BookmarkService bookmarkService;
+    private final RequestService requestService;
     private final CoordinateFinderUtil coordinateFinderUtil;
     private final AmazonS3 amazonS3;
     private final NotificationService notificationService;
@@ -192,7 +194,7 @@ public class PostService {
         // 작성자인지 판별
         boolean isAuthor = post.getUser().getId().equals(userId);
 
-        List<RequestEntity> requestList = requestRepository.findAllByPost_postId(postId);
+        List<RequestEntity> requestList = requestRepository.findAllByPost_PostId(postId);
 
         String loginUserRequestStatus = isAuthor ? "AUTHOR" : "NONE";
 
@@ -335,6 +337,9 @@ public class PostService {
 
         // 게시글 관련 북마크 삭제
         bookmarkService.deleteBookmarksByPost(postId);
+
+        // 게시글 관련 참여요청 삭제
+        requestService.deleteRequestsByPost(postId);
 
         postRepository.delete(post);
     }
