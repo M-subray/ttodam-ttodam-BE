@@ -3,6 +3,7 @@ package com.ttodampartners.ttodamttodam.domain.post.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.ttodampartners.ttodamttodam.domain.bookmark.service.BookmarkService;
+import com.ttodampartners.ttodamttodam.domain.notification.service.NotificationService;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
@@ -40,6 +41,7 @@ public class PostService {
     private final BookmarkService bookmarkService;
     private final CoordinateFinderUtil coordinateFinderUtil;
     private final AmazonS3 amazonS3;
+    private final NotificationService notificationService;
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
@@ -60,7 +62,10 @@ public class PostService {
             post.setPLocationX(coordinates[1]); // 경도 설정
             post.setPLocationY(coordinates[0]); // 위도 설정
 
-            return postRepository.save(post);
+            postRepository.save(post);
+            // 키워드(프로덕트 이름 리스트)로 알림 발송
+            notificationService.sendNotificationForKeyword(postCreateDto, post.getPostId());
+            return post;
         } catch (IOException e) {
 
             throw new RuntimeException("위치 정보를 가져오는 동안 에러가 발생했습니다.", e);
