@@ -6,9 +6,7 @@ import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +32,10 @@ public class PostCreateDto {
     private LocalDateTime deadline;
 
     @Builder.Default
-    private PostEntity.Status status = PostEntity.Status. IN_PROGRESS;
+    private PostEntity.Status status = PostEntity.Status.IN_PROGRESS;
+
+    @Builder.Default
+    private PostEntity.PurchaseStatus purchaseStatus = PostEntity.PurchaseStatus.PROCEEDING;
 
     private PostEntity.Category category;
 
@@ -53,6 +54,7 @@ public class PostCreateDto {
                 .place(postCreateDto.getPlace())
                 .deadline(postCreateDto.getDeadline())
                 .status(postCreateDto.getStatus())
+                .purchaseStatus(postCreateDto.getPurchaseStatus())
                 .category(postCreateDto.getCategory())
                 .content(postCreateDto.getContent())
                 .imgUrls(imgUrls)
