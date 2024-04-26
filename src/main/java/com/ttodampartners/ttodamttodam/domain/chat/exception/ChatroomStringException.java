@@ -14,6 +14,11 @@ public class ChatroomStringException extends RuntimeException{
     private ErrorCode errorCode;
     private String errorMessage;
 
+    public ChatroomStringException(String message) {
+        this.errorCode = null;
+        this.errorMessage = message;
+    }
+
     public ChatroomStringException(ErrorCode errorCode) {
         this.errorCode = errorCode;
         this.errorMessage = errorCode.getDescription();

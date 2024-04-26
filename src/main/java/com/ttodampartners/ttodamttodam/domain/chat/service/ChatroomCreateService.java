@@ -12,6 +12,7 @@ import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomException;
 import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomStringException;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomMemberRepository;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomRepository;
+import com.ttodampartners.ttodamttodam.domain.notification.service.NotificationService;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
 import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
@@ -44,6 +45,7 @@ public class ChatroomCreateService {
     private final UserRepository userRepository;
     private final ChatroomRepository chatroomRepository;
     private final ChatroomMemberRepository chatroomMemberRepository;
+    private final NotificationService notificationService;
 
     // 개인 채팅방 생성
     @Transactional
@@ -90,8 +92,6 @@ public class ChatroomCreateService {
         List<ChatroomMemberEntity> chatroomMemberEntities = saveChatroomMembers(members, chatroom);
         if (chatroomMemberEntities.isEmpty()) {
             log.info("save 실패");
-        } else {
-            log.info("save 성공 -> row 개수: {}", chatroomMemberEntities.size());
         }
         // 해당 채팅방에 소속된 유저(공구 주최자, 문의자)의 프로필 정보 리스트
         List<ChatroomProfileResponse> profileList = getChatroomProfiles(members);
@@ -138,6 +138,9 @@ public class ChatroomCreateService {
         }
 
         List<ChatroomMemberEntity> chatroomMemberEntities = saveChatroomMembers(members, chatroom);
+
+        // 단체 채팅방 생성 알림
+        notificationService.sendNotificationForGroupChat(post, members);
     }
 
     /*

@@ -6,16 +6,20 @@ import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomProfileR
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatMessageEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomMemberEntity;
+import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomStringException;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatMessageRepository;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomMemberRepository;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomRepository;
+import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ChatroomEnterService {
@@ -26,11 +30,14 @@ public class ChatroomEnterService {
     // 채팅방 입장했을 때, 해당 채팅방 멤버 정보 반환
     @Transactional
     public ChatroomEnterResponse getChatroomDetails(Long chatroomId) {
-        List<ChatroomMemberEntity> chatroomMemberEntities = chatroomMemberRepository.findAllByChatroomEntity(
-                // 추후 exception handler 처리 필요!!
-                chatroomRepository.findByChatroomId(chatroomId).orElseThrow(IllegalArgumentException::new)
-        );
-        // 채팅방 소속 유저가 한 명도 없을 경우 처리 필요!!
+        ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(() -> new ChatroomStringException(ErrorCode.CHATROOM_NOT_FOUND));
+        List<ChatroomMemberEntity> chatroomMemberEntities = chatroomMemberRepository.findAllByChatroomEntity(chatroom);
+
+        if (CollectionUtils.isEmpty(chatroomMemberEntities)) {
+            throw new ChatroomStringException("채팅방에 소속된 유저가 없습니다.");
+        } else if (chatroomMemberEntities.size() != chatroom.getUserCount()) {
+            log.info("채팅방 인원 수에 차이가 있습니다. 채팅방에서 나간 유저가 있는지 확인해주세요.");
+        }
 
         List<ChatroomProfileResponse> profileList = chatroomMemberEntities.stream().map(
                 ChatroomMemberEntity::getChatroomProfile
@@ -42,7 +49,12 @@ public class ChatroomEnterService {
     @Transactional
     public List<ChatMessageResponse> getChatMessageHistory(Long chatroomId) {
         ChatroomEntity chatroom = chatroomRepository.findByChatroomId(chatroomId).orElseThrow(IllegalArgumentException::new);
-        List<ChatMessageEntity> chatMessageEntities = chatMessageRepository.findAllByChatroomEntity(chatroom); // 추후 메시지 하나도 없을 때 경우 처리 필요!!
+        // 채팅 내역이 존재하지 않을 경우
+        if (chatroom.getLastMessageId() == null) {
+            throw new ChatroomStringException(ErrorCode.CHATROOM_MESSAGE_NOT_FOUND);
+        }
+
+        List<ChatMessageEntity> chatMessageEntities = chatMessageRepository.findAllByChatroomEntity(chatroom);
         List<ChatMessageResponse> chatMessageResponses = chatMessageEntities.stream().map(
                 ChatMessageEntity::getChatMessageResponse
         ).toList();

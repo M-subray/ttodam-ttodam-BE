@@ -22,7 +22,7 @@ public class PostController {
     public ResponseEntity<PostDto> createPost(
             @AuthenticationPrincipal UserDetailsDto userDetails,
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
-            @RequestBody PostCreateDto postCreateDto
+            @RequestPart PostCreateDto postCreateDto
         ) {
         Long userId = userDetails.getId();
         return ResponseEntity.ok(PostDto.of(postService.createPost(userId, imageFiles, postCreateDto)));
