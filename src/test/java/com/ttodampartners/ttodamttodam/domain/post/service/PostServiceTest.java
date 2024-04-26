@@ -4,6 +4,7 @@ import com.ttodampartners.ttodamttodam.domain.post.dto.*;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
+import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
@@ -155,6 +156,16 @@ class PostServiceTest {
         assertEquals(5, updatedPost.getParticipants());
         assertEquals("서울특별시 마포구 양화로 지하188", updatedPost.getPlace());
 
+    }
+
+    @Test
+    void UPDATE_POST_PURCHASE_STATUS_TEST(){
+        Long userId = 3L;
+        Long postId = 59L;
+
+        PostEntity updateRequest = postService.updatePurchaseStatus(userId, postId,"성공");
+
+        assertEquals(PostEntity.PurchaseStatus.SUCCESS, updateRequest.getPurchaseStatus());
     }
 
     @Test

@@ -1,9 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.post.controller;
 
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostDetailDto;
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
+import com.ttodampartners.ttodamttodam.domain.post.dto.*;
 import com.ttodampartners.ttodamttodam.domain.post.service.PostService;
 import com.ttodampartners.ttodamttodam.global.dto.UserDetailsDto;
 import lombok.RequiredArgsConstructor;
@@ -90,6 +87,16 @@ public class PostController {
     {
         Long userId = userDetails.getId();
         return ResponseEntity.ok(PostDto.of(postService.updatePost(userId, postId, newImageFiles, postUpdateDto)));
+    }
+
+    @PutMapping("/post/{postId}/purchase/{purchaseStatus}")
+    public ResponseEntity<PostDto> updatePurchaseStatus(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
+            @PathVariable Long postId,
+            @PathVariable String purchaseStatus
+    ) {
+        Long userId = userDetails.getId();
+        return ResponseEntity.ok(PostDto.of(postService.updatePurchaseStatus(userId, postId, purchaseStatus)));
     }
 
     @DeleteMapping("/post/{postId}")

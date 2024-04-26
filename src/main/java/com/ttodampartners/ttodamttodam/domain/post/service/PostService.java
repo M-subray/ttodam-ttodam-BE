@@ -12,6 +12,7 @@ import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
 import com.ttodampartners.ttodamttodam.domain.post.entity.ProductEntity;
 import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
+import com.ttodampartners.ttodamttodam.domain.request.exception.RequestException;
 import com.ttodampartners.ttodamttodam.domain.request.repository.RequestRepository;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
@@ -293,6 +294,27 @@ public class PostService {
             product.setPrice(productUpdateDto.getPrice());
             product.setPurchaseLink(productUpdateDto.getPurchaseLink());
         }
+    }
+
+    @Transactional
+    public PostEntity updatePurchaseStatus(Long userId, Long postId,String purchaseStatus){
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(ErrorCode.NOT_FOUND_POST));
+
+        // 주최자 인증
+        validateAuthority(userId, post);
+
+        if (post.getStatus() == PostEntity.Status.IN_PROGRESS) {
+            throw new RequestException(ErrorCode.POST_STATUS_IN_PROGRESS);
+        } else if (post.getStatus() == PostEntity.Status.FAILED) {
+            throw new RequestException(ErrorCode.POST_STATUS_FAILED);
+        }
+
+        PostEntity.PurchaseStatus status = PostEntity.PurchaseStatus.fromLabel(purchaseStatus);
+
+        post.setPurchaseStatus(status);
+
+        return post;
     }
 
     @Transactional

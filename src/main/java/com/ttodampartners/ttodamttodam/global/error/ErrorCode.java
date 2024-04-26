@@ -64,6 +64,7 @@ public enum ErrorCode {
   NOT_FOUND_REQUEST("해당 요청은 찾을 수 없습니다."),
   POST_STATUS_COMPLETED("모집이 완료된 게시글입니다."),
   POST_STATUS_FAILED("모집이 종료된 게시글입니다."),
+  POST_STATUS_IN_PROGRESS("모집이 진행중인 게시글입니다."),
   REQUEST_PERMISSION_DENIED("해당 참여요청에 권한이 없습니다."),
 
   /*
@@ -71,6 +72,7 @@ public enum ErrorCode {
    */
   CHATROOM_ALREADY_EXIST("개인 채팅방이 이미 존재합니다."),
   GROUP_CHATROOM_ALREADY_EXIST("단체 채팅방이 이미 존재합니다."),
+  CHATROOM_CREATE_DENIED("게시글 생성은 모집중 상태에만 가능합니다."),
   USER_CHATROOM_NOT_EXIST("해당 유저가 속한 채팅방이 존재하지 않습니다."),
   USER_NOT_IN_CHATROOM("해당 유저가 채팅방에 속해있지 않아 채팅방을 나갈 수 없습니다."),
   CHATROOM_NOT_FOUND("채팅방이 존재하지 않습니다."),
