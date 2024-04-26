@@ -1,5 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.request.controller;
 
+import com.ttodampartners.ttodamttodam.domain.request.dto.ActivitiesDto;
 import com.ttodampartners.ttodamttodam.domain.request.dto.RequestDto;
 import com.ttodampartners.ttodamttodam.domain.request.dto.RequestSendDto;
 import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
@@ -31,6 +32,27 @@ public class RequestController {
         return ResponseEntity.ok(RequestDto.of(requestService.sendRequest(userId,postId,requestSendDto)));
        }
 
+    // 모집에 참여한 게시글 목록 조회 (로그인 유저가 참여요청을 보낸 모든 게시글)
+    @GetMapping("/users/activities")
+    public ResponseEntity<List<ActivitiesDto>> getUsersActivities(
+            @AuthenticationPrincipal UserDetailsDto userDetails
+    ){
+        Long userId = userDetails.getId();
+        List<ActivitiesDto> activities = requestService.getUsersActivities(userId);
+        return ResponseEntity.ok(activities);
+    }
+
+    @DeleteMapping("/request/{requestId}")
+    public ResponseEntity<Void> deleteRequest(
+            @AuthenticationPrincipal UserDetailsDto userDetails,
+            @PathVariable Long requestId
+    )
+    {
+        Long userId = userDetails.getId();
+        requestService.deleteRequest(userId, requestId);
+        return ResponseEntity.status(OK).build();
+    }
+
     @GetMapping("/post/{postId}/request")
     public ResponseEntity<List<RequestDto>> getRequestList(
             @AuthenticationPrincipal UserDetailsDto userDetails,
@@ -51,15 +73,5 @@ public class RequestController {
         return ResponseEntity.ok(RequestDto.of(requestService.updateRequestStatus(userId, requestId, requestStatus)));
     }
 
-    @DeleteMapping("/request/{requestId}")
-    public ResponseEntity<Void> deleteRequest(
-            @AuthenticationPrincipal UserDetailsDto userDetails,
-            @PathVariable Long requestId
-    )
-    {
-        Long userId = userDetails.getId();
-        requestService.deleteRequest(userId, requestId);
-        return ResponseEntity.status(OK).build();
-    }
 
 }

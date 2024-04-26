@@ -1,5 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.request.service;
 
+import com.ttodampartners.ttodamttodam.domain.request.dto.ActivitiesDto;
 import com.ttodampartners.ttodamttodam.domain.request.dto.RequestDto;
 import com.ttodampartners.ttodamttodam.domain.request.dto.RequestSendDto;
 import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
@@ -65,6 +66,14 @@ class RequestServiceTest {
 
         assertFalse(requestRepository.existsById(3L));
 
+    }
+    @Test
+    void GET_USER_ACTIVITIES_TEST(){
+        Long userId = 1L;
+
+        List<ActivitiesDto> usersActivities = requestService.getUsersActivities(userId);
+
+        assertEquals(1, usersActivities.size());
     }
 
 }
