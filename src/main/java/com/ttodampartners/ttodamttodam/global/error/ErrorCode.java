@@ -64,6 +64,7 @@ public enum ErrorCode {
   NOT_FOUND_REQUEST("해당 요청은 찾을 수 없습니다."),
   POST_STATUS_COMPLETED("모집이 완료된 게시글입니다."),
   POST_STATUS_FAILED("모집이 종료된 게시글입니다."),
+  POST_STATUS_IN_PROGRESS("모집이 진행중인 게시글입니다."),
   REQUEST_PERMISSION_DENIED("해당 참여요청에 권한이 없습니다."),
 
   /*
