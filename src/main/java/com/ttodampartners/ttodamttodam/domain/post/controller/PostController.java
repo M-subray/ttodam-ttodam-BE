@@ -29,32 +29,41 @@ public class PostController {
        }
 
     @GetMapping("/post/list")
-    public ResponseEntity<List<PostDto>> getPostList(
+    public ResponseEntity<List<PostListDto>> getPostList(
             @AuthenticationPrincipal UserDetailsDto userDetails
     ){
         Long userId = userDetails.getId();
-        List<PostDto> postList = postService.getPostList(userId);
+        List<PostListDto> postList = postService.getPostList(userId);
         return ResponseEntity.ok(postList);
     }
 
     @GetMapping("/post/category/{category}")
-    public ResponseEntity<List<PostDto>> getCategoryPostList(
+    public ResponseEntity<List<PostListDto>> getCategoryPostList(
             @AuthenticationPrincipal UserDetailsDto userDetails,
             @PathVariable String category
     ){
         Long userId = userDetails.getId();
-        List<PostDto> postList = postService.getCategoryPostList(userId,category);
+        List<PostListDto> postList = postService.getCategoryPostList(userId,category);
         return ResponseEntity.ok(postList);
     }
 
     // 자신이 작성한 게시글 목록 조회
     @GetMapping("/users/post/list")
-    public ResponseEntity<List<PostDto>> getUsersPostList(
+    public ResponseEntity<List<PostListDto>> getUsersPostList(
             @AuthenticationPrincipal UserDetailsDto userDetails
     ){
         Long userId = userDetails.getId();
-        List<PostDto> postList = postService.getUsersPostList(userId);
-        return ResponseEntity.ok(postList);
+        List<PostListDto> userPostList = postService.getUsersPostList(userId);
+        return ResponseEntity.ok(userPostList);
+    }
+
+    //게시글 검색
+    @GetMapping("/post/search")
+    public ResponseEntity<List<PostListDto>> searchPostList(
+            @RequestParam(required = false) String search
+    ){
+        List<PostListDto> searchPostList = postService.searchPostList(search);
+        return ResponseEntity.ok(searchPostList);
     }
 
     @GetMapping("/post/{postId}")

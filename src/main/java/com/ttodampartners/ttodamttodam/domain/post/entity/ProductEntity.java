@@ -20,7 +20,7 @@ public class ProductEntity {
     @Column(name = "id", nullable = false)
     private Long productId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private PostEntity post;
 

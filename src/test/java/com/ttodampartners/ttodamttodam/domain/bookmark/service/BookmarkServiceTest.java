@@ -3,7 +3,6 @@ package com.ttodampartners.ttodamttodam.domain.bookmark.service;
 import com.ttodampartners.ttodamttodam.domain.bookmark.dto.BookmarkDto;
 import com.ttodampartners.ttodamttodam.domain.bookmark.entity.BookmarkEntity;
 import com.ttodampartners.ttodamttodam.domain.bookmark.repository.BookmarkRepository;
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

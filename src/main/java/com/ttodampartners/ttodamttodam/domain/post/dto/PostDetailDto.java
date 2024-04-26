@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostDetailDto {
-    private PostDto post;
+    private PostListDto post;
     private List<RequestDto> requestList;
     private String loginUserRequestStatus;
     private boolean isBookmarked;
 
     public static PostDetailDto of(PostEntity postEntity, List<RequestEntity> requestEntities, String loginUserRequestStatus, boolean isBookmarked) {
         return PostDetailDto.builder()
-                .post(PostDto.of(postEntity))
+                .post(PostListDto.of(postEntity))
                 .requestList(requestEntities.stream()
                         .map(RequestDto::of)
                         .collect(Collectors.toList()))
