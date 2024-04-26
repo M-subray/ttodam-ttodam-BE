@@ -1,10 +1,10 @@
 package com.ttodampartners.ttodamttodam.domain.request.service;
 
-import com.ttodampartners.ttodamttodam.domain.bookmark.exception.BookmarkException;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.event.GroupChatCreateEvent;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
+import com.ttodampartners.ttodamttodam.domain.request.dto.ActivitiesDto;
 import com.ttodampartners.ttodamttodam.domain.request.dto.RequestDto;
 import com.ttodampartners.ttodamttodam.domain.request.dto.RequestSendDto;
 import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
@@ -17,9 +17,7 @@ import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,6 +51,36 @@ public class RequestService {
         RequestEntity request = RequestSendDto.of(requestUser,post,requestSendDto);
 
         return requestRepository.save(request);
+    }
+
+    @Transactional
+    public List<ActivitiesDto> getUsersActivities(Long requestUserId) {
+
+        // 로그인 유저가 참여요청 내역
+        List<RequestEntity> usersActivities = requestRepository.findAllByRequestUser_Id(requestUserId);
+
+        return usersActivities.stream()
+                .map(ActivitiesDto::of)
+                .collect(Collectors.toList());
+
+    }
+
+    @Transactional
+    public void deleteRequest(Long userId, Long requestId) {
+        RequestEntity request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RequestException(ErrorCode.NOT_FOUND_REQUEST));
+
+        UserEntity requestUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+
+        Long requestUserId = requestUser.getId();
+
+        // 권한 인증
+        if (!userId.equals(requestUserId)) {
+            throw new RequestException(ErrorCode.REQUEST_PERMISSION_DENIED);
+        }
+
+        requestRepository.delete(request);
     }
 
     @Transactional
@@ -128,24 +156,6 @@ public class RequestService {
                     .filter(request -> request.getRequestStatus() == RequestEntity.RequestStatus.ACCEPT).toList()).build()
             );
         }
-    }
-
-    @Transactional
-    public void deleteRequest(Long userId, Long requestId) {
-        RequestEntity request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new RequestException(ErrorCode.NOT_FOUND_REQUEST));
-
-        UserEntity requestUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
-
-        Long requestUserId = requestUser.getId();
-
-        // 권한 인증
-        if (!userId.equals(requestUserId)) {
-            throw new RequestException(ErrorCode.REQUEST_PERMISSION_DENIED);
-        }
-
-        requestRepository.delete(request);
     }
 
     private void validateAuthority(Long userId, PostEntity post) {

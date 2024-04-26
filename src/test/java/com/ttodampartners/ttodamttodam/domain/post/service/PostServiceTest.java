@@ -1,12 +1,10 @@
 package com.ttodampartners.ttodamttodam.domain.post.service;
 
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostDto;
-import com.ttodampartners.ttodamttodam.domain.post.dto.PostUpdateDto;
+import com.ttodampartners.ttodamttodam.domain.post.dto.*;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
-import com.ttodampartners.ttodamttodam.domain.post.dto.ProductAddDto;
+import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
@@ -45,7 +43,7 @@ class PostServiceTest {
             imageFiles.add(imageFile);
         }
 
-        PostEntity post = postService.createPost(3L, imageFiles, testPost);
+        PostEntity post = postService.createPost(5L, imageFiles, testPost);
 
         Optional<PostEntity> optionalPost = postRepository.findById(post.getPostId());
         assertTrue(optionalPost.isPresent());
@@ -80,18 +78,38 @@ class PostServiceTest {
 
         List<PostDto> postList = postService.getPostList(userId);
 
-        assertEquals(1, postList.size());
+        assertEquals(2, postList.size());
+    }
+
+    @Test
+    void GET_CATEGORY_POST_LIST_TEST(){
+        Long userId = 1L;
+        String category = "생활용품";
+
+        List<PostDto> postList = postService.getCategoryPostList(userId,category);
+
+        assertEquals(3, postList.size());
+    }
+
+
+    @Test
+    void GET_USERS_POST_LIST_TEST(){
+        Long userId = 3L;
+
+        List<PostDto> userPostList = postService.getUsersPostList(userId);
+
+        assertEquals(3, userPostList.size());
     }
 
     @Test
     void GET_POST_TEST(){
-        Long userId = 3L;
+        Long userId = 5L;
         Long postId = 63L;
 
-        PostDto testPost = postService.getPost(userId, postId);
+        PostDetailDto testPost = postService.getPost(userId, postId);
 
-        assertEquals("Updated Title", testPost.getTitle());
-
+        assertEquals("NONE", testPost.getLoginUserRequestStatus());
+        assertTrue(testPost.isBookmarked());
     }
 
     @Test
@@ -128,6 +146,16 @@ class PostServiceTest {
         assertEquals(5, updatedPost.getParticipants());
         assertEquals("서울특별시 마포구 양화로 지하188", updatedPost.getPlace());
 
+    }
+
+    @Test
+    void UPDATE_POST_PURCHASE_STATUS_TEST(){
+        Long userId = 3L;
+        Long postId = 59L;
+
+        PostEntity updateRequest = postService.updatePurchaseStatus(userId, postId,"성공");
+
+        assertEquals(PostEntity.PurchaseStatus.SUCCESS, updateRequest.getPurchaseStatus());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.post.dto;
 
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
+import com.ttodampartners.ttodamttodam.domain.request.dto.RequestDto;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import lombok.*;
 

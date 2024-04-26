@@ -1,9 +1,12 @@
 package com.ttodampartners.ttodamttodam.global.error;
 
+import com.ttodampartners.ttodamttodam.domain.bookmark.exception.BookmarkException;
 import com.ttodampartners.ttodamttodam.domain.keyword.exception.KeywordException;
 import com.ttodampartners.ttodamttodam.domain.chat.dto.ChatExceptionResponse;
 import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomException;
 import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomStringException;
+import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
+import com.ttodampartners.ttodamttodam.domain.request.exception.RequestException;
 import com.ttodampartners.ttodamttodam.domain.user.exception.AwsException;
 import com.ttodampartners.ttodamttodam.domain.user.exception.CoordinateException;
 import com.ttodampartners.ttodamttodam.infra.email.exception.MailException;
@@ -68,5 +71,26 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> validationExceptionHandle(MethodArgumentNotValidException e) {
     String errorMessage = e.getBindingResult().getFieldError().getDefaultMessage();
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+  }
+
+  /*
+    게시글 관련 Exception 추가
+  */
+  @ExceptionHandler(PostException.class)
+  public ResponseEntity<String> PostExceptionHandler(PostException e) {
+    log.error("에러코드: {}, 에러 메시지: {}", e.getErrorCode(), e.getErrorMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorMessage());
+  }
+
+  @ExceptionHandler(RequestException.class)
+  public ResponseEntity<String> RequestExceptionHandler(RequestException e) {
+    log.error("에러코드: {}, 에러 메시지: {}", e.getErrorCode(), e.getErrorMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getErrorMessage());
+  }
+
+  @ExceptionHandler(BookmarkException.class)
+  public ResponseEntity<String> BookmarkExceptionHandle(BookmarkException e) {
+    log.error("에러코드: {}, 에러 메시지: {}", e.getErrorCode(), e.getErrorMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorMessage());
   }
 }

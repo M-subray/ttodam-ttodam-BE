@@ -59,6 +59,10 @@ public class PostEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "purchase_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PurchaseStatus purchaseStatus;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
      private Category category;
@@ -96,6 +100,14 @@ public class PostEntity {
 
             this.label = label;
         }
+        public static Category fromLabel(String label) {
+            for (Category category : Category.values()) {
+                if (category.label.equals(label)) {
+                    return category;
+                }
+            }
+            throw new IllegalArgumentException("Unknown request status label: " + label);
+        }
     }
 
     @Getter
@@ -108,6 +120,28 @@ public class PostEntity {
         Status(String label) {
 
             this.label = label;
+        }
+    }
+
+    @Getter
+    public enum PurchaseStatus {
+        PREPARING("진행전"),
+        PROCEEDING("진행중"),
+        SUCCESS("성공"),
+        FAILURE("실패");
+
+        private final String label;
+        PurchaseStatus(String label) {
+
+            this.label = label;
+        }
+        public static PurchaseStatus fromLabel(String label) {
+            for (PurchaseStatus purchaseStatus : PurchaseStatus.values()) {
+                if (purchaseStatus.label.equals(label)) {
+                    return purchaseStatus;
+                }
+            }
+            throw new IllegalArgumentException("Unknown request status label: " + label);
         }
     }
 
