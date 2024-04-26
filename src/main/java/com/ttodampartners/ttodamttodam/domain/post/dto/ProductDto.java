@@ -10,21 +10,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDto {
-    private Long productId;
-    private Long postId;
     private String productName;
-    private Integer count;
-    private String purchaseLink;
     private Long price;
+    private Integer count;
 
     public static ProductDto from(ProductEntity productEntity){
         return ProductDto.builder()
-                .productId(productEntity.getProductId())
-                .postId(productEntity.getPost().getPostId())
                 .productName(productEntity.getProductName())
-                .count(productEntity.getCount())
-                .purchaseLink(productEntity.getPurchaseLink())
                 .price(productEntity.getPrice())
+                .count(productEntity.getCount())
                 .build();
     }
 
