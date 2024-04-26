@@ -9,6 +9,7 @@ import com.ttodampartners.ttodamttodam.domain.chat.dto.response.ChatroomProfileR
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomMemberEntity;
 import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomException;
+import com.ttodampartners.ttodamttodam.domain.chat.exception.ChatroomStringException;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomMemberRepository;
 import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomRepository;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
@@ -45,13 +46,15 @@ public class ChatroomCreateService {
     private final ChatroomMemberRepository chatroomMemberRepository;
 
     // 개인 채팅방 생성
-    // 추후 게시글 상태 '모집중'인지 체크!!
     @Transactional
     public ChatroomResponse createChatroom(ChatroomCreateRequest request, Long userId) {
         // 문의자
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
         PostEntity post = postRepository.findById(request.getPostId()).orElseThrow(IllegalArgumentException::new);
+        if (post.getStatus() != PostEntity.Status.IN_PROGRESS) { // '모집중' 게시글이 아닌 경우
+            throw new ChatroomStringException(CHATROOM_CREATE_DENIED);
+        }
         // 게시글 작성자
         UserEntity host = userRepository.findById(post.getUser().getId()).orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
