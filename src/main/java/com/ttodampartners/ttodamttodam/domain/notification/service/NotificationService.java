@@ -6,16 +6,22 @@ import com.ttodampartners.ttodamttodam.domain.notification.entity.NotificationEn
 import com.ttodampartners.ttodamttodam.domain.notification.entity.NotificationEntity.Type;
 import com.ttodampartners.ttodamttodam.domain.notification.exception.NotificationException;
 import com.ttodampartners.ttodamttodam.domain.notification.repository.NotificationRepository;
+import com.ttodampartners.ttodamttodam.domain.notification.util.TokenSseEmitter;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.ProductAddDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
+import com.ttodampartners.ttodamttodam.global.config.security.TokenProvider;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +33,17 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Slf4j
 @Service
 public class NotificationService {
-  private static Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
+  private static final long EXPIRE_TIME = 1000 * 60 * 60;
+  private static Map<Long, TokenSseEmitter> sseEmitters = new ConcurrentHashMap<>();
   private final KeywordRepository keywordRepository;
   private final NotificationRepository notificationRepository;
 
   public void subscribe(Long userId) {
-    // 현재 클라이언트를 위한 sseEmitter 객체 생성
-    SseEmitter sseEmitter = new SseEmitter();
+    // 현재 클라이언트를 위한 sseEmitter 객체 생성 (만료시간 한시간 설정)
+    TokenSseEmitter sseEmitter = new TokenSseEmitter(EXPIRE_TIME);
+    Date now = new Date();
+//    sseEmitter.setExpiredDate(now.getTime() + EXPIRE_TIME);
+    sseEmitter.setExpiredDate(now.getTime() + EXPIRE_TIME);
 
     // 연결
     try {
@@ -55,7 +65,7 @@ public class NotificationService {
     });
   }
 
-  public void sendNotificationForKeyword (PostCreateDto postCreateDto, Long postId) {
+  public void sendNotificationForKeyword (PostCreateDto postCreateDto, PostEntity post) {
     // PostCreateDto 에서 가져온 키워드를 담을 String 리스트
     List<String> keywordList = new ArrayList<>();
 
@@ -74,25 +84,27 @@ public class NotificationService {
         SseEmitter sseEmitter = getSseEmitter(keywordEntity.getUser().getId());
         String message = String.format("등록하신 키워드 '%s' 가 포함된 글이 작성되었습니다.",
             keywordEntity.getKeywordName());
-        saveNotificationForKeyword(keywordEntity, message);
+        saveNotificationForKeyword(keywordEntity, message, post);
         if (sseEmitter != null) {
           try {
             sseEmitter.send(SseEmitter.event().
                 name("notification").
                 data(Map.of("notificationMessage", message)));
           } catch (IOException e) {
-            log.error("SSE 메시지 전송 실패 (userId : {}", keywordEntity.getUser().getId(), e);
+            throw new NotificationException(ErrorCode.SSE_SEND_FAILED);
           }
         }
       }
     }
   }
 
-  private void saveNotificationForKeyword (KeywordEntity keywordEntity, String message) {
+  private void saveNotificationForKeyword (KeywordEntity keywordEntity,
+      String message, PostEntity post) {
     notificationRepository.save(NotificationEntity.builder()
         .user(keywordEntity.getUser())
         .message(message)
         .type(Type.KEYWORD)
+        .post(post)
         .build());
   }
 
@@ -105,10 +117,10 @@ public class NotificationService {
       if (sseEmitter != null) {
         try {
           sseEmitter.send(SseEmitter.event().
-                  name("notification").
-                  data(Map.of("notificationMessage", message)));
+              name("notification").
+              data(Map.of("notificationMessage", message)));
         } catch (IOException e) {
-          log.error("SSE 메시지 전송 실패 (userId : {}", member.getId(), e);
+          throw new NotificationException(ErrorCode.SSE_SEND_FAILED);
         }
       }
     }
@@ -116,17 +128,31 @@ public class NotificationService {
 
   private void saveNotificationForGroupChat(UserEntity member, String message) {
     notificationRepository.save(NotificationEntity.builder()
-            .user(member)
-            .message(message)
-            .type(Type.GROUPCHAT)
-            .build());
+        .user(member)
+        .message(message)
+        .type(Type.GROUPCHAT)
+        .build());
   }
 
-  @Scheduled(fixedRate = 15000)
-  public void sendHeartBeat () {
-    for (Map.Entry<Long, SseEmitter> entry : sseEmitters.entrySet()) {
+  @Scheduled(fixedRate = 10000)
+  public void sendHeartBeat() {
+    long currentTime = System.currentTimeMillis();
+
+    Iterator<Entry<Long, TokenSseEmitter>> iterator = sseEmitters.entrySet().iterator();
+    while (iterator.hasNext()) {
+      Map.Entry<Long, TokenSseEmitter> entry = iterator.next();
       Long userId = entry.getKey();
-      SseEmitter sseEmitter = entry.getValue();
+      TokenSseEmitter sseEmitter = entry.getValue();
+
+      // 토큰 만료 시간 확인
+      long expirationTime = sseEmitter.getExpiredDate();
+      if (expirationTime <= currentTime) {
+        // 만료된 SSE 연결을 종료하고 맵에서 제거
+        sseEmitter.complete();
+        iterator.remove();
+        log.info("SSE 연결이 만료되어 종료됩니다. UserId: {}", userId);
+        continue; // 만료된 SSE 연결인 경우 이후 로직은 실행하지 않고 다음 반복으로 넘어갑니다.
+      }
 
       try {
         int heartBeat = (int) (Math.random() * 100) + 60;
