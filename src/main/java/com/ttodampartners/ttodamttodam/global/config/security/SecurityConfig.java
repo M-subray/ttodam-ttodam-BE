@@ -32,7 +32,8 @@ public class SecurityConfig {
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .authorizeHttpRequests(authorize ->
             authorize
-                .requestMatchers("/users/**").permitAll()
+                .requestMatchers("/users/signin/**").permitAll()
+                .requestMatchers("/users/signup/**").permitAll()
                 .requestMatchers("/login/**").permitAll()
                 .requestMatchers("/post/**").authenticated()
                 .requestMatchers("/post/search").permitAll()
@@ -40,6 +41,8 @@ public class SecurityConfig {
                 .requestMatchers("/users/{userId}/**").authenticated()
                 .requestMatchers("/users/activities").authenticated()
                 .requestMatchers("/users/post").authenticated()
+                .requestMatchers("/users/**").authenticated()
+                .requestMatchers("/notifications/**").authenticated()
                 .requestMatchers("/chatrooms/**").permitAll()
                 .requestMatchers("/ws-chatting/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
