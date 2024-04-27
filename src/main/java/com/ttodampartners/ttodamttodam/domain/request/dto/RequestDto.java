@@ -14,8 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RequestDto {
     private Long requestId;
-    private UserEntity requestUser;
-    private PostEntity post;
+    private Long requestUser;
     private RequestEntity.RequestStatus requestStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -23,8 +22,7 @@ public class RequestDto {
     public static RequestDto of(RequestEntity requestEntity) {
         return RequestDto.builder()
                 .requestId(requestEntity.getRequestId())
-                .requestUser(requestEntity.getRequestUser())
-                .post(requestEntity.getPost())
+                .requestUser(requestEntity.getRequestUser().getId())
                 .requestStatus(requestEntity.getRequestStatus())
                 .createdAt(requestEntity.getCreatedAt())
                 .updatedAt(requestEntity.getUpdatedAt())
