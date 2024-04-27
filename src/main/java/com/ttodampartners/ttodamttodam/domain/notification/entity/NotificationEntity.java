@@ -1,5 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.notification.entity;
 
+import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.user.dto.model.NotificationBaseEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import jakarta.persistence.Column;
@@ -11,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +43,10 @@ public class NotificationEntity extends NotificationBaseEntity {
 
   @NotBlank
   private String message;
+
+  @OneToOne
+  @JoinColumn(name = "post_id", nullable = true)
+  private PostEntity post;
 
   @Getter
   public enum Type {

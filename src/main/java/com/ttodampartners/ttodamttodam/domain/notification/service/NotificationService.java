@@ -9,6 +9,7 @@ import com.ttodampartners.ttodamttodam.domain.notification.repository.Notificati
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.ProductAddDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
+import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class NotificationService {
     });
   }
 
-  public void sendNotificationForKeyword (PostCreateDto postCreateDto, Long postId) {
+  public void sendNotificationForKeyword (PostCreateDto postCreateDto, PostEntity post) {
     // PostCreateDto 에서 가져온 키워드를 담을 String 리스트
     List<String> keywordList = new ArrayList<>();
 
@@ -74,7 +75,7 @@ public class NotificationService {
         SseEmitter sseEmitter = getSseEmitter(keywordEntity.getUser().getId());
         String message = String.format("등록하신 키워드 '%s' 가 포함된 글이 작성되었습니다.",
             keywordEntity.getKeywordName());
-        saveNotificationForKeyword(keywordEntity, message);
+        saveNotificationForKeyword(keywordEntity, message, post);
         if (sseEmitter != null) {
           try {
             sseEmitter.send(SseEmitter.event().
@@ -88,11 +89,13 @@ public class NotificationService {
     }
   }
 
-  private void saveNotificationForKeyword (KeywordEntity keywordEntity, String message) {
+  private void saveNotificationForKeyword (KeywordEntity keywordEntity,
+      String message, PostEntity post) {
     notificationRepository.save(NotificationEntity.builder()
         .user(keywordEntity.getUser())
         .message(message)
         .type(Type.KEYWORD)
+        .post(post)
         .build());
   }
 
@@ -105,8 +108,8 @@ public class NotificationService {
       if (sseEmitter != null) {
         try {
           sseEmitter.send(SseEmitter.event().
-                  name("notification").
-                  data(Map.of("notificationMessage", message)));
+              name("notification").
+              data(Map.of("notificationMessage", message)));
         } catch (IOException e) {
           log.error("SSE 메시지 전송 실패 (userId : {}", member.getId(), e);
         }
@@ -116,10 +119,10 @@ public class NotificationService {
 
   private void saveNotificationForGroupChat(UserEntity member, String message) {
     notificationRepository.save(NotificationEntity.builder()
-            .user(member)
-            .message(message)
-            .type(Type.GROUPCHAT)
-            .build());
+        .user(member)
+        .message(message)
+        .type(Type.GROUPCHAT)
+        .build());
   }
 
   @Scheduled(fixedRate = 15000)

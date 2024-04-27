@@ -70,7 +70,7 @@ public class PostService {
 
             postRepository.save(post);
             // 키워드(프로덕트 이름 리스트)로 알림 발송
-            notificationService.sendNotificationForKeyword(postCreateDto, post.getPostId());
+            notificationService.sendNotificationForKeyword(postCreateDto, post);
             return post;
         } catch (IOException e) {
 

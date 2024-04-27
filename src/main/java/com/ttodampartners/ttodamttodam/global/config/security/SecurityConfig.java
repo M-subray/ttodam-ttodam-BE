@@ -32,10 +32,13 @@ public class SecurityConfig {
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .authorizeHttpRequests(authorize ->
             authorize
-                .requestMatchers("/users/**").permitAll()
+                .requestMatchers("/users/signin/**").permitAll()
+                .requestMatchers("/users/signup/**").permitAll()
                 .requestMatchers("/login/**").permitAll()
                 .requestMatchers("/post/**").authenticated()
-                .requestMatchers("/users/{userId}/**").authenticated()
+                .requestMatchers("/request/**").authenticated()
+                .requestMatchers("/users/**").authenticated()
+                .requestMatchers("/notifications/**").authenticated()
                 .requestMatchers("/chatrooms/**").permitAll()
                 .requestMatchers("/ws-chatting/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
