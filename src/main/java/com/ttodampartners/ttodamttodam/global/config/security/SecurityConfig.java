@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .requestMatchers("/users/**").permitAll()
                 .requestMatchers("/login/**").permitAll()
                 .requestMatchers("/post/**").authenticated()
+                .requestMatchers("/request/**").authenticated()
                 .requestMatchers("/users/{userId}/**").authenticated()
                 .requestMatchers("/chatrooms/**").permitAll()
                 .requestMatchers("/ws-chatting/**").permitAll()

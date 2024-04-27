@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.*;
 public class PostController {
     private final PostService postService;
 
-    @PostMapping("/post")
+    @PostMapping("/post/write")
     public ResponseEntity<PostDto> createPost(
             @AuthenticationPrincipal UserDetailsDto userDetails,
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
@@ -82,7 +82,7 @@ public class PostController {
             @AuthenticationPrincipal UserDetailsDto userDetails,
             @PathVariable Long postId,
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> newImageFiles,
-            @RequestBody PostUpdateDto postUpdateDto
+            @RequestPart PostUpdateDto postUpdateDto
     )
     {
         Long userId = userDetails.getId();
