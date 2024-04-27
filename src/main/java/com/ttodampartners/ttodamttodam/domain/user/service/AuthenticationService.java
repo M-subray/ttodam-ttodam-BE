@@ -20,6 +20,7 @@ public class AuthenticationService implements UserDetailsService {
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
     UserEntity userEntity = findByEmail(email);
     return UserDetailsDto.builder()
+        .id(userEntity.getId())
         .email(userEntity.getEmail())
         .password(userEntity.getPassword())
         .build();
@@ -29,4 +30,5 @@ public class AuthenticationService implements UserDetailsService {
     return userRepository.findByEmail(email)
         .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_EMAIL));
   }
+
 }

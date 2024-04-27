@@ -2,7 +2,6 @@ package com.ttodampartners.ttodamttodam.domain.user.controller;
 
 import com.ttodampartners.ttodamttodam.domain.user.dto.SigninRequestDto;
 import com.ttodampartners.ttodamttodam.domain.user.service.SigninService;
-import com.ttodampartners.ttodamttodam.global.config.security.TokenProvider;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,18 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SigninController {
   private final SigninService signinService;
-  private final TokenProvider tokenProvider;
 
   @PostMapping("/users/signin")
   public ResponseEntity<?> signin (@RequestBody @Valid SigninRequestDto signinRequestDto) {
-    signinService.signin(signinRequestDto);
-
-    String token = tokenProvider.generateToken(signinRequestDto.getEmail());
+    String token = signinService.signin(signinRequestDto);
 
     HttpHeaders headers = new HttpHeaders();
     headers.add("Authorization", "Bearer " + token);
     log.info("로그인 성공, email : {}", signinRequestDto.getEmail());
 
-   return ResponseEntity.ok().headers(headers).body("로그인 성공");
+    return ResponseEntity.ok().headers(headers).body("로그인 성공");
   }
 }

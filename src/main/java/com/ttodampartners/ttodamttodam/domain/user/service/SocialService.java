@@ -1,8 +1,11 @@
 package com.ttodampartners.ttodamttodam.domain.user.service;
 
+import com.ttodampartners.ttodamttodam.domain.notification.service.NotificationService;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
+import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
 import com.ttodampartners.ttodamttodam.global.config.security.TokenProvider;
+import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +32,7 @@ public class SocialService {
   private final TokenProvider tokenProvider;
   private final RestTemplate restTemplate = new RestTemplate();
   private String email;
+  private final NotificationService notificationService;
 
   public String socialLogin(String code, String registrationId) {
     String accessToken = getAccessToken(code, registrationId);
@@ -42,11 +46,13 @@ public class SocialService {
 
     Optional<UserEntity> byEmail = userRepository.findByEmail(email);
 
+    // 가져온 이메일이 DB에 없다면 회원가입
     if (byEmail.isEmpty()) {
       userRepository.save(UserEntity.builder().email(email).build());
       log.info("소셜 회원가입 성공, 이메일 : " + email);
     }
 
+    notificationService.subscribe(getUserByEmail(email).getId());
     return tokenProvider.generateToken(email);
   }
 
@@ -81,5 +87,10 @@ public class SocialService {
     headers.set("Authorization", "Bearer " + accessToken);
     HttpEntity entity = new HttpEntity(headers);
     return restTemplate.exchange(resourceUri, HttpMethod.GET, entity, JsonNode.class).getBody();
+  }
+
+  private UserEntity getUserByEmail(String email) {
+    return userRepository.findByEmail(email).orElseThrow(() ->
+        new UserException(ErrorCode.NOT_FOUND_EMAIL));
   }
 }

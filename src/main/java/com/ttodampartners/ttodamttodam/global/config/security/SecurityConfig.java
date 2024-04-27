@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
@@ -33,7 +34,11 @@ public class SecurityConfig {
             authorize
                 .requestMatchers("/users/**").permitAll()
                 .requestMatchers("/login/**").permitAll()
+                .requestMatchers("/post/**").authenticated()
+                .requestMatchers("/request/**").authenticated()
                 .requestMatchers("/users/{userId}/**").authenticated()
+                .requestMatchers("/chatrooms/**").permitAll()
+                .requestMatchers("/ws-chatting/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         );
     return http.build();

@@ -44,6 +44,10 @@ public class ProfileDto {
       message = "핸드폰 번호 형식을 지켜주세요 (010-0000-0000)")
   private String phone;
 
+  /*
+  AssertTrue 를 통해 password 가 입력됐으나
+  confirmPassword 가 쓰여있지 않다면 안내 문구 발생
+   */
   @AssertTrue(message = "비밀번호를 변경하려면 한 번 더 입력해 주세요.")
   private boolean isConfirmPasswordRequired() {
     return password == null || confirmPassword != null;
