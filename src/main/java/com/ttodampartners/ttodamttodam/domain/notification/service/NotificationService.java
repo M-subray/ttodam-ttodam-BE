@@ -6,17 +6,22 @@ import com.ttodampartners.ttodamttodam.domain.notification.entity.NotificationEn
 import com.ttodampartners.ttodamttodam.domain.notification.entity.NotificationEntity.Type;
 import com.ttodampartners.ttodamttodam.domain.notification.exception.NotificationException;
 import com.ttodampartners.ttodamttodam.domain.notification.repository.NotificationRepository;
+import com.ttodampartners.ttodamttodam.domain.notification.util.TokenSseEmitter;
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostCreateDto;
 import com.ttodampartners.ttodamttodam.domain.post.dto.ProductAddDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
-import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
+import com.ttodampartners.ttodamttodam.global.config.security.TokenProvider;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,13 +33,17 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Slf4j
 @Service
 public class NotificationService {
-  private static Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
+  private static final long EXPIRE_TIME = 1000 * 60 * 60;
+  private static Map<Long, TokenSseEmitter> sseEmitters = new ConcurrentHashMap<>();
   private final KeywordRepository keywordRepository;
   private final NotificationRepository notificationRepository;
 
   public void subscribe(Long userId) {
-    // 현재 클라이언트를 위한 sseEmitter 객체 생성
-    SseEmitter sseEmitter = new SseEmitter();
+    // 현재 클라이언트를 위한 sseEmitter 객체 생성 (만료시간 한시간 설정)
+    TokenSseEmitter sseEmitter = new TokenSseEmitter(EXPIRE_TIME);
+    Date now = new Date();
+//    sseEmitter.setExpiredDate(now.getTime() + EXPIRE_TIME);
+    sseEmitter.setExpiredDate(now.getTime() + EXPIRE_TIME);
 
     // 연결
     try {
@@ -82,7 +91,7 @@ public class NotificationService {
                 name("notification").
                 data(Map.of("notificationMessage", message)));
           } catch (IOException e) {
-            log.error("SSE 메시지 전송 실패 (userId : {}", keywordEntity.getUser().getId(), e);
+            throw new NotificationException(ErrorCode.SSE_SEND_FAILED);
           }
         }
       }
@@ -111,7 +120,7 @@ public class NotificationService {
               name("notification").
               data(Map.of("notificationMessage", message)));
         } catch (IOException e) {
-          log.error("SSE 메시지 전송 실패 (userId : {}", member.getId(), e);
+          throw new NotificationException(ErrorCode.SSE_SEND_FAILED);
         }
       }
     }
@@ -125,11 +134,25 @@ public class NotificationService {
         .build());
   }
 
-  @Scheduled(fixedRate = 15000)
-  public void sendHeartBeat () {
-    for (Map.Entry<Long, SseEmitter> entry : sseEmitters.entrySet()) {
+  @Scheduled(fixedRate = 10000)
+  public void sendHeartBeat() {
+    long currentTime = System.currentTimeMillis();
+
+    Iterator<Entry<Long, TokenSseEmitter>> iterator = sseEmitters.entrySet().iterator();
+    while (iterator.hasNext()) {
+      Map.Entry<Long, TokenSseEmitter> entry = iterator.next();
       Long userId = entry.getKey();
-      SseEmitter sseEmitter = entry.getValue();
+      TokenSseEmitter sseEmitter = entry.getValue();
+
+      // 토큰 만료 시간 확인
+      long expirationTime = sseEmitter.getExpiredDate();
+      if (expirationTime <= currentTime) {
+        // 만료된 SSE 연결을 종료하고 맵에서 제거
+        sseEmitter.complete();
+        iterator.remove();
+        log.info("SSE 연결이 만료되어 종료됩니다. UserId: {}", userId);
+        continue; // 만료된 SSE 연결인 경우 이후 로직은 실행하지 않고 다음 반복으로 넘어갑니다.
+      }
 
       try {
         int heartBeat = (int) (Math.random() * 100) + 60;

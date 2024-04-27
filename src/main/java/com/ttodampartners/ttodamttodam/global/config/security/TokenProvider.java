@@ -74,6 +74,7 @@ public class TokenProvider {
     }
   }
 
+
   // 토큰의 남은 시간 가져오기 (토큰 blacklist Redis 저장 때 duration 지정 위해 쓰임)
   public long calculateRemainingTime(Date expiration) {
     Date now = new Date();
