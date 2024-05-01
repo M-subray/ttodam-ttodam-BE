@@ -1,3 +1,9 @@
+<div align="center"><img width="621" alt="또담또담 배너" src="https://github.com/ttodam-ttodam/ttodam-ttodam-BE/assets/38836598/a7525b97-3b05-42fc-9d17-9ef676205437"></div>
+
+<div align="center"><h3>또담또담, 우리 동네 공동구매 플랫폼</h3></div>
+
+</br>
+
 ## 프로젝트 설명
 1인 가구 증가와 물가가 치솟고 있는 상황에 합리적 소비를 원하는 사람들이 늘고 있습니다.
 
@@ -7,16 +13,34 @@
 
 소분까지 보다 편하게 할 수 있도록 도와주는 커뮤니티 앱입니다.
 
+</br>
+
 ## 사용 기술
-- Java 17
-- Gradle
-- Mysql, Redis
-- Spring, Spring Boot
-- Spring JPA
-- Spring security, OAuth
-- stomp, socketjs, websocket
-- SSE
-- Amazon EC2, Amazon S3
+|<strong> 분야 </strong>|<strong> 사용한 기술 이름 </strong>|
+|:--|:--|
+|<strong> Language </strong>| Java 17 |
+|<strong> Build </strong>| Gradle |
+|<strong> Framework </strong>| Spring, SpringBoot 3.1.10 |
+|<strong> Core Skills </strong>| Spring JPA, Spring Security, OAuth, SSE, STOMP, WebSocket |
+|<strong> Database </strong>| MySQL,  Redis |
+|<strong> Deploy </strong>| AWS EC2, AWS RDS, Amazon S3 |
+
+</br>
+
+## 🤼 팀원 소개 🤼
+
+|<strong> 문병학 </strong>|<strong> 양예린 </strong>|<strong> 양지은 </strong>|
+|:----:|:-----:|:----:|
+|<img src="https://avatars.githubusercontent.com/u/100525337?v=4" width="200" height="200"/>|<img src="https://avatars.githubusercontent.com/u/68904755?v=4" width="200" height="200"/>|<img src="https://github.com/ttodam-ttodam/ttodam-ttodam-BE/assets/38836598/efd7413d-e06d-4955-a942-8ad55c129fd6" width="200" height="200"/>|
+|<strong> 유저, 프로필, 알림  </strong>|<strong> 게시글, 검색, 배포 </strong>|<strong> 채팅, 알림, 테스트 </strong>|
+|<strong> [M_subray](https://github.com/M-subray) </strong>|<strong> [e_elin](https://github.com/yell2023) </strong>|<strong> [yje9802](https://github.com/yje9802) </strong>|
+
+<br/>
+
+## 시스템 아키텍처
+![또담또담_아키텍처](https://github.com/ttodam-ttodam/ttodam-ttodam-BE/assets/38836598/5aa1bb7b-86b0-419e-b634-9f948f312e3f)
+
+</br>
 
 ## ERD
 ![ttodamERD](https://github.com/ttodam-ttodam/ttodam-ttodam-BE/assets/144686741/17512f4d-f9c5-4986-b8a5-5b2f1d0feba3)
@@ -73,7 +97,11 @@
       - 게시글의 모집인원이 모두 모이게 되면 게시글의 상태가 '완료'가 되며 구매 일정 조율을 위한 단체 채팅방이 생성된다.
   - 요청 전 문의사항이 있다면 작성자에게 1:1 채팅을 통해 문의 가능
 ### 채팅 기능
-- [x] 1:1 채팅방 생성
-  - 참여자가 글 작성자에게 문의사항이 있을 경우 생성
+- [x] 1:1 문의 채팅방 생성
+  - 참여자가 글 작성자에게 문의사항이 있을 경우 생성할 수 있습니다.
 - [x] 단체 채팅방
-  - 공동구매 게시글의 참여희망 인원이 모두 모이게 되면 자동으로 생
+  - 공동구매 게시글의 참여희망 인원이 모두 모이게 되면 자동으로 생성됩니다.
+- [x] WebSocket과 STOMP를 활용하여 채팅 기능을 구현했습니다.
+  - STOMP를 도입하여 세션 관리와 메시지 타입 관리에 대한 부담을 줄였습니다.
+- [x] 30일 지난 채팅 메시지 자동 삭제
+  - Spring Scheduler 기능을 활용하여 서버로 수신된 지 30일 지난 메시지는 자동으로 삭제되게 하여 DB에 과도한 메시지가 쌓이는 것을 방지했습니다.
