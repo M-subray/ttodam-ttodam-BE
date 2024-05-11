@@ -1,5 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.user.entity;
 
+import com.ttodampartners.ttodamttodam.domain.bookmark.entity.BookmarkEntity;
 import com.ttodampartners.ttodamttodam.domain.keyword.entity.KeywordEntity;
 import com.ttodampartners.ttodamttodam.domain.user.dto.model.BaseEntity;
 import jakarta.persistence.CascadeType;
@@ -10,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Size;
+import java.awt.print.Book;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,6 +62,9 @@ public class UserEntity extends BaseEntity {
   @Column(nullable = false, columnDefinition = "DOUBLE DEFAULT 0")
   private double manners;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+  @OneToMany(cascade = CascadeType.REMOVE)
+  private List<BookmarkEntity> bookmark;
+
+  @OneToMany(cascade = CascadeType.REMOVE)
   private List<KeywordEntity> keyword;
 }

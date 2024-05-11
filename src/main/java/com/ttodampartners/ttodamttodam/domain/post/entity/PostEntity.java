@@ -1,5 +1,6 @@
 package com.ttodampartners.ttodamttodam.domain.post.entity;
 
+import com.ttodampartners.ttodamttodam.domain.bookmark.entity.BookmarkEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.global.config.StringListConverter;
 import jakarta.persistence.*;
@@ -24,125 +25,134 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EntityListeners(AuditingEntityListener.class)
 @Entity(name = "post")
 public class PostEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long postId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", nullable = false)
+  private Long postId;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<ProductEntity> products = new ArrayList<>();
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private UserEntity user;
 
-    @Column(nullable = false)
-    private String title;
+  @Builder.Default
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  private List<ProductEntity> products = new ArrayList<>();
 
-    @Column(nullable = false)
-    private Integer participants;
+  @Column(nullable = false)
+  private String title;
 
-    @Column(nullable = false)
-    private String place;
+  @Column(nullable = false)
+  private Integer participants;
 
-    @Column(name = "p_location_x", nullable = false)
-    private Double pLocationX;
+  @Column(nullable = false)
+  private String place;
 
-    @Column(name = "p_location_y", nullable = false)
-    private Double pLocationY;
+  @Column(name = "p_location_x", nullable = false)
+  private Double pLocationX;
 
-    @Column(nullable = false)
-    private LocalDateTime deadline;
+  @Column(name = "p_location_y", nullable = false)
+  private Double pLocationY;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Status status;
+  @Column(nullable = false)
+  private LocalDateTime deadline;
 
-    @Column(name = "purchase_status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PurchaseStatus purchaseStatus;
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Status status;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-     private Category category;
+  @Column(name = "purchase_status", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private PurchaseStatus purchaseStatus;
 
-    @Lob
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Category category;
 
-    @Convert(converter = StringListConverter.class)
-    @Builder.Default
-    @Column(name = "post_img_url", nullable = false)
-    private List<String> imgUrls = new ArrayList<>();
+  @Lob
+  @Column(columnDefinition = "TEXT", nullable = false)
+  private String content;
 
-    @Column(name = "create_at", nullable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;
+  @Convert(converter = StringListConverter.class)
+  @Builder.Default
+  @Column(name = "post_img_url", nullable = false)
+  private List<String> imgUrls = new ArrayList<>();
 
-    @Column(name = "update_at", nullable = false)
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+  @Column(name = "create_at", nullable = false)
+  @CreatedDate
+  private LocalDateTime createdAt;
 
-    @Getter
-    public enum Category {
-        DAILY("생활용품"),
-        KITCHEN("주방용품"),
-        FOOD("식품"),
-        PET("반려동물용품"),
-        CLOTHING("의류/잡화"),
-        HEALTH("헬스/건강식품"),
-        OFFICE("오피스/문구"),
-        OTHER("기타");
+  @Column(name = "update_at", nullable = false)
+  @LastModifiedDate
+  private LocalDateTime updatedAt;
 
-        private final String label;
-        Category(String label) {
+  @OneToMany(cascade = CascadeType.REMOVE)
+  private List<BookmarkEntity> bookmark;
 
-            this.label = label;
-        }
-        public static Category fromLabel(String label) {
-            for (Category category : Category.values()) {
-                if (category.label.equals(label)) {
-                    return category;
-                }
-            }
-            throw new IllegalArgumentException("Unknown request status label: " + label);
-        }
+  @Getter
+  public enum Category {
+    DAILY("생활용품"),
+    KITCHEN("주방용품"),
+    FOOD("식품"),
+    PET("반려동물용품"),
+    CLOTHING("의류/잡화"),
+    HEALTH("헬스/건강식품"),
+    OFFICE("오피스/문구"),
+    OTHER("기타");
+
+    private final String label;
+
+    Category(String label) {
+
+      this.label = label;
     }
 
-    @Getter
-    public enum Status {
-        IN_PROGRESS("진행중"),
-        COMPLETED("완료"),
-        FAILED("실패");
-
-        private final String label;
-        Status(String label) {
-
-            this.label = label;
+    public static Category fromLabel(String label) {
+      for (Category category : Category.values()) {
+        if (category.label.equals(label)) {
+          return category;
         }
+      }
+      throw new IllegalArgumentException("Unknown request status label: " + label);
+    }
+  }
+
+  @Getter
+  public enum Status {
+    IN_PROGRESS("진행중"),
+    COMPLETED("완료"),
+    FAILED("실패");
+
+    private final String label;
+
+    Status(String label) {
+
+      this.label = label;
+    }
+  }
+
+  @Getter
+  public enum PurchaseStatus {
+    PREPARING("진행전"),
+    PROCEEDING("진행중"),
+    SUCCESS("성공"),
+    FAILURE("실패");
+
+    private final String label;
+
+    PurchaseStatus(String label) {
+
+      this.label = label;
     }
 
-    @Getter
-    public enum PurchaseStatus {
-        PREPARING("진행전"),
-        PROCEEDING("진행중"),
-        SUCCESS("성공"),
-        FAILURE("실패");
-
-        private final String label;
-        PurchaseStatus(String label) {
-
-            this.label = label;
+    public static PurchaseStatus fromLabel(String label) {
+      for (PurchaseStatus purchaseStatus : PurchaseStatus.values()) {
+        if (purchaseStatus.label.equals(label)) {
+          return purchaseStatus;
         }
-        public static PurchaseStatus fromLabel(String label) {
-            for (PurchaseStatus purchaseStatus : PurchaseStatus.values()) {
-                if (purchaseStatus.label.equals(label)) {
-                    return purchaseStatus;
-                }
-            }
-            throw new IllegalArgumentException("Unknown request status label: " + label);
-        }
+      }
+      throw new IllegalArgumentException("Unknown request status label: " + label);
     }
+  }
 
 }
