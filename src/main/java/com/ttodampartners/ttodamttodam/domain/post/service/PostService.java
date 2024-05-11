@@ -4,7 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.ttodampartners.ttodamttodam.domain.bookmark.entity.BookmarkEntity;
 import com.ttodampartners.ttodamttodam.domain.bookmark.repository.BookmarkRepository;
-import com.ttodampartners.ttodamttodam.domain.bookmark.service.BookmarkService;
+import com.ttodampartners.ttodamttodam.domain.bookmark.service.BookmarkRegisterService;
 import com.ttodampartners.ttodamttodam.domain.notification.service.NotificationService;
 import com.ttodampartners.ttodamttodam.domain.post.dto.*;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
@@ -18,13 +18,11 @@ import com.ttodampartners.ttodamttodam.domain.request.service.RequestService;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
-import com.ttodampartners.ttodamttodam.domain.user.util.AuthenticationUtil;
 import com.ttodampartners.ttodamttodam.domain.user.util.CoordinateFinderUtil;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -46,7 +44,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
     private final BookmarkRepository bookmarkRepository;
-    private final BookmarkService bookmarkService;
+    private final BookmarkRegisterService bookmarkRegisterService;
     private final RequestService requestService;
     private final CoordinateFinderUtil coordinateFinderUtil;
     private final AmazonS3 amazonS3;
@@ -337,10 +335,6 @@ public class PostService {
         for (String deleteImageUrl : post.getImgUrls()) {
             deleteImageFileFromS3(deleteImageUrl);
         }
-
-        // 게시글 관련 북마크 삭제
-        bookmarkService.deleteBookmarksByPost(postId);
-
         // 게시글 관련 참여요청 삭제
         requestService.deleteRequestsByPost(postId);
 

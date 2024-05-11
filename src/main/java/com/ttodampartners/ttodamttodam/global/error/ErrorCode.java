@@ -58,6 +58,7 @@ public enum ErrorCode {
    */
   NOT_FOUND_BOOKMARK("해당 북마크를 찾을 수 없습니다."),
   BOOKMARK_PERMISSION_DENIED("해당 북마크에 권한이 없습니다."),
+  ALREADY_REGISTER_BOOKMARK("이미 등록 된 북마크입니다."),
 
   /*
   Request Exception

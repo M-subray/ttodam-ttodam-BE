@@ -6,32 +6,34 @@ import lombok.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookmarkDto {
-    private Long userId;
-    private Long postId;
-    private String postTitle;
-    private String postStatus;
-    private List<ProductListDto> products;
 
-    public static BookmarkDto of(BookmarkEntity bookmarkEntity) {
-        String postStatus = bookmarkEntity.getPost().getStatus().toString();
-        List<ProductListDto> products = bookmarkEntity.getPost().getProducts()
-                .stream()
-                .map(ProductListDto::from)
-                .collect(Collectors.toList());
+  private Long bookmarkId;
+  private Long userId;
+  private Long postId;
+  private String postTitle;
+  private String postStatus;
+  private List<ProductListDto> products;
 
-        return BookmarkDto.builder()
-                .userId(bookmarkEntity.getUser().getId())
-                .postId(bookmarkEntity.getPost().getPostId())
-                .postTitle(bookmarkEntity.getPost().getTitle())
-                .postStatus(postStatus)
-                .products(products)
-                .build();
-    }
+  public static BookmarkDto of(BookmarkEntity bookmarkEntity) {
+    String postStatus = bookmarkEntity.getPost().getStatus().toString();
+    List<ProductListDto> products = bookmarkEntity.getPost().getProducts()
+        .stream()
+        .map(ProductListDto::from)
+        .collect(Collectors.toList());
+
+    return BookmarkDto.builder()
+        .bookmarkId(bookmarkEntity.getBookmarkId())
+        .userId(bookmarkEntity.getUser().getId())
+        .postId(bookmarkEntity.getPost().getPostId())
+        .postTitle(bookmarkEntity.getPost().getTitle())
+        .postStatus(postStatus)
+        .products(products)
+        .build();
+  }
 }
