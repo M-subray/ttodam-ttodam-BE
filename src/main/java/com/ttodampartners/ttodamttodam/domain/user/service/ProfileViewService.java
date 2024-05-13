@@ -2,20 +2,16 @@ package com.ttodampartners.ttodamttodam.domain.user.service;
 
 import com.ttodampartners.ttodamttodam.domain.user.dto.ProfileViewDto;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
-import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
-import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
-import com.ttodampartners.ttodamttodam.domain.user.util.AuthenticationUtil;
-import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
+import com.ttodampartners.ttodamttodam.global.util.UserUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class ProfileViewService {
-  private final UserRepository userRepository;
+  private final UserUtil userUtil;
   public ProfileViewDto viewProfile () {
-    UserEntity user = getUser();
+    UserEntity user = userUtil.getCurUserEntity();
 
     return ProfileViewDto.builder()
         .nickname(user.getNickname())
@@ -24,9 +20,4 @@ public class ProfileViewService {
         .build();
   }
 
-  private UserEntity getUser () {
-    Authentication authentication = AuthenticationUtil.getAuthentication();
-    return userRepository.findByEmail(authentication.getName()).orElseThrow(() ->
-        new UserException(ErrorCode.NOT_FOUND_USER));
-  }
 }

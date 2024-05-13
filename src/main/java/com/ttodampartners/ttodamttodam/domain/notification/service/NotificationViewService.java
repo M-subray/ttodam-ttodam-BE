@@ -7,7 +7,7 @@ import com.ttodampartners.ttodamttodam.domain.notification.repository.Notificati
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
-import com.ttodampartners.ttodamttodam.domain.user.util.AuthenticationUtil;
+import com.ttodampartners.ttodamttodam.global.util.UserUtil;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,7 +49,7 @@ public class NotificationViewService {
 
 
   private UserEntity getUser () {
-    Authentication authentication = AuthenticationUtil.getAuthentication();
+    Authentication authentication = UserUtil.getAuthentication();
     return userRepository.findByEmail(authentication.getName()).orElseThrow(() ->
         new UserException(ErrorCode.NOT_FOUND_USER));
   }

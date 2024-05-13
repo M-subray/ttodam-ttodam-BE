@@ -7,8 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
   /*
-  User Exception
-   */
+    User Exception
+     */
   NOT_FOUND_USER("해당 유저를 찾지 못했습니다."),
   NOT_FOUND_EMAIL("해당 이메일로 등록된 유저를 찾지 못했습니다."),
   EXISTS_EMAIL("이미 등록된 이메일입니다."),
@@ -19,6 +19,9 @@ public enum ErrorCode {
   PERMISSION_DENIED("권한이 없습니다."),
   SOCIAL_ACCOUNTS_IMPOSSIBLE("소셜 계정은 비밀번호 설정이 불가합니다."),
   ALREADY_LOGOUT("해당 계정은 이미 로그아웃됐습니다."),
+  NOT_UPDATE_PROFILE("프로필 입력 후 사용해 주세요."),
+  ALREADY_EVALUATED_MANNERS("매너점수 평가를 이미 진행 했습니다."),
+  ADD_MANNERS_SCORE("상대에 대해 평가할 점수를 넣어주세요."),
 
   /*
   Mail Exception

@@ -1,7 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.post.controller;
 
 import com.ttodampartners.ttodamttodam.domain.post.dto.PostListDto;
-import com.ttodampartners.ttodamttodam.domain.post.service.PostListService;
+import com.ttodampartners.ttodamttodam.domain.post.service.PostListViewService;
 import com.ttodampartners.ttodamttodam.global.dto.UserDetailsDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-public class PostListController {
+public class PostListViewController {
 
-  private final PostListService postListService;
+  private final PostListViewService postListViewService;
 
   // 전체 글 조회
   @GetMapping("/post/list")
   public ResponseEntity<List<PostListDto>> getPostList() {
-    List<PostListDto> postList = postListService.getPostList();
+    List<PostListDto> postList = postListViewService.getPostList();
 
     return ResponseEntity.ok(postList);
   }
@@ -32,7 +32,7 @@ public class PostListController {
   @GetMapping("/post/category/{category}")
   public ResponseEntity<List<PostListDto>> getCategoryPostList(
       @PathVariable String category) {
-    List<PostListDto> postList = postListService.getCategoryPostList(category);
+    List<PostListDto> postList = postListViewService.getCategoryPostList(category);
 
     return ResponseEntity.ok(postList);
   }
@@ -41,7 +41,7 @@ public class PostListController {
   @GetMapping("/users/post/list")
   public ResponseEntity<List<PostListDto>> getUsersPostList(
       @AuthenticationPrincipal UserDetailsDto userDetails) {
-    List<PostListDto> userPostList = postListService.getUsersPostList();
+    List<PostListDto> userPostList = postListViewService.getUsersPostList();
 
     return ResponseEntity.ok(userPostList);
   }
@@ -50,7 +50,7 @@ public class PostListController {
   @GetMapping("/post/search")
   public ResponseEntity<List<PostListDto>> searchPostList(
       @RequestParam(required = false) String word) {
-    List<PostListDto> searchPostList = postListService.searchPostList(word);
+    List<PostListDto> searchPostList = postListViewService.searchPostList(word);
 
     return ResponseEntity.ok(searchPostList);
   }

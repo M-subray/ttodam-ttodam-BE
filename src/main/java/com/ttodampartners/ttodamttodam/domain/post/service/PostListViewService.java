@@ -4,25 +4,21 @@ import com.ttodampartners.ttodamttodam.domain.post.dto.PostListDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
-import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
-import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
-import com.ttodampartners.ttodamttodam.domain.user.util.AuthenticationUtil;
-import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
+import com.ttodampartners.ttodamttodam.global.util.UserUtil;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class PostListService {
+public class PostListViewService {
 
-  private final UserRepository userRepository;
   private final PostRepository postRepository;
+  private final UserUtil userUtil;
 
   /*
   전체 글 조회
@@ -30,7 +26,7 @@ public class PostListService {
    */
   @Transactional(readOnly = true)
   public List<PostListDto> getPostList() {
-    UserEntity user = getUser();
+    UserEntity user = userUtil.getCurUserEntity();
     String userRoadName = roadName(user.getLocation());
     List<PostEntity> postList = postRepository.findAll();
 
@@ -50,7 +46,7 @@ public class PostListService {
   // 카테고리별 글 조회
   @Transactional(readOnly = true)
   public List<PostListDto> getCategoryPostList(String category) {
-    UserEntity user = getUser();
+    UserEntity user = userUtil.getCurUserEntity();
     String userRoadName = roadName(user.getLocation());
 
     PostEntity.Category currentCategory = PostEntity.Category.fromLabel(category);
@@ -72,7 +68,7 @@ public class PostListService {
   // 내가 작성한 글 조회
   @Transactional(readOnly = true)
   public List<PostListDto> getUsersPostList() {
-    UserEntity user = getUser();
+    UserEntity user = userUtil.getCurUserEntity();
     List<PostEntity> usersPostList = postRepository.findByUserId(user.getId());
 
     return usersPostList.stream()
@@ -83,7 +79,6 @@ public class PostListService {
   // 키워드로 글 조회
   @Transactional(readOnly = true)
   public List<PostListDto> searchPostList(String word) {
-
     List<PostEntity> searchPostList = postRepository.findBySearch(word);
 
     return searchPostList.stream()
@@ -101,11 +96,5 @@ public class PostListService {
     } else {
       return "";
     }
-  }
-
-  private UserEntity getUser() {
-    Authentication authentication = AuthenticationUtil.getAuthentication();
-    return userRepository.findByEmail(authentication.getName()).orElseThrow(() ->
-        new UserException(ErrorCode.NOT_FOUND_USER));
   }
 }

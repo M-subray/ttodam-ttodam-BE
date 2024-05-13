@@ -1,4 +1,4 @@
-package com.ttodampartners.ttodamttodam.domain.user.util;
+package com.ttodampartners.ttodamttodam.global.util;
 
 import com.ttodampartners.ttodamttodam.domain.user.exception.CoordinateException;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;

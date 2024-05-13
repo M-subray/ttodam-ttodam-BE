@@ -30,6 +30,9 @@ public class RequestEntity {
     @JoinColumn(name = "request_user", nullable = false)
     private UserEntity requestUser;
 
+    @JoinColumn(name = "request_member_manner_evaluated")
+    private boolean requestMemberMannerEvaluated;
+
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
     private PostEntity post;

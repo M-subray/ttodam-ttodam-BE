@@ -4,8 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
-import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
-import com.ttodampartners.ttodamttodam.domain.user.service.ImageUpdateService;
+import com.ttodampartners.ttodamttodam.domain.user.service.ProfileImageUpdateService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,13 +18,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("이미지 업데이트 컨트롤러 테스트")
-class ImageUpdateControllerTest {
+class ProfileImageUpdateControllerTest {
 
   @Mock
-  ImageUpdateService imageUpdateService;
+  ProfileImageUpdateService profileImageUpdateService;
 
   @InjectMocks
-  ImageUpdateController imageUpdateController;
+  ProfileImageUpdateController profileImageUpdateController;
 
   @Test
   void imageUpdateTest() {
@@ -34,8 +33,8 @@ class ImageUpdateControllerTest {
         "image/jpeg", new byte[0]);
 
     //when
-    doNothing().when(imageUpdateService).imageUpdate(any(MultipartFile.class));
-    ResponseEntity<String> response = imageUpdateController.imageUpdate(file);
+    doNothing().when(profileImageUpdateService).imageUpdate(any(MultipartFile.class));
+    ResponseEntity<String> response = profileImageUpdateController.imageUpdate(file);
 
     //then
     assertEquals(HttpStatus.OK, response.getStatusCode());
