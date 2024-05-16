@@ -17,17 +17,16 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @Entity(name = "bookmark")
 public class BookmarkEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long bookmarkId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", nullable = false)
+  private Long bookmarkId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private UserEntity user;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
-    private PostEntity post;
-
+  @ManyToOne
+  @JoinColumn(name = "post_id", nullable = false)
+  private PostEntity post;
 }

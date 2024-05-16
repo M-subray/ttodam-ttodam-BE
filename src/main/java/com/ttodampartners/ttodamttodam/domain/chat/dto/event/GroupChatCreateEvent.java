@@ -1,7 +1,7 @@
 package com.ttodampartners.ttodamttodam.domain.chat.dto.event;
 
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
-import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
+import com.ttodampartners.ttodamttodam.domain.participation.entity.ParticipationEntity;
 import lombok.*;
 
 import java.util.List;
@@ -10,5 +10,5 @@ import java.util.List;
 @Builder
 public class GroupChatCreateEvent {
     private final PostEntity post;
-    private final List<RequestEntity> requestEntities;
+    private final List<ParticipationEntity> requestEntities;
 }

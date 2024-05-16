@@ -62,6 +62,8 @@ public class UserEntity extends BaseEntity {
   @Column(nullable = false, columnDefinition = "DOUBLE DEFAULT 0")
   private double manners;
 
+  private Long evaluationNumber;
+
   @OneToMany(cascade = CascadeType.REMOVE)
   private List<BookmarkEntity> bookmark;
 

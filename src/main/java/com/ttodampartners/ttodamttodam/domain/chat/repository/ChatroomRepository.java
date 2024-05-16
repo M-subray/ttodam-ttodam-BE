@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface ChatroomRepository extends JpaRepository<ChatroomEntity, Long> {
     Optional<ChatroomEntity> findByChatroomId(Long id);
-    List<ChatroomEntity> findByPostEntity(PostEntity post);
+    List<ChatroomEntity> findByPost(PostEntity post);
     @Query(nativeQuery = true, value = "SELECT * FROM CHATROOM WHERE post_id=? AND user_count > 2 LIMIT 1")
     ChatroomEntity findByPostEntityAndUserCountGreaterThan2(PostEntity post);
 }

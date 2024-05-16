@@ -1,4 +1,4 @@
-package com.ttodampartners.ttodamttodam.domain.request.exception;
+package com.ttodampartners.ttodamttodam.domain.participation.exception;
 
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import lombok.*;
@@ -8,11 +8,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RequestException extends RuntimeException{
+public class ParticipationException extends RuntimeException{
   private ErrorCode errorCode;
   private String errorMessage;
 
-  public RequestException(ErrorCode errorCode) {
+  public ParticipationException(ErrorCode errorCode) {
     this.errorCode = errorCode;
     this.errorMessage = errorCode.getDescription();
   }

@@ -4,7 +4,6 @@ import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -14,21 +13,19 @@ import java.util.List;
 @AllArgsConstructor
 public class PostUpdateDto {
 
-    private Long postId;
+  private String title;
 
-    private String title;
+  private Integer participants;
 
-    private Integer participants;
+  private String place;
 
-    private String place;
+  private LocalDateTime deadline;
 
-    private LocalDateTime deadline;
+  private PostEntity.Category category;
 
-    private PostEntity.Category category;
+  private String content;
 
-    private String content;
+  private List<String> imgUrls;
 
-    private List<String> imgUrls;
-
-    private List<ProductUpdateDto> products;
+  private List<ProductUpdateDto> products;
 }

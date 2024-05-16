@@ -5,31 +5,27 @@ import com.ttodampartners.ttodamttodam.domain.bookmark.entity.BookmarkEntity;
 import com.ttodampartners.ttodamttodam.domain.bookmark.exception.BookmarkException;
 import com.ttodampartners.ttodamttodam.domain.bookmark.repository.BookmarkRepository;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
-import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
-import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
+import com.ttodampartners.ttodamttodam.domain.post.util.PostUtil;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
-import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
-import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
-import com.ttodampartners.ttodamttodam.domain.user.util.AuthenticationUtil;
+import com.ttodampartners.ttodamttodam.global.util.UserUtil;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class BookmarkRegisterService {
 
-  private final PostRepository postRepository;
-  private final UserRepository userRepository;
+  private final UserUtil userUtil;
+  private final PostUtil postUtil;
   private final BookmarkRepository bookmarkRepository;
 
   @Transactional
   public BookmarkDto registerBookmark(Long postId) {
-    UserEntity user = getUser();
-    PostEntity post = getPost(postId);
+    UserEntity user = userUtil.getCurUserEntity();
+    PostEntity post = postUtil.getPost(postId);
 
     alreadyRegisterCheck(user, post);
 
@@ -40,18 +36,6 @@ public class BookmarkRegisterService {
             .build());
 
     return BookmarkDto.of(bookmarkEntity);
-  }
-
-  private UserEntity getUser() {
-    Authentication authentication = AuthenticationUtil.getAuthentication();
-
-    return userRepository.findByEmail(authentication.getName()).orElseThrow(() ->
-        new UserException(ErrorCode.NOT_FOUND_USER));
-  }
-
-  private PostEntity getPost(Long postId) {
-    return postRepository.findById(postId).orElseThrow(() ->
-        new PostException(ErrorCode.NOT_FOUND_POST));
   }
 
   private void alreadyRegisterCheck (UserEntity curUser, PostEntity newPost) {

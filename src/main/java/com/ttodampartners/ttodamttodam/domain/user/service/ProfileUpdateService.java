@@ -4,8 +4,8 @@ import com.ttodampartners.ttodamttodam.domain.user.dto.ProfileDto;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
-import com.ttodampartners.ttodamttodam.domain.user.util.AuthenticationUtil;
-import com.ttodampartners.ttodamttodam.domain.user.util.CoordinateFinderUtil;
+import com.ttodampartners.ttodamttodam.global.util.UserUtil;
+import com.ttodampartners.ttodamttodam.global.util.CoordinateFinderUtil;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProfileUpdateService {
   private final UserRepository userRepository;
+  private final UserUtil userUtil;
   private final PasswordEncoder passwordEncoder;
   private final CoordinateFinderUtil coordinateFinderUtil;
 
@@ -27,7 +28,7 @@ public class ProfileUpdateService {
    */
   @Transactional
   public void profileUpdate (ProfileDto profileDto) {
-    UserEntity user = getUser();
+    UserEntity user = userUtil.getCurUserEntity();
     isMatchEmail(user);
 
     if (!profileDto.getNickname().equals(user.getNickname())) {
@@ -77,14 +78,8 @@ public class ProfileUpdateService {
     }
   }
 
-  private UserEntity getUser () {
-    Authentication authentication = AuthenticationUtil.getAuthentication();
-    return userRepository.findByEmail(authentication.getName()).orElseThrow(() ->
-        new UserException(ErrorCode.NOT_FOUND_USER));
-  }
-
   private void isMatchEmail(UserEntity user) {
-    Authentication authentication = AuthenticationUtil.getAuthentication();
+    Authentication authentication = UserUtil.getAuthentication();
     String authEmail = authentication.getName();
 
     if (!authEmail.equals(user.getEmail())) {

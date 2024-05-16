@@ -4,13 +4,10 @@ import com.ttodampartners.ttodamttodam.domain.bookmark.entity.BookmarkEntity;
 import com.ttodampartners.ttodamttodam.domain.bookmark.exception.BookmarkException;
 import com.ttodampartners.ttodamttodam.domain.bookmark.repository.BookmarkRepository;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
-import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
-import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
-import com.ttodampartners.ttodamttodam.domain.user.util.AuthenticationUtil;
+import com.ttodampartners.ttodamttodam.global.util.UserUtil;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,11 +15,11 @@ import org.springframework.stereotype.Service;
 public class BookmarkDeleteService {
 
   private final BookmarkRepository bookmarkRepository;
-  private final UserRepository userRepository;
+  private final UserUtil userUtil;
 
   @Transactional
   public void deleteBookmark(Long bookmarkId) {
-    UserEntity curUser = getUser();
+    UserEntity curUser = userUtil.getCurUserEntity();
     BookmarkEntity bookmark = getBookmark(bookmarkId);
 
     // 권한 인증
@@ -33,13 +30,6 @@ public class BookmarkDeleteService {
     }
 
     bookmarkRepository.delete(bookmark);
-  }
-
-  private UserEntity getUser() {
-    Authentication authentication = AuthenticationUtil.getAuthentication();
-
-    return userRepository.findByEmail(authentication.getName()).orElseThrow(() ->
-        new UserException(ErrorCode.NOT_FOUND_USER));
   }
 
   private BookmarkEntity getBookmark(Long bookmarkId) {

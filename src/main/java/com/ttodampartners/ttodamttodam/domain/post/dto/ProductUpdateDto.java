@@ -10,14 +10,13 @@ import lombok.*;
 @AllArgsConstructor
 public class ProductUpdateDto {
 
-    private Long productId;
+  private Long productId;
 
-    private String productName;
+  private String productName;
 
-    private Integer count;
+  private Integer count;
 
-    private Long price;
+  private Long price;
 
-    private String purchaseLink;
-
+  private String purchaseLink;
 }
