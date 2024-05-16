@@ -15,7 +15,7 @@ import com.ttodampartners.ttodamttodam.domain.chat.repository.ChatroomRepository
 import com.ttodampartners.ttodamttodam.domain.notification.service.NotificationService;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
-import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
+import com.ttodampartners.ttodamttodam.domain.participation.entity.ParticipationEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
 import com.ttodampartners.ttodamttodam.domain.user.repository.UserRepository;
@@ -61,7 +61,7 @@ public class ChatroomCreateService {
         UserEntity host = userRepository.findById(post.getUser().getId()).orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
         // 이미 user가 해당 post에 일대일 채팅방 생성한 적 있는지 체크
-        List<ChatroomEntity> chatroomEntities = chatroomRepository.findByPostEntity(post); // 이 post에서 생성된 채팅방 리스트
+        List<ChatroomEntity> chatroomEntities = chatroomRepository.findByPost(post); // 이 post에서 생성된 채팅방 리스트
         ErrorCode code = CHATROOM_ALREADY_EXIST;
         if (!CollectionUtils.isEmpty(chatroomEntities)) { // 이 post에서 생성된 채팅방이 하나라도 존재한다면
             for (ChatroomEntity chatroom: chatroomEntities) {
@@ -81,7 +81,7 @@ public class ChatroomCreateService {
 
         // CHATROOM 테이블에 컬럼 추가
         ChatroomEntity chatroom = chatroomRepository.save(
-                ChatroomEntity.builder().postEntity(post).chatName(post.getTitle()).userCount(2).build()
+                ChatroomEntity.builder().post(post).chatName(post.getTitle()).userCount(2).build()
         );
 
         // 채팅방 소속 멤버들
@@ -114,7 +114,7 @@ public class ChatroomCreateService {
         log.info("TransactionPhase.AFTER_COMMIT ---> {}", event);
 
         PostEntity post = event.getPost();
-        List<RequestEntity> requestEntities = event.getRequestEntities();
+        List<ParticipationEntity> requestEntities = event.getRequestEntities();
 
         // 단체 채팅방 존재 여부 확인
         ChatroomEntity alreadyExist = chatroomRepository.findByPostEntityAndUserCountGreaterThan2(post);
@@ -124,7 +124,7 @@ public class ChatroomCreateService {
 
         // CHATROOM 테이블에 컬럼 추가
         ChatroomEntity chatroom = chatroomRepository.save(
-                ChatroomEntity.builder().postEntity(post).chatName(post.getTitle()).userCount(requestEntities.size() + 1).build()
+                ChatroomEntity.builder().post(post).chatName(post.getTitle()).userCount(requestEntities.size() + 1).build()
         );
 
         List<UserEntity> members = new ArrayList<>();

@@ -1,8 +1,9 @@
-package com.ttodampartners.ttodamttodam.domain.request.dto;
+package com.ttodampartners.ttodamttodam.domain.participation.dto;
 
+import com.ttodampartners.ttodamttodam.domain.participation.type.ParticipationStatus;
 import com.ttodampartners.ttodamttodam.domain.post.dto.ProductListDto;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
-import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
+import com.ttodampartners.ttodamttodam.domain.participation.entity.ParticipationEntity;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,7 +17,7 @@ public class ActivitiesDto {
     // 현재 로그인 유저 정보
     private Long userId;
     private String userNickname;
-    private RequestEntity.RequestStatus requestStatus;
+    private ParticipationStatus participationStatus;
     //참여 게시글 정보
     private Long postId;
     private Long authorId;
@@ -28,7 +29,7 @@ public class ActivitiesDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static ActivitiesDto of(RequestEntity request) {
+    public static ActivitiesDto of(ParticipationEntity request) {
 
         List<ProductListDto> products = request.getPost().getProducts()
                 .stream().map(ProductListDto::from).collect(Collectors.toList());
@@ -41,7 +42,7 @@ public class ActivitiesDto {
                 .authorNickname(request.getPost().getUser().getNickname())
                 .title(request.getPost().getTitle())
                 .status(request.getPost().getStatus())
-                .requestStatus(request.getRequestStatus())
+                .participationStatus(request.getParticipationStatus())
                 .purchaseStatus(request.getPost().getPurchaseStatus())
                 .products(products)
                 .createdAt(request.getPost().getCreatedAt())

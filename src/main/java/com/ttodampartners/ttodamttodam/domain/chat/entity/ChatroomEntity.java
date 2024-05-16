@@ -26,7 +26,7 @@ public class ChatroomEntity extends BaseEntity {
     // POST 테이블과 연결
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
-    private PostEntity postEntity;
+    private PostEntity post;
 
     // CHATROOM_MEMBER 테이블과 연결
     @OneToMany(mappedBy = "chatroomEntity", cascade = CascadeType.ALL, orphanRemoval = true)

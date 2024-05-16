@@ -10,7 +10,7 @@ import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
 import com.ttodampartners.ttodamttodam.domain.post.repository.ProductRepository;
 import com.ttodampartners.ttodamttodam.domain.post.util.PostUtil;
-import com.ttodampartners.ttodamttodam.domain.request.exception.RequestException;
+import com.ttodampartners.ttodamttodam.domain.participation.exception.ParticipationException;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.global.util.UserUtil;
 import com.ttodampartners.ttodamttodam.global.util.CoordinateFinderUtil;
@@ -134,9 +134,9 @@ public class PostUpdateService {
     validateAuthority(user.getId(), post);
 
     if (post.getStatus() == PostEntity.Status.IN_PROGRESS) {
-      throw new RequestException(ErrorCode.POST_STATUS_IN_PROGRESS);
+      throw new ParticipationException(ErrorCode.POST_STATUS_IN_PROGRESS);
     } else if (post.getStatus() == PostEntity.Status.FAILED) {
-      throw new RequestException(ErrorCode.POST_STATUS_FAILED);
+      throw new ParticipationException(ErrorCode.POST_STATUS_FAILED);
     }
 
     post.setPurchaseStatus(PostEntity.PurchaseStatus.fromLabel(purchaseStatus));

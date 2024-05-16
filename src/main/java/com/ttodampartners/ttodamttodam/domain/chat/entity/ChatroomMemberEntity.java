@@ -42,7 +42,7 @@ public class ChatroomMemberEntity {
     // 채팅방 정보를 ChatroomListResponse에 담아서 리턴
     public ChatroomListResponse getChatroomInfos() {
         ChatroomEntity userChatroom = this.chatroomEntity;
-        PostEntity userChatroomPost = userChatroom.getPostEntity();
+        PostEntity userChatroomPost = userChatroom.getPost();
 
         return ChatroomListResponse.builder()
                 .chatroomId(userChatroom.getChatroomId())

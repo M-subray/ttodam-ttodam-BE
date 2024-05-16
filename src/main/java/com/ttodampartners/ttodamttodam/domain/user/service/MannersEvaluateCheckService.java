@@ -1,10 +1,10 @@
 package com.ttodampartners.ttodamttodam.domain.user.service;
 
+import com.ttodampartners.ttodamttodam.domain.participation.type.ParticipationStatus;
 import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
-import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
-import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity.RequestStatus;
-import com.ttodampartners.ttodamttodam.domain.request.repository.RequestRepository;
+import com.ttodampartners.ttodamttodam.domain.participation.entity.ParticipationEntity;
+import com.ttodampartners.ttodamttodam.domain.participation.repository.ParticipationRepository;
 import com.ttodampartners.ttodamttodam.domain.user.dto.MannersEvaluateCheckDto;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.global.error.ErrorCode;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MannersEvaluateCheckService {
 
-  private final RequestRepository requestRepository;
+  private final ParticipationRepository participationRepository;
   private final UserUtil userUtil;
   private final PostRepository postRepository;
 
@@ -49,16 +49,16 @@ public class MannersEvaluateCheckService {
   }
 
   private Map<Long, String> getRequestList(Long postId, UserEntity curUser, UserEntity postUser) {
-    List<RequestEntity> acceptedRequests =
-        requestRepository.findAllByPost_PostIdAndRequestStatus(postId, RequestStatus.ACCEPT);
+    List<ParticipationEntity> acceptedRequests =
+        participationRepository.findAllByPost_PostIdAndParticipationStatus(postId, ParticipationStatus.ACCEPT);
 
     return getUsersFromAcceptedRequests(acceptedRequests, curUser, postUser);
   }
 
-  private Map<Long, String> getUsersFromAcceptedRequests(List<RequestEntity> acceptedRequests,
+  private Map<Long, String> getUsersFromAcceptedRequests(List<ParticipationEntity> acceptedRequests,
       UserEntity curUser, UserEntity postUser) {
     Map<Long, String> userIdAndNickname = new HashMap<>();
-    for (RequestEntity request : acceptedRequests) {
+    for (ParticipationEntity request : acceptedRequests) {
       // 본인 제외하고 추가 (본인을 본인이 매너점수 평가할 수 없기에)
       if (request.getRequestUser().getId() != curUser.getId()) {
         Long userId = request.getRequestUser().getId();

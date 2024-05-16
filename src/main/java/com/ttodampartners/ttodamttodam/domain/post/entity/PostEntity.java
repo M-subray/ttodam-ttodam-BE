@@ -1,7 +1,8 @@
 package com.ttodampartners.ttodamttodam.domain.post.entity;
 
 import com.ttodampartners.ttodamttodam.domain.bookmark.entity.BookmarkEntity;
-import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
+import com.ttodampartners.ttodamttodam.domain.chat.entity.ChatroomEntity;
+import com.ttodampartners.ttodamttodam.domain.participation.entity.ParticipationEntity;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.global.config.StringListConverter;
 import jakarta.persistence.*;
@@ -91,7 +92,10 @@ public class PostEntity {
   private List<BookmarkEntity> bookmark;
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-  private List<RequestEntity> request;
+  private List<ParticipationEntity> request;
+
+  @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+  private List<ChatroomEntity> chatroom;
 
   @JoinColumn(name = "post_user_manner_evaluated")
   private boolean postUserMannerEvaluated;

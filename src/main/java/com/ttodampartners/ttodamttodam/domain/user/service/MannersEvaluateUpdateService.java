@@ -3,8 +3,8 @@ package com.ttodampartners.ttodamttodam.domain.user.service;
 import com.ttodampartners.ttodamttodam.domain.post.entity.PostEntity;
 import com.ttodampartners.ttodamttodam.domain.post.exception.PostException;
 import com.ttodampartners.ttodamttodam.domain.post.repository.PostRepository;
-import com.ttodampartners.ttodamttodam.domain.request.entity.RequestEntity;
-import com.ttodampartners.ttodamttodam.domain.request.repository.RequestRepository;
+import com.ttodampartners.ttodamttodam.domain.participation.entity.ParticipationEntity;
+import com.ttodampartners.ttodamttodam.domain.participation.repository.ParticipationRepository;
 import com.ttodampartners.ttodamttodam.domain.user.dto.MannersEvaluateUpdateDto;
 import com.ttodampartners.ttodamttodam.domain.user.entity.UserEntity;
 import com.ttodampartners.ttodamttodam.domain.user.exception.UserException;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MannersEvaluateUpdateService {
   private final UserRepository userRepository;
   private final UserUtil userUtil;
-  private final RequestRepository requestRepository;
+  private final ParticipationRepository participationRepository;
   private final PostRepository postRepository;
 
   @Transactional
@@ -66,13 +66,13 @@ public class MannersEvaluateUpdateService {
   }
 
   private void ifAlreadyEvaluateForMember(Long postId, Long userId) {
-    List<RequestEntity> allByPostPostId = requestRepository.findAllByPost_PostId(postId);
-    for (RequestEntity requestEntity : allByPostPostId) {
-      if (requestEntity.getRequestUser().getId() == userId) {
-        if (requestEntity.isRequestMemberMannerEvaluated()) {
+    List<ParticipationEntity> allByPostPostId = participationRepository.findAllByPost_PostId(postId);
+    for (ParticipationEntity participationEntity : allByPostPostId) {
+      if (participationEntity.getRequestUser().getId() == userId) {
+        if (participationEntity.isRequestMemberMannerEvaluated()) {
           throw new UserException(ErrorCode.ALREADY_EVALUATED_MANNERS);
         } else {
-          requestEntity.setRequestMemberMannerEvaluated(true);
+          participationEntity.setRequestMemberMannerEvaluated(true);
         }
       }
     }
